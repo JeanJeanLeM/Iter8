@@ -4,6 +4,10 @@ export * from './Endpoints';
 export * from './Files';
 /* Memories */
 export * from './Memories';
+/* Recipes */
+export * from './Recipes';
+/* Journal */
+export * from './Journal';
 export * from './Messages';
 export * from './Misc';
 export * from './Tools';

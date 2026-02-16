@@ -9,6 +9,8 @@ import {
   useRef,
   startTransition,
 } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { BookOpen, NotebookPen } from 'lucide-react';
 import { useRecoilValue } from 'recoil';
 import { motion } from 'framer-motion';
 import { Skeleton, useMediaQuery } from '@librechat/client';
@@ -65,6 +67,65 @@ const NavMask = memo(
 );
 
 const MemoNewChat = memo(NewChat);
+
+const RecipeBookNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const location = useLocation();
+    const isActive = location.pathname === '/r' || location.pathname.startsWith('/r/');
+    return (
+      <Link
+        to="/r"
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className={cn(
+          'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt',
+          isActive && 'bg-surface-active-alt',
+        )}
+      >
+        <BookOpen className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_recipe_book')}</span>
+      </Link>
+    );
+  },
+);
+RecipeBookNavLink.displayName = 'RecipeBookNavLink';
+
+const JournalNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const location = useLocation();
+    const isActive =
+      location.pathname === '/journal' || location.pathname.startsWith('/journal');
+    return (
+      <Link
+        to="/journal"
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className={cn(
+          'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt',
+          isActive && 'bg-surface-active-alt',
+        )}
+      >
+        <NotebookPen className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_journal')}</span>
+      </Link>
+    );
+  },
+);
+JournalNavLink.displayName = 'JournalNavLink';
 
 const Nav = memo(
   ({
@@ -232,6 +293,16 @@ const Nav = memo(
               toggleNav={toggleNavVisible}
               headerButtons={headerButtons}
               isSmallScreen={isSmallScreen}
+            />
+            <RecipeBookNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+            <JournalNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
             />
             <div className="flex min-h-0 flex-grow flex-col overflow-hidden">
               <Conversations

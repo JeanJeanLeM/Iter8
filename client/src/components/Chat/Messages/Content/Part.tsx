@@ -18,6 +18,7 @@ import WebSearch from './WebSearch';
 import ToolCall from './ToolCall';
 import ImageGen from './ImageGen';
 import Image from './Image';
+import RecipeBlock from './RecipeBlock';
 
 type PartProps = {
   part?: TMessageContentParts;
@@ -139,6 +140,14 @@ const Part = memo(
             output={toolCall.output ?? ''}
           />
         );
+      } else if (isToolCall && toolCall.name === 'update_recipe') {
+        return (
+          <RecipeBlock
+            output={toolCall.output ?? ''}
+            isSubmitting={isSubmitting}
+            isLast={isLast}
+          />
+        );
       } else if (isToolCall) {
         return (
           <ToolCall
@@ -190,6 +199,16 @@ const Part = memo(
             );
           }
           return null;
+        }
+
+        if (toolCall.function?.name === 'update_recipe') {
+          return (
+            <RecipeBlock
+              output={toolCall.function.output ?? ''}
+              isSubmitting={isSubmitting}
+              isLast={isLast}
+            />
+          );
         }
 
         return (

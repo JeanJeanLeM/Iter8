@@ -210,16 +210,50 @@ router.post('/update', validateConvoAccess, async (req, res) => {
 
   const sanitizedTitle = title.trim().slice(0, MAX_CONVO_TITLE_LENGTH);
 
+  const useDietaryPreferences = req.body.arg?.useDietaryPreferences;
+  const updatePayload = { conversationId, title: sanitizedTitle };
+  if (typeof useDietaryPreferences === 'boolean') {
+    updatePayload.useDietaryPreferences = useDietaryPreferences;
+  }
+
   try {
     const dbResponse = await saveConvo(
       req,
-      { conversationId, title: sanitizedTitle },
+      updatePayload,
       { context: `POST /api/convos/update ${conversationId}` },
     );
     res.status(201).json(dbResponse);
   } catch (error) {
     logger.error('Error updating conversation', error);
     res.status(500).send('Error updating conversation');
+  }
+});
+
+/**
+ * PATCH /api/convos/:conversationId/dietary-preferences
+ * Updates only useDietaryPreferences for the conversation.
+ */
+router.patch('/:conversationId/dietary-preferences', (req, res, next) => {
+  req.body = { ...(req.body || {}), conversationId: req.params.conversationId };
+  return validateConvoAccess(req, res, next);
+}, async (req, res) => {
+  const { conversationId } = req.params;
+  const { useDietaryPreferences } = req.body ?? {};
+
+  if (typeof useDietaryPreferences !== 'boolean') {
+    return res.status(400).json({ error: 'useDietaryPreferences must be a boolean.' });
+  }
+
+  try {
+    const dbResponse = await saveConvo(
+      req,
+      { conversationId, useDietaryPreferences },
+      { context: `PATCH /api/convos/dietary-preferences ${conversationId}` },
+    );
+    res.status(200).json(dbResponse);
+  } catch (error) {
+    logger.error('Error updating dietary preferences', error);
+    res.status(500).send('Error updating dietary preferences');
   }
 });
 

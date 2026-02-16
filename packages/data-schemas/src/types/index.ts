@@ -20,6 +20,9 @@ export * from './share';
 export * from './pluginAuth';
 /* Memories */
 export * from './memory';
+/* Recipes */
+export * from './recipe';
+export * from './realization';
 /* Prompts */
 export * from './prompts';
 /* Access Control */

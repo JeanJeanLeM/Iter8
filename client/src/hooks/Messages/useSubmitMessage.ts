@@ -3,13 +3,14 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { replaceSpecialVars } from 'librechat-data-provider';
 import { useChatContext, useChatFormContext, useAddedChatContext } from '~/Providers';
 import { useAuthContext } from '~/hooks/AuthContext';
-import store from '~/store';
+import store, { selectedRecipeForVariation } from '~/store';
 
 export default function useSubmitMessage() {
   const { user } = useAuthContext();
   const methods = useChatFormContext();
   const { conversation: addedConvo } = useAddedChatContext();
   const { ask, index, getMessages, setMessages, latestMessage } = useChatContext();
+  const selectedRecipe = useRecoilValue(selectedRecipeForVariation);
 
   const autoSendPrompts = useRecoilValue(store.autoSendPrompts);
   const setActivePrompt = useSetRecoilState(store.activePromptByIndex(index));
@@ -33,11 +34,12 @@ export default function useSubmitMessage() {
         },
         {
           addedConvo: addedConvo ?? undefined,
+          selectedRecipeForVariation: selectedRecipe ?? undefined,
         },
       );
       methods.reset();
     },
-    [ask, methods, addedConvo, setMessages, getMessages, latestMessage],
+    [ask, methods, addedConvo, selectedRecipe, setMessages, getMessages, latestMessage],
   );
 
   const submitPrompt = useCallback(

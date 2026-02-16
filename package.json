@@ -28,6 +28,8 @@
     "upgrade": "node config/upgrade.js",
     "create-user": "node config/create-user.js",
     "invite-user": "node config/invite-user.js",
+    "create-recipe-agent": "node config/create-recipe-agent.js",
+    "seed-recipes": "node config/seed-recipes.js",
     "list-users": "node config/list-users.js",
     "reset-password": "node config/reset-password.js",
     "ban-user": "node config/ban-user.js",
@@ -170,5 +172,8 @@
       "admin/",
       "packages/"
     ]
+  },
+  "dependencies": {
+    "mongodb": "^7.1.0"
   }
 }

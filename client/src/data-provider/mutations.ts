@@ -39,6 +39,22 @@ export const useUpdateConversationMutation = (
   );
 };
 
+export const useUpdateConversationDietaryPreferencesMutation = (
+  conversationId: string,
+): UseMutationResult<t.TConversation, Error, boolean, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (useDietaryPreferences: boolean) =>
+      dataService.updateConversationDietaryPreferences(conversationId, useDietaryPreferences),
+    {
+      onSuccess: (updatedConvo) => {
+        queryClient.setQueryData([QueryKeys.conversation, conversationId], updatedConvo);
+        updateConvoInAllQueries(queryClient, conversationId, () => updatedConvo);
+      },
+    },
+  );
+};
+
 export const useTagConversationMutation = (
   conversationId: string,
   options?: t.updateTagsInConvoOptions,

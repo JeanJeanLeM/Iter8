@@ -92,6 +92,7 @@ export default function useChatFunctions({
       overrideMessages,
       overrideFiles,
       addedConvo,
+      selectedRecipeForVariation,
     } = {},
   ) => {
     setShowStopButton(false);
@@ -327,6 +328,7 @@ export default function useChatFunctions({
       ephemeralAgent,
       editedContent,
       addedConvo,
+      selectedRecipeForVariation: selectedRecipeForVariation ?? undefined,
     };
 
     if (isRegenerate) {

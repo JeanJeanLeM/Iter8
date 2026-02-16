@@ -813,6 +813,8 @@ export type TStartupConfig = {
   >;
   mcpPlaceholder?: string;
   conversationImportMaxFileSize?: number;
+  /** Default agent ID for recipe app (e.g. Assistant Recettes) */
+  defaultRecipeAgentId?: string;
 };
 
 export enum OCRStrategy {

@@ -25,3 +25,6 @@ export { default as transactionSchema } from './transaction';
 export { default as userSchema } from './user';
 export { default as memorySchema } from './memory';
 export { default as groupSchema } from './group';
+export { default as recipeSchema } from './recipe';
+export { default as recipeVoteSchema } from './recipeVote';
+export { default as realizationSchema } from './realization';

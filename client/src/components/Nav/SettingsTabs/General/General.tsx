@@ -1,13 +1,14 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useMemo } from 'react';
 import Cookies from 'js-cookie';
 import { useRecoilState } from 'recoil';
 import { Dropdown, ThemeContext } from '@librechat/client';
 import ArchivedChats from './ArchivedChats';
 import ToggleSwitch from '../ToggleSwitch';
 import { useLocalize } from '~/hooks';
+import { RECIPE_APP_SIMPLE_UX } from '~/constants/recipeApp';
 import store from '~/store';
 
-const toggleSwitchConfigs = [
+const allToggleSwitchConfigs = [
   {
     stateAtom: store.enableUserMsgMarkdown,
     localizationKey: 'com_nav_user_msg_markdown',
@@ -176,6 +177,14 @@ function General() {
       Cookies.set('lang', userLang, { expires: 365 });
     },
     [setLangcode],
+  );
+
+  const toggleSwitchConfigs = useMemo(
+    () =>
+      RECIPE_APP_SIMPLE_UX
+        ? allToggleSwitchConfigs.filter((c) => c.key !== 'hideSidePanel')
+        : allToggleSwitchConfigs,
+    [],
   );
 
   return (

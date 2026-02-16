@@ -206,3 +206,101 @@ export type GraphTokenResponse = {
   expires_in: number;
   scope: string;
 };
+
+/* Recipes */
+export type TRecipeIngredient = {
+  name: string;
+  quantity?: number;
+  unit?: string;
+  note?: string;
+};
+export type TRecipeStep = {
+  order: number;
+  instruction: string;
+  ingredientsUsed?: string[];
+};
+
+/** Duration in minutes, or object with prep/cook/total in minutes */
+export type TRecipeDuration = number | { prep?: number; cook?: number; total?: number };
+
+export type TRecipe = {
+  _id: string;
+  userId: string;
+  parentId: string | null;
+  variationNote?: string;
+  objective?: string;
+  title: string;
+  description?: string;
+  portions?: number;
+  duration?: TRecipeDuration;
+  ingredients: TRecipeIngredient[];
+  steps: TRecipeStep[];
+  equipment?: string[];
+  tags?: string[];
+  dishType?: 'entree' | 'plat' | 'dessert';
+  cuisineType?: string[];
+  diet?: string[];
+  imageUrl?: string;
+  images?: Array<{ url: string; source: 'ai' | 'upload' }>;
+  variationCount?: number;
+  score?: number;
+  userVote?: number;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type RecipesListParams = {
+  ingredientsInclude?: string[];
+  ingredientsExclude?: string[];
+  dishType?: string;
+  cuisineType?: string[];
+  diet?: string[];
+  parentsOnly?: boolean;
+  parentId?: string | null;
+  /** Fetch only recipes with these IDs */
+  ids?: string[];
+};
+
+export type RecipesListResponse = {
+  recipes: TRecipe[];
+};
+
+export type RecipeVoteResponse = {
+  ok: boolean;
+  score?: number;
+};
+
+/* Journal (realizations) */
+export type TRealization = {
+  _id: string;
+  userId: string;
+  recipeId: string;
+  realizedAt: string;
+  comment?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type TRealizationWithRecipe = TRealization & {
+  recipeTitle?: string;
+  recipeImageUrl?: string;
+  recipeParentId?: string | null;
+  variationNote?: string;
+};
+
+export type JournalListParams = {
+  recipeId?: string;
+  fromDate?: string;
+  toDate?: string;
+  sort?: 'realizedAtDesc' | 'realizedAtAsc';
+};
+
+export type JournalListResponse = {
+  realizations: TRealizationWithRecipe[];
+};
+
+export type CreateJournalEntryParams = {
+  recipeId: string;
+  realizedAt?: string;
+  comment?: string;
+};

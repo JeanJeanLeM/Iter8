@@ -14,11 +14,14 @@ const buildDefaultConvo = ({
   conversation,
   endpoint = null,
   lastConversationSetup,
+  defaultAgentId,
 }: {
   models: string[];
   conversation: TConversation;
   endpoint?: EModelEndpoint | null;
   lastConversationSetup: TConversation | null;
+  /** Default agent ID when none selected (e.g. "Assistant Recettes" for recipe app) */
+  defaultAgentId?: string | null;
 }): TConversation => {
   const { lastSelectedModel, lastSelectedTools } = getLocalStorageItems();
   const endpointType = lastConversationSetup?.endpointType ?? conversation.endpointType;
@@ -67,13 +70,18 @@ const buildDefaultConvo = ({
 
   // Ensures agent_id is always defined
   const agentId = convo?.agent_id ?? '';
-  const defaultAgentId = lastConversationSetup?.agent_id ?? '';
-  if (
-    isAgentsEndpoint(endpoint) &&
-    agentId &&
-    (!defaultAgentId || isEphemeralAgentId(defaultAgentId))
-  ) {
-    defaultConvo.agent_id = agentId;
+  const lastAgentId = lastConversationSetup?.agent_id ?? '';
+  if (isAgentsEndpoint(endpoint)) {
+    if (agentId && (!lastAgentId || isEphemeralAgentId(lastAgentId))) {
+      defaultConvo.agent_id = agentId;
+    } else if (
+      !agentId &&
+      (!lastAgentId || isEphemeralAgentId(lastAgentId)) &&
+      defaultAgentId
+    ) {
+      // defaultAgentId comes from startup config (e.g. Assistant Recettes); server validates it exists
+      defaultConvo.agent_id = defaultAgentId;
+    }
   }
 
   // Clear model for non-ephemeral agents - agents use their configured model internally

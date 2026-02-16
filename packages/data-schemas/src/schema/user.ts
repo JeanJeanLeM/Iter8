@@ -138,6 +138,37 @@ const userSchema = new Schema<IUser>(
           type: Boolean,
           default: true,
         },
+        diets: {
+          type: [String],
+          default: undefined,
+        },
+        allergies: {
+          type: [String],
+          default: undefined,
+        },
+        cookingLevel: {
+          type: String,
+          default: undefined,
+        },
+        dietaryPreferences: {
+          type: String,
+          default: undefined,
+        },
+        preferencesSummary: {
+          type: String,
+          default: undefined,
+        },
+        /** Recipe display: 'si' (metric) or 'american' (US cups, tbsp, etc.) */
+        unitSystem: {
+          type: String,
+          enum: ['si', 'american'],
+          default: undefined,
+        },
+        /** When true, show gram equivalent for tsp/tbsp/cup in recipe ingredients */
+        showIngredientGrams: {
+          type: Boolean,
+          default: undefined,
+        },
       },
       default: {},
     },

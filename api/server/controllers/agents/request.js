@@ -14,6 +14,23 @@ const { handleAbortError } = require('~/server/middleware');
 const { logViolation } = require('~/cache');
 const { saveMessage } = require('~/models');
 
+function buildUserMessageWithRecipeContext(text, selectedRecipeForVariation) {
+  if (!text || typeof text !== 'string') {
+    return text ?? '';
+  }
+  if (
+    !selectedRecipeForVariation ||
+    typeof selectedRecipeForVariation !== 'object' ||
+    !selectedRecipeForVariation.recipeId
+  ) {
+    return text;
+  }
+  const { recipeId, title, parentId } = selectedRecipeForVariation;
+  const parentPart = parentId != null ? ` parentId=${parentId}` : '';
+  const prefix = `[RECETTE_CIBLE: id=${recipeId} titre=${title || 'Sans titre'}${parentPart}]\n\n`;
+  return prefix + text;
+}
+
 function createCloseHandler(abortController) {
   return function (manual) {
     if (!manual) {
@@ -38,7 +55,7 @@ function createCloseHandler(abortController) {
  */
 const ResumableAgentController = async (req, res, next, initializeClient, addTitle) => {
   const {
-    text,
+    text: rawText,
     isRegenerate,
     endpointOption,
     conversationId: reqConversationId,
@@ -47,8 +64,10 @@ const ResumableAgentController = async (req, res, next, initializeClient, addTit
     parentMessageId = null,
     overrideParentMessageId = null,
     responseMessageId: editedResponseMessageId = null,
+    selectedRecipeForVariation,
   } = req.body;
 
+  const text = buildUserMessageWithRecipeContext(rawText, selectedRecipeForVariation);
   const userId = req.user.id;
 
   const { allowed, pendingRequests, limit } = await checkAndIncrementPendingRequest(userId);
@@ -431,7 +450,7 @@ const AgentController = async (req, res, next, initializeClient, addTitle) => {
  */
 const _LegacyAgentController = async (req, res, next, initializeClient, addTitle) => {
   const {
-    text,
+    text: rawText,
     isRegenerate,
     endpointOption,
     conversationId: reqConversationId,
@@ -440,7 +459,10 @@ const _LegacyAgentController = async (req, res, next, initializeClient, addTitle
     parentMessageId = null,
     overrideParentMessageId = null,
     responseMessageId: editedResponseMessageId = null,
+    selectedRecipeForVariation,
   } = req.body;
+
+  const text = buildUserMessageWithRecipeContext(rawText, selectedRecipeForVariation);
 
   // Generate conversationId upfront if not provided - streamId === conversationId always
   // Treat "new" as a placeholder that needs a real UUID (frontend may send "new" for new convos)

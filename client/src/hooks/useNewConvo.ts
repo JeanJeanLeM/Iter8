@@ -117,6 +117,15 @@ const useNewConvo = (index = 0) => {
           // Skip this check for existing agent conversations (they have agent_id set)
           // Also check localStorage for new conversations restored after refresh
           const { lastConversationSetup } = getLocalStorageItems();
+          // Prefer default recipe agent on home/new chat when no prior endpoint preference is saved
+          if (
+            startupConfig?.defaultRecipeAgentId &&
+            endpointsConfig?.agents &&
+            hasAgentAccess &&
+            !lastConversationSetup?.endpoint
+          ) {
+            defaultEndpoint = EModelEndpoint.agents;
+          }
           const storedAgentId =
             isAgentsEndpoint(lastConversationSetup?.endpoint) && lastConversationSetup?.agent_id;
           const isExistingAgentConvo =
@@ -196,6 +205,9 @@ const useNewConvo = (index = 0) => {
             lastConversationSetup: activePreset as TConversation,
             endpoint: defaultEndpoint,
             models,
+            defaultAgentId: isAgentsEndpoint(defaultEndpoint)
+              ? startupConfig?.defaultRecipeAgentId
+              : undefined,
           });
         }
 
@@ -249,7 +261,14 @@ const useNewConvo = (index = 0) => {
           state: disableFocus ? {} : { focusChat: true },
         });
       },
-    [endpointsConfig, defaultPreset, assistantsListMap, modelsQuery.data, hasAgentAccess],
+    [
+      endpointsConfig,
+      defaultPreset,
+      assistantsListMap,
+      modelsQuery.data,
+      hasAgentAccess,
+      startupConfig?.defaultRecipeAgentId,
+    ],
   );
 
   const newConversation = useCallback(

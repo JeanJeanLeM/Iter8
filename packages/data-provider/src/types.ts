@@ -141,6 +141,8 @@ export type TSubmission = {
   editedContent?: TEditedContent | null;
   /** Added conversation for multi-convo feature */
   addedConvo?: TConversation;
+  /** Recipe selected as modification target - injected into agent context */
+  selectedRecipeForVariation?: { recipeId: string; title: string; parentId?: string | null } | null;
 };
 
 export type EventSubmission = Omit<TSubmission, 'initialResponse'> & { initialResponse: TMessage };
@@ -204,6 +206,12 @@ export type TUser = {
   backupCodes?: TBackupCode[];
   personalization?: {
     memories?: boolean;
+    diets?: string[];
+    allergies?: string[];
+    cookingLevel?: string;
+    dietaryPreferences?: string;
+    unitSystem?: 'si' | 'american';
+    showIngredientGrams?: boolean;
   };
   createdAt: string;
   updatedAt: string;

@@ -18,6 +18,7 @@ import type { Endpoint } from '~/common';
 import { useGetEndpointsQuery } from '~/data-provider';
 import { mapEndpoints, getIconKey } from '~/utils';
 import { useHasAccess } from '~/hooks';
+import { RECIPE_APP_SIMPLE_UX } from '~/constants/recipeApp';
 import { icons } from './Icons';
 
 export const useEndpoints = ({
@@ -69,6 +70,10 @@ export const useEndpoints = ({
       result.push(endpoints[i]);
     }
 
+    // Recipe app: show only My Agents in the model selector
+    if (RECIPE_APP_SIMPLE_UX) {
+      return result.filter((ep) => ep === EModelEndpoint.agents);
+    }
     return result;
   }, [endpoints, hasAgentAccess, includedEndpoints, interfaceConfig.modelSelect]);
 

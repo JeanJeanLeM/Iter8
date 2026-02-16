@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+// Ensure Recipe, RecipeVote, etc. are registered before createMethods runs (db/index calls createModels)
+require('~/db');
 const { createMethods } = require('@librechat/data-schemas');
 const methods = createMethods(mongoose);
 const { comparePassword } = require('./userMethods');

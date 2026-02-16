@@ -33,6 +33,13 @@ export interface IUser extends Document {
   termsAccepted?: boolean;
   personalization?: {
     memories?: boolean;
+    diets?: string[];
+    allergies?: string[];
+    cookingLevel?: string;
+    dietaryPreferences?: string;
+    preferencesSummary?: string;
+    unitSystem?: 'si' | 'american';
+    showIngredientGrams?: boolean;
   };
   favorites?: Array<{
     agentId?: string;
@@ -70,6 +77,13 @@ export interface UpdateUserRequest {
   termsAccepted?: boolean;
   personalization?: {
     memories?: boolean;
+    diets?: string[];
+    allergies?: string[];
+    cookingLevel?: string;
+    dietaryPreferences?: string;
+    preferencesSummary?: string;
+    unitSystem?: 'si' | 'american';
+    showIngredientGrams?: boolean;
   };
 }
 

@@ -114,6 +114,9 @@ export const genTitle = (conversationId: string) =>
 
 export const updateConversation = () => `${conversationsRoot}/update`;
 
+export const conversationDietaryPreferences = (conversationId: string) =>
+  `${conversationsRoot}/${conversationId}/dietary-preferences`;
+
 export const archiveConversation = () => `${conversationsRoot}/archive`;
 
 export const deleteConversation = () => `${conversationsRoot}`;
@@ -373,6 +376,17 @@ export const verifyTwoFactorTemp = () => `${BASE_URL}/api/auth/2fa/verify-temp`;
 export const memories = () => `${BASE_URL}/api/memories`;
 export const memory = (key: string) => `${memories()}/${encodeURIComponent(key)}`;
 export const memoryPreferences = () => `${memories()}/preferences`;
+
+/* Recipes */
+export const recipes = (params?: q.RecipesListParams) =>
+  `${BASE_URL}/api/recipes${params ? buildQuery(params as Record<string, unknown>) : ''}`;
+export const recipe = (id: string) => `${BASE_URL}/api/recipes/${encodeURIComponent(id)}`;
+export const recipeVote = (id: string) => `${BASE_URL}/api/recipes/${encodeURIComponent(id)}/vote`;
+
+/* Journal */
+export const journal = (params?: q.JournalListParams) =>
+  `${BASE_URL}/api/journal${params ? buildQuery(params as Record<string, unknown>) : ''}`;
+export const journalEntry = (id: string) => `${BASE_URL}/api/journal/${encodeURIComponent(id)}`;
 
 export const searchPrincipals = (params: q.PrincipalSearchParams) => {
   const { q: query, limit, types } = params;

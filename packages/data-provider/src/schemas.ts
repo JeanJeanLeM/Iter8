@@ -760,6 +760,8 @@ export const tConversationSchema = z.object({
   iconURL: z.string().nullable().optional(),
   /* temporary chat */
   expiredAt: z.string().nullable().optional(),
+  /** When true (default), dietary/preferences context is injected into agent runs for this conversation. */
+  useDietaryPreferences: z.boolean().optional(),
   /* file token limits */
   fileTokenLimit: coerceNumber.optional(),
   /** @deprecated */

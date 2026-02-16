@@ -1,12 +1,13 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QueryKeys } from 'librechat-data-provider';
+import { useSetRecoilState } from 'recoil';
+import { QueryKeys, Constants } from 'librechat-data-provider';
 import { useQueryClient } from '@tanstack/react-query';
 import { TooltipAnchor, NewChatIcon, MobileSidebar, Sidebar, Button } from '@librechat/client';
 import { CLOSE_SIDEBAR_ID, OPEN_SIDEBAR_ID } from '~/components/Chat/Menus/OpenSidebar';
 import { useLocalize, useNewConvo } from '~/hooks';
 import { clearMessagesCache } from '~/utils';
-import store from '~/store';
+import store, { recipeMessageMap } from '~/store';
 
 export default function NewChat({
   index = 0,
@@ -22,6 +23,7 @@ export default function NewChat({
   headerButtons?: React.ReactNode;
 }) {
   const queryClient = useQueryClient();
+  const setRecipeMessageMap = useSetRecoilState(recipeMessageMap);
   /** Note: this component needs an explicit index passed if using more than one */
   const { newConversation: newConvo } = useNewConvo(index);
   const navigate = useNavigate();
@@ -44,13 +46,18 @@ export default function NewChat({
       }
       clearMessagesCache(queryClient, conversation?.conversationId);
       queryClient.invalidateQueries([QueryKeys.messages]);
+      setRecipeMessageMap((prev) => {
+        const next = { ...prev };
+        delete next[Constants.NEW_CONVO];
+        return next;
+      });
       newConvo();
       navigate('/c/new', { state: { focusChat: true } });
       if (isSmallScreen) {
         toggleNav();
       }
     },
-    [queryClient, conversation, newConvo, navigate, toggleNav, isSmallScreen],
+    [queryClient, conversation, newConvo, navigate, toggleNav, isSmallScreen, setRecipeMessageMap],
   );
 
   return (

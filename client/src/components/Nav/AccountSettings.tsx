@@ -1,11 +1,15 @@
-import { useState, memo, useRef } from 'react';
+import { useState, memo, useRef, useEffect } from 'react';
 import * as Select from '@ariakit/react/select';
 import { FileText, LogOut } from 'lucide-react';
 import { LinkIcon, GearIcon, DropdownMenuSeparator, Avatar } from '@librechat/client';
+import { SettingsTabValues } from 'librechat-data-provider';
+import { useRecoilState } from 'recoil';
 import { MyFilesModal } from '~/components/Chat/Input/Files/MyFilesModal';
 import { useGetStartupConfig, useGetUserBalance } from '~/data-provider';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { useLocalize } from '~/hooks';
+import { RECIPE_APP_SIMPLE_UX } from '~/constants/recipeApp';
+import store from '~/store';
 import Settings from './Settings';
 
 function AccountSettings() {
@@ -16,8 +20,22 @@ function AccountSettings() {
     enabled: !!isAuthenticated && startupConfig?.balance?.enabled,
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [openSettingsWithTab, setOpenSettingsWithTab] = useRecoilState(store.openSettingsWithTab);
   const [showFiles, setShowFiles] = useState(false);
   const accountSettingsButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (openSettingsWithTab !== null) {
+      setShowSettings(true);
+    }
+  }, [openSettingsWithTab]);
+
+  const handleSettingsOpenChange = (open: boolean) => {
+    setShowSettings(open);
+    if (!open) {
+      setOpenSettingsWithTab(null);
+    }
+  };
 
   return (
     <Select.SelectProvider>
@@ -59,14 +77,16 @@ function AccountSettings() {
             <DropdownMenuSeparator />
           </>
         )}
-        <Select.SelectItem
-          value=""
-          onClick={() => setShowFiles(true)}
-          className="select-item text-sm"
-        >
-          <FileText className="icon-md" aria-hidden="true" />
-          {localize('com_nav_my_files')}
-        </Select.SelectItem>
+        {!RECIPE_APP_SIMPLE_UX && (
+          <Select.SelectItem
+            value=""
+            onClick={() => setShowFiles(true)}
+            className="select-item text-sm"
+          >
+            <FileText className="icon-md" aria-hidden="true" />
+            {localize('com_nav_my_files')}
+          </Select.SelectItem>
+        )}
         {startupConfig?.helpAndFaqURL !== '/' && (
           <Select.SelectItem
             value=""
@@ -79,7 +99,10 @@ function AccountSettings() {
         )}
         <Select.SelectItem
           value=""
-          onClick={() => setShowSettings(true)}
+          onClick={() => {
+            setOpenSettingsWithTab(null);
+            setShowSettings(true);
+          }}
           className="select-item text-sm"
         >
           <GearIcon className="icon-md" aria-hidden="true" />
@@ -103,7 +126,13 @@ function AccountSettings() {
           triggerRef={accountSettingsButtonRef}
         />
       )}
-      {showSettings && <Settings open={showSettings} onOpenChange={setShowSettings} />}
+      {showSettings && (
+        <Settings
+          open={showSettings}
+          onOpenChange={handleSettingsOpenChange}
+          initialTab={openSettingsWithTab ?? undefined}
+        />
+      )}
     </Select.SelectProvider>
   );
 }

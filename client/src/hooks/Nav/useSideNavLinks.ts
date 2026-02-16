@@ -13,6 +13,7 @@ import type { TInterfaceConfig, TEndpointsConfig } from 'librechat-data-provider
 import MCPBuilderPanel from '~/components/SidePanel/MCPBuilder/MCPBuilderPanel';
 import type { NavLink } from '~/common';
 import AgentPanelSwitch from '~/components/SidePanel/Agents/AgentPanelSwitch';
+import { RECIPE_APP_SIMPLE_UX } from '~/constants/recipeApp';
 import BookmarkPanel from '~/components/SidePanel/Bookmarks/BookmarkPanel';
 import PanelSwitch from '~/components/SidePanel/Builder/PanelSwitch';
 import PromptsAccordion from '~/components/Prompts/PromptsAccordion';
@@ -92,6 +93,7 @@ export default function useSideNavLinks({
     }
 
     if (
+      !RECIPE_APP_SIMPLE_UX &&
       endpointsConfig?.[EModelEndpoint.agents] &&
       hasAccessToAgents &&
       hasAccessToCreateAgents &&
@@ -172,13 +174,15 @@ export default function useSideNavLinks({
       });
     }
 
-    links.push({
-      title: 'com_sidepanel_hide_panel',
-      label: '',
-      icon: ArrowRightToLine,
-      onClick: hidePanel,
-      id: 'hide-panel',
-    });
+    if (!RECIPE_APP_SIMPLE_UX) {
+      links.push({
+        title: 'com_sidepanel_hide_panel',
+        label: '',
+        icon: ArrowRightToLine,
+        onClick: hidePanel,
+        id: 'hide-panel',
+      });
+    }
 
     return links;
   }, [

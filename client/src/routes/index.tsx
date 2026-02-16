@@ -20,6 +20,10 @@ import ShareRoute from './ShareRoute';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
+import RecipeBookView from '~/components/Recipes/RecipeBookView';
+import RecipeDetailView from '~/components/Recipes/RecipeDetailView';
+import RecipeStepByStepView from '~/components/Recipes/RecipeStepByStepView';
+import { JournalView } from '~/components/Journal';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -126,6 +130,22 @@ export const router = createBrowserRouter(
                   <AgentMarketplace />
                 </MarketplaceProvider>
               ),
+            },
+            {
+              path: 'r/:id/step',
+              element: <RecipeStepByStepView />,
+            },
+            {
+              path: 'r/:id',
+              element: <RecipeDetailView />,
+            },
+            {
+              path: 'r',
+              element: <RecipeBookView />,
+            },
+            {
+              path: 'journal',
+              element: <JournalView />,
             },
           ],
         },

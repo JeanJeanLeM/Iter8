@@ -51,6 +51,8 @@ export interface IConversation extends Document {
   web_search?: boolean;
   disableStreaming?: boolean;
   fileTokenLimit?: number;
+  /** When true (default), dietary/preferences context is injected into agent runs for this conversation. */
+  useDietaryPreferences?: boolean;
   // Additional fields
   files?: string[];
   expiredAt?: Date;

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 import { SettingsTabValues } from 'librechat-data-provider';
 import { MessageSquare, Command, DollarSign } from 'lucide-react';
@@ -27,13 +27,28 @@ import { useLocalize, TranslationKeys } from '~/hooks';
 import { useGetStartupConfig } from '~/data-provider';
 import { cn } from '~/utils';
 
-export default function Settings({ open, onOpenChange }: TDialogProps) {
+type SettingsProps = TDialogProps & {
+  initialTab?: SettingsTabValues;
+};
+
+export default function Settings({ open, onOpenChange, initialTab }: SettingsProps) {
   const isSmallScreen = useMediaQuery('(max-width: 767px)');
   const { data: startupConfig } = useGetStartupConfig();
   const localize = useLocalize();
   const [activeTab, setActiveTab] = useState(SettingsTabValues.GENERAL);
   const tabRefs = useRef({});
+  const appliedInitialTabRef = useRef(false);
   const { hasAnyPersonalizationFeature, hasMemoryOptOut } = usePersonalizationAccess();
+
+  useEffect(() => {
+    if (open && initialTab && !appliedInitialTabRef.current) {
+      setActiveTab(initialTab);
+      appliedInitialTabRef.current = true;
+    }
+    if (!open) {
+      appliedInitialTabRef.current = false;
+    }
+  }, [open, initialTab]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     const tabs: SettingsTabValues[] = [

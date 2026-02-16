@@ -1,5 +1,5 @@
 import { atom, selectorFamily } from 'recoil';
-import { TAttachment } from 'librechat-data-provider';
+import { TAttachment, SettingsTabValues } from 'librechat-data-provider';
 import { atomWithLocalStorage } from './utils';
 import { BadgeItem } from '~/common';
 
@@ -64,6 +64,12 @@ const chatBadges = atomWithLocalStorage<Pick<BadgeItem, 'id'>[]>('chatBadges', [
   // { id: '2' },
 ]);
 
+/** When set, opens the Settings dialog with this tab selected (e.g. from header "Préférences" link). */
+const openSettingsWithTab = atom<SettingsTabValues | null>({
+  key: 'openSettingsWithTab',
+  default: null,
+});
+
 export default {
   hideBannerHint,
   messageAttachmentsMap,
@@ -71,4 +77,5 @@ export default {
   queriesEnabled,
   isEditingBadges,
   chatBadges,
+  openSettingsWithTab,
 };

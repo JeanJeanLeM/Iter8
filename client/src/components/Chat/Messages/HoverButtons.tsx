@@ -22,6 +22,7 @@ type THoverButtons = {
   isLast: boolean;
   index: number;
   handleFeedback?: ({ feedback }: { feedback: TFeedback | undefined }) => void;
+  extraButtons?: React.ReactNode;
 };
 
 type HoverButtonProps = {
@@ -122,6 +123,7 @@ const HoverButtons = ({
   latestMessage,
   isLast,
   handleFeedback,
+  extraButtons,
 }: THoverButtons) => {
   const localize = useLocalize();
   const [isCopied, setIsCopied] = useState(false);
@@ -186,88 +188,82 @@ const HoverButtons = ({
 
   return (
     <div className="group visible flex justify-center gap-0.5 self-end focus-within:outline-none lg:justify-start">
-      {/* Text to Speech */}
-      {TextToSpeech && (
-        <MessageAudio
-          index={index}
-          isLast={isLast}
-          messageId={message.messageId}
-          content={extractMessageContent(message)}
-          renderButton={(props) => (
-            <HoverButton
-              onClick={props.onClick}
-              title={props.title}
-              icon={props.icon}
-              isActive={props.isActive}
+      {extraButtons != null ? (
+        extraButtons
+      ) : (
+        /* Messages utilisateur : boutons standards */
+        <>
+          {TextToSpeech && (
+            <MessageAudio
+              index={index}
               isLast={isLast}
+              messageId={message.messageId}
+              content={extractMessageContent(message)}
+              renderButton={(props) => (
+                <HoverButton
+                  onClick={props.onClick}
+                  title={props.title}
+                  icon={props.icon}
+                  isActive={props.isActive}
+                  isLast={isLast}
+                />
+              )}
             />
           )}
-        />
-      )}
-
-      {/* Copy Button */}
-      <HoverButton
-        onClick={handleCopy}
-        title={
-          isCopied ? localize('com_ui_copied_to_clipboard') : localize('com_ui_copy_to_clipboard')
-        }
-        icon={isCopied ? <CheckMark className="h-[18px] w-[18px]" /> : <Clipboard size="19" />}
-        isLast={isLast}
-        className={cn(
-          'ml-0 flex items-center gap-1.5 text-xs',
-          isSubmitting && isCreatedByUser ? 'md:opacity-0 md:group-hover:opacity-100' : '',
-        )}
-      />
-
-      {/* Edit Button */}
-      {isEditableEndpoint && (
-        <HoverButton
-          id={`edit-${message.messageId}`}
-          onClick={onEdit}
-          title={localize('com_ui_edit')}
-          icon={<EditIcon size="19" />}
-          isActive={isEditing}
-          isVisible={!hideEditButton}
-          isDisabled={hideEditButton}
-          isLast={isLast}
-          className={isCreatedByUser ? '' : 'active'}
-        />
-      )}
-
-      {/* Fork Button */}
-      <Fork
-        messageId={message.messageId}
-        conversationId={conversation.conversationId}
-        forkingSupported={forkingSupported}
-        latestMessageId={latestMessage?.messageId}
-        isLast={isLast}
-      />
-
-      {/* Feedback Buttons */}
-      {!isCreatedByUser && handleFeedback != null && (
-        <Feedback handleFeedback={handleFeedback} feedback={message.feedback} isLast={isLast} />
-      )}
-
-      {/* Regenerate Button */}
-      {regenerateEnabled && (
-        <HoverButton
-          onClick={regenerate}
-          title={localize('com_ui_regenerate')}
-          icon={<RegenerateIcon size="19" />}
-          isLast={isLast}
-          className="active"
-        />
-      )}
-
-      {/* Continue Button */}
-      {continueSupported && (
-        <HoverButton
-          onClick={(e) => e && handleContinue(e)}
-          title={localize('com_ui_continue')}
-          icon={<ContinueIcon className="w-19 h-19 -rotate-180" />}
-          isLast={isLast}
-          className="active"
-        />
+          <HoverButton
+            onClick={handleCopy}
+            title={
+              isCopied ? localize('com_ui_copied_to_clipboard') : localize('com_ui_copy_to_clipboard')
+            }
+            icon={isCopied ? <CheckMark className="h-[18px] w-[18px]" /> : <Clipboard size="19" />}
+            isLast={isLast}
+            className={cn(
+              'ml-0 flex items-center gap-1.5 text-xs',
+              isSubmitting && isCreatedByUser ? 'md:opacity-0 md:group-hover:opacity-100' : '',
+            )}
+          />
+          {isEditableEndpoint && (
+            <HoverButton
+              id={`edit-${message.messageId}`}
+              onClick={onEdit}
+              title={localize('com_ui_edit')}
+              icon={<EditIcon size="19" />}
+              isActive={isEditing}
+              isVisible={!hideEditButton}
+              isDisabled={hideEditButton}
+              isLast={isLast}
+              className={isCreatedByUser ? '' : 'active'}
+            />
+          )}
+          <Fork
+            messageId={message.messageId}
+            conversationId={conversation.conversationId}
+            forkingSupported={forkingSupported}
+            latestMessageId={latestMessage?.messageId}
+            isLast={isLast}
+          />
+          {!isCreatedByUser && handleFeedback != null && (
+            <Feedback handleFeedback={handleFeedback} feedback={message.feedback} isLast={isLast} />
+          )}
+          {regenerateEnabled && (
+            <HoverButton
+              onClick={regenerate}
+              title={localize('com_ui_regenerate')}
+              icon={<RegenerateIcon size="19" />}
+              isLast={isLast}
+              className="active"
+            />
+          )}
+          {continueSupported && (
+            <HoverButton
+              onClick={(e) => e && handleContinue(e)}
+              title={localize('com_ui_continue')}
+              icon={<ContinueIcon className="w-19 h-19 -rotate-180" />}
+              isLast={isLast}
+              className="active"
+            />
+          )}
+        </>
       )}
     </div>
   );

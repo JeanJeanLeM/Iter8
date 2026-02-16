@@ -11,6 +11,7 @@ import {
   deriveBaseURL,
   logAxiosError,
   inputSchema,
+  math,
 } from '~/utils';
 import { standardCache } from '~/cache';
 
@@ -127,6 +128,7 @@ export async function fetchModels({
   }
 
   try {
+    const timeoutMs = math(process.env.FETCH_MODELS_TIMEOUT_MS, 15000);
     const options: {
       headers: Record<string, string>;
       timeout: number;
@@ -135,8 +137,11 @@ export async function fetchModels({
       headers: {
         ...(headers ?? {}),
       },
-      timeout: 5000,
+      timeout: timeoutMs,
     };
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'packages/api/src/endpoints/models.ts:fetchModels',message:'fetchModels axios.get',data:{name,baseURL:baseURL??'',timeoutMs},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
 
     if (name === EModelEndpoint.anthropic) {
       options.headers = {
@@ -171,8 +176,12 @@ export async function fetchModels({
     }
     models = input.data.map((item: { id: string }) => item.id);
   } catch (error) {
+    const err = error as Error & { code?: string };
     const logMessage = `Failed to fetch models from ${azure ? 'Azure ' : ''}${name} API`;
-    logAxiosError({ message: logMessage, error: error as Error });
+    logAxiosError({ message: logMessage, error: err });
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'packages/api/src/endpoints/models.ts:fetchModels catch',message:'fetchModels failed',data:{name,errorMessage:err?.message??'',isTimeout:err?.message?.includes('timeout')||err?.code==='ECONNABORTED'},timestamp:Date.now(),hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
   }
 
   return models;

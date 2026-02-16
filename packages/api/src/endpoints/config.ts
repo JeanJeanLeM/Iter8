@@ -69,12 +69,14 @@ export function getProviderConfig({
   provider: string;
   appConfig?: AppConfig;
 }): ProviderConfigResult {
-  let getOptions = providerConfigMap[provider];
-  let overrideProvider = provider;
+  const normalizedProvider =
+    provider?.toLowerCase() === 'openai' ? EModelEndpoint.openAI : provider;
+  let getOptions = providerConfigMap[normalizedProvider];
+  let overrideProvider = normalizedProvider;
   let customEndpointConfig: Partial<TEndpoint> | undefined;
 
-  if (!getOptions && providerConfigMap[provider.toLowerCase()] != null) {
-    overrideProvider = provider.toLowerCase();
+  if (!getOptions && providerConfigMap[normalizedProvider.toLowerCase()] != null) {
+    overrideProvider = normalizedProvider.toLowerCase();
     getOptions = providerConfigMap[overrideProvider];
   } else if (!getOptions) {
     customEndpointConfig = getCustomEndpointConfig({ endpoint: provider, appConfig });

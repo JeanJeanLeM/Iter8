@@ -187,6 +187,90 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
   }
 
   /**
+   * Update a user's personalization preferences (memories, diets, allergies, cookingLevel, dietaryPreferences).
+   * Only updates the keys present in the patch. Creates personalization object if needed.
+   */
+  async function updateUserPersonalization(
+    userId: string,
+    patch: {
+      memories?: boolean;
+      diets?: string[];
+      allergies?: string[];
+      cookingLevel?: string;
+      dietaryPreferences?: string;
+      preferencesSummary?: string;
+      unitSystem?: 'si' | 'american' | null;
+      showIngredientGrams?: boolean;
+    },
+  ): Promise<IUser | null> {
+    const User = mongoose.models.User;
+    const user = await User.findById(userId);
+    if (!user) {
+      return null;
+    }
+    const $set: Record<string, unknown> = {};
+    if (typeof patch.memories === 'boolean') {
+      $set['personalization.memories'] = patch.memories;
+    }
+    if (Array.isArray(patch.diets)) {
+      $set['personalization.diets'] = patch.diets;
+    }
+    if (Array.isArray(patch.allergies)) {
+      $set['personalization.allergies'] = patch.allergies;
+    }
+    const $unset: Record<string, 1> = {};
+    if (patch.cookingLevel !== undefined) {
+      const val = patch.cookingLevel?.trim();
+      if (val) {
+        $set['personalization.cookingLevel'] = val;
+      } else {
+        $unset['personalization.cookingLevel'] = 1;
+      }
+    }
+    if (patch.dietaryPreferences !== undefined) {
+      const val = patch.dietaryPreferences?.trim();
+      if (val) {
+        $set['personalization.dietaryPreferences'] = val;
+      } else {
+        $unset['personalization.dietaryPreferences'] = 1;
+      }
+    }
+    if (patch.preferencesSummary !== undefined) {
+      const val = patch.preferencesSummary?.trim();
+      if (val) {
+        $set['personalization.preferencesSummary'] = val;
+      } else {
+        $unset['personalization.preferencesSummary'] = 1;
+      }
+    }
+    if (patch.unitSystem !== undefined) {
+      const val = patch.unitSystem === 'si' || patch.unitSystem === 'american' ? patch.unitSystem : '';
+      if (val) {
+        $set['personalization.unitSystem'] = val;
+      } else {
+        $unset['personalization.unitSystem'] = 1;
+      }
+    }
+    if (patch.showIngredientGrams !== undefined) {
+      $set['personalization.showIngredientGrams'] = !!patch.showIngredientGrams;
+    }
+    if (Object.keys($set).length === 0 && Object.keys($unset).length === 0) {
+      return (await User.findById(userId).lean()) as IUser | null;
+    }
+    const updateOp: Record<string, unknown> = {};
+    if (Object.keys($set).length > 0) {
+      updateOp.$set = $set;
+    }
+    if (Object.keys($unset).length > 0) {
+      updateOp.$unset = $unset;
+    }
+    return (await User.findByIdAndUpdate(userId, updateOp, {
+      new: true,
+      runValidators: true,
+    }).lean()) as IUser | null;
+  }
+
+  /**
    * Update a user's personalization memories setting.
    * Handles the edge case where the personalization object doesn't exist.
    */
@@ -194,25 +278,7 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
     userId: string,
     memoriesEnabled: boolean,
   ): Promise<IUser | null> {
-    const User = mongoose.models.User;
-
-    // First, ensure the personalization object exists
-    const user = await User.findById(userId);
-    if (!user) {
-      return null;
-    }
-
-    // Use $set to update the nested field, which will create the personalization object if it doesn't exist
-    const updateOperation = {
-      $set: {
-        'personalization.memories': memoriesEnabled,
-      },
-    };
-
-    return (await User.findByIdAndUpdate(userId, updateOperation, {
-      new: true,
-      runValidators: true,
-    }).lean()) as IUser | null;
+    return updateUserPersonalization(userId, { memories: memoriesEnabled });
   }
 
   /**
@@ -332,6 +398,7 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
     deleteUserById,
     updateUserPlugins,
     toggleUserMemories,
+    updateUserPersonalization,
   };
 }
 

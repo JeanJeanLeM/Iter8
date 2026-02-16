@@ -3,13 +3,14 @@ const { Tokenizer, generateCheckAccess } = require('@librechat/api');
 const { PermissionTypes, Permissions } = require('librechat-data-provider');
 const {
   getAllUserMemories,
-  toggleUserMemories,
+  updateUserPersonalization,
   createMemory,
   deleteMemory,
   setMemory,
 } = require('~/models');
 const { requireJwtAuth, configMiddleware } = require('~/server/middleware');
 const { getRoleByName } = require('~/models/Role');
+const { generatePreferencesSummary } = require('~/server/services/PreferencesSummaryService');
 
 const router = express.Router();
 
@@ -159,30 +160,141 @@ router.post('/', memoryPayloadLimit, checkMemoryCreate, configMiddleware, async 
   }
 });
 
+const PERSONALIZATION_MAX_ITEMS = 20;
+const PERSONALIZATION_MAX_ITEM_LENGTH = 80;
+const PERSONALIZATION_DIETARY_PREFERENCES_MAX_LENGTH = 500;
+const COOKING_LEVEL_VALUES = new Set(['beginner', 'intermediate', 'advanced']);
+
+function validateStringArray(value, fieldName) {
+  if (!Array.isArray(value)) {
+    return `${fieldName} must be an array of strings.`;
+  }
+  if (value.length > PERSONALIZATION_MAX_ITEMS) {
+    return `${fieldName} must have at most ${PERSONALIZATION_MAX_ITEMS} items.`;
+  }
+  for (let i = 0; i < value.length; i++) {
+    if (typeof value[i] !== 'string') {
+      return `${fieldName}[${i}] must be a string.`;
+    }
+    const trimmed = value[i].trim();
+    if (trimmed.length === 0) {
+      return `${fieldName}[${i}] must be non-empty after trim.`;
+    }
+    if (trimmed.length > PERSONALIZATION_MAX_ITEM_LENGTH) {
+      return `${fieldName}[${i}] must be at most ${PERSONALIZATION_MAX_ITEM_LENGTH} characters.`;
+    }
+  }
+  return null;
+}
+
 /**
  * PATCH /memories/preferences
- * Updates the user's memory preferences (e.g., enabling/disabling memories).
- * Body: { memories: boolean }
- * Returns 200 and { updated: true, preferences: { memories: boolean } } when successful.
+ * Updates the user's personalization preferences (memories, diets, allergies, cookingLevel, dietaryPreferences).
+ * Body: { memories?, diets?, allergies?, cookingLevel?, dietaryPreferences? }
+ * At least one key must be present. Returns 200 and { updated: true, preferences } when successful.
  */
-router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
-  const { memories } = req.body;
+const UNIT_SYSTEM_VALUES = new Set(['si', 'american']);
 
-  if (typeof memories !== 'boolean') {
-    return res.status(400).json({ error: 'memories must be a boolean value.' });
+router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
+  const { memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams } = req.body;
+
+  const patch = {};
+  if (typeof memories === 'boolean') {
+    patch.memories = memories;
+  }
+  if (diets !== undefined) {
+    const err = validateStringArray(diets, 'diets');
+    if (err) {
+      return res.status(400).json({ error: err });
+    }
+    patch.diets = diets.map((s) => s.trim());
+  }
+  if (allergies !== undefined) {
+    const err = validateStringArray(allergies, 'allergies');
+    if (err) {
+      return res.status(400).json({ error: err });
+    }
+    patch.allergies = allergies.map((s) => s.trim());
+  }
+  if (cookingLevel !== undefined) {
+    if (typeof cookingLevel !== 'string') {
+      return res.status(400).json({ error: 'cookingLevel must be a string.' });
+    }
+    const level = cookingLevel.trim();
+    if (level && !COOKING_LEVEL_VALUES.has(level)) {
+      return res.status(400).json({
+        error: `cookingLevel must be one of: ${[...COOKING_LEVEL_VALUES].join(', ')}.`,
+      });
+    }
+    patch.cookingLevel = level || '';
+  }
+  if (dietaryPreferences !== undefined) {
+    if (typeof dietaryPreferences !== 'string') {
+      return res.status(400).json({ error: 'dietaryPreferences must be a string.' });
+    }
+    const prefs = dietaryPreferences.trim();
+    if (prefs.length > PERSONALIZATION_DIETARY_PREFERENCES_MAX_LENGTH) {
+      return res.status(400).json({
+        error: `dietaryPreferences must be at most ${PERSONALIZATION_DIETARY_PREFERENCES_MAX_LENGTH} characters.`,
+      });
+    }
+    patch.dietaryPreferences = prefs;
+  }
+  if (unitSystem !== undefined) {
+    const sys = typeof unitSystem === 'string' ? unitSystem.trim().toLowerCase() : '';
+    if (sys && !UNIT_SYSTEM_VALUES.has(sys)) {
+      return res.status(400).json({
+        error: 'unitSystem must be one of: si, american.',
+      });
+    }
+    patch.unitSystem = sys || null;
+  }
+  if (showIngredientGrams !== undefined) {
+    patch.showIngredientGrams = !!showIngredientGrams;
+  }
+
+  if (Object.keys(patch).length === 0) {
+    return res.status(400).json({
+      error:
+        'At least one of memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, or showIngredientGrams must be provided.',
+    });
   }
 
   try {
-    const updatedUser = await toggleUserMemories(req.user.id, memories);
+    const updatedUser = await updateUserPersonalization(req.user.id, patch);
 
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found.' });
     }
 
+    const p = updatedUser.personalization || {};
+    const hasDietaryData =
+      (p.diets?.length || p.allergies?.length || p.cookingLevel || p.dietaryPreferences) && !!(patch.diets !== undefined || patch.allergies !== undefined || patch.cookingLevel !== undefined || patch.dietaryPreferences !== undefined);
+    if (hasDietaryData) {
+      Promise.resolve()
+        .then(() => generatePreferencesSummary(p))
+        .then((summary) => {
+          if (summary) {
+            return updateUserPersonalization(req.user.id, { preferencesSummary: summary });
+          }
+        })
+        .catch((err) => {
+          const { logger } = require('@librechat/data-schemas');
+          logger.warn('[memories/preferences] Preferences summary generation failed', err);
+        });
+    }
+
     res.json({
       updated: true,
       preferences: {
-        memories: updatedUser.personalization?.memories ?? true,
+        memories: p.memories ?? true,
+        diets: p.diets ?? [],
+        allergies: p.allergies ?? [],
+        cookingLevel: p.cookingLevel ?? '',
+        dietaryPreferences: p.dietaryPreferences ?? '',
+        preferencesSummary: p.preferencesSummary ?? '',
+        unitSystem: p.unitSystem ?? '',
+        showIngredientGrams: p.showIngredientGrams ?? false,
       },
     });
   } catch (error) {

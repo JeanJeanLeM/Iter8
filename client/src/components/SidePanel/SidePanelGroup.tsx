@@ -7,6 +7,7 @@ import type { ImperativePanelHandle } from 'react-resizable-panels';
 import { useGetStartupConfig } from '~/data-provider';
 import ArtifactsPanel from './ArtifactsPanel';
 import { normalizeLayout, cn } from '~/utils';
+import { RECIPE_APP_SIMPLE_UX } from '~/constants/recipeApp';
 import SidePanel from './SidePanel';
 import store from '~/store';
 
@@ -127,7 +128,7 @@ const SidePanelGroup = memo(
             />
           )}
 
-          {!hideSidePanel && interfaceConfig.sidePanel === true && (
+          {!RECIPE_APP_SIMPLE_UX && !hideSidePanel && interfaceConfig.sidePanel === true && (
             <SidePanel
               panelRef={panelRef}
               minSize={minSize}
@@ -147,7 +148,7 @@ const SidePanelGroup = memo(
         {artifacts != null && isSmallScreen && (
           <div className="fixed inset-0 z-[100]">{artifacts}</div>
         )}
-        {!hideSidePanel && interfaceConfig.sidePanel === true && (
+        {!RECIPE_APP_SIMPLE_UX && !hideSidePanel && interfaceConfig.sidePanel === true && (
           <button
             onClick={handleClosePanel}
             aria-label="Close right side panel"

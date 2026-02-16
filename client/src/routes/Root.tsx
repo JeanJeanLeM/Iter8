@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useMediaQuery } from '@librechat/client';
 import type { ContextType } from '~/common';
 import {
@@ -18,6 +18,7 @@ import {
 } from '~/Providers';
 import { useUserTermsQuery, useGetStartupConfig } from '~/data-provider';
 import { Nav, MobileNav, NAV_WIDTH } from '~/components/Nav';
+import { OpenSidebar } from '~/components/Chat/Menus';
 import { TermsAndConditionsModal } from '~/components/ui';
 import { useHealthCheck } from '~/data-provider';
 import { Banner } from '~/components/Banners';
@@ -32,6 +33,8 @@ export default function Root() {
 
   const { isAuthenticated, logout } = useAuthContext();
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const location = useLocation();
+  const isChatRoute = location.pathname === '/c' || location.pathname.startsWith('/c/');
 
   // Global health check - runs once per authenticated session
   useHealthCheck(isAuthenticated);
@@ -90,6 +93,17 @@ export default function Root() {
                     }
                   >
                     <MobileNav navVisible={navVisible} setNavVisible={setNavVisible} />
+                    {!navVisible && !isChatRoute && (
+                      <div
+                        className="absolute left-2 top-2 z-20 hidden md:left-4 md:top-4 md:block"
+                        style={{ marginTop: bannerHeight ? 0 : undefined }}
+                      >
+                        <OpenSidebar
+                          setNavVisible={setNavVisible}
+                          className="shadow-md"
+                        />
+                      </div>
+                    )}
                     <Outlet context={{ navVisible, setNavVisible } satisfies ContextType} />
                   </div>
                 </div>

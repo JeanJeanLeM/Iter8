@@ -157,4 +157,9 @@ export const conversationPreset = {
   verbosity: {
     type: String,
   },
+  /** When true (default), dietary/preferences context is injected into agent runs for this conversation. */
+  useDietaryPreferences: {
+    type: Boolean,
+    default: true,
+  },
 };

@@ -46,10 +46,27 @@ export const useUpdateMemoryMutation = (
   );
 };
 
-export type UpdateMemoryPreferencesParams = { memories: boolean };
+export type UpdateMemoryPreferencesParams = {
+  memories?: boolean;
+  diets?: string[];
+  allergies?: string[];
+  cookingLevel?: string;
+  dietaryPreferences?: string;
+  /** 'si' | 'american' | '' (empty string clears preference) */
+  unitSystem?: 'si' | 'american' | '';
+  showIngredientGrams?: boolean;
+};
 export type UpdateMemoryPreferencesResponse = {
   updated: boolean;
-  preferences: { memories: boolean };
+  preferences: {
+    memories?: boolean;
+    diets?: string[];
+    allergies?: string[];
+    cookingLevel?: string;
+    dietaryPreferences?: string;
+    unitSystem?: string;
+    showIngredientGrams?: boolean;
+  };
 };
 
 export const useUpdateMemoryPreferencesMutation = (

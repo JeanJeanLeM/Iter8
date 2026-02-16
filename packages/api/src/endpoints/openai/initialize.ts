@@ -39,8 +39,14 @@ export async function initializeOpenAI({
     [EModelEndpoint.azureOpenAI]: AZURE_OPENAI_BASEURL,
   };
 
-  const userProvidesKey = isUserProvided(credentials[endpoint as keyof typeof credentials]);
-  const userProvidesURL = isUserProvided(baseURLOptions[endpoint as keyof typeof baseURLOptions]);
+  // Normalize endpoint key: agent provider may be 'openai' (lowercase) but credentials use EModelEndpoint.openAI ('openAI')
+  const credentialsKey =
+    (endpoint as string)?.toLowerCase() === 'openai'
+      ? EModelEndpoint.openAI
+      : (endpoint as keyof typeof credentials);
+
+  const userProvidesKey = isUserProvided(credentials[credentialsKey]);
+  const userProvidesURL = isUserProvided(baseURLOptions[credentialsKey]);
 
   let userValues: UserKeyValues | null = null;
   if (expiresAt && (userProvidesKey || userProvidesURL)) {
@@ -50,10 +56,10 @@ export async function initializeOpenAI({
 
   let apiKey = userProvidesKey
     ? userValues?.apiKey
-    : credentials[endpoint as keyof typeof credentials];
+    : credentials[credentialsKey];
   const baseURL = userProvidesURL
     ? userValues?.baseURL
-    : baseURLOptions[endpoint as keyof typeof baseURLOptions];
+    : baseURLOptions[credentialsKey];
 
   const clientOptions: OpenAIConfigOptions = {
     proxy: PROXY ?? undefined,

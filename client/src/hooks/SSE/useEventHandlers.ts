@@ -8,6 +8,7 @@ import {
   Constants,
   EndpointURLs,
   ContentTypes,
+  dataService,
   tPresetSchema,
   tMessageSchema,
   tConvoUpdateSchema,
@@ -41,7 +42,7 @@ import { useApplyAgentTemplate } from '~/hooks/Agents';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { MESSAGE_UPDATE_INTERVAL } from '~/common';
 import { useLiveAnnouncer } from '~/Providers';
-import store from '~/store';
+import store, { recipeMessageMap } from '~/store';
 
 type TSyncData = {
   sync: boolean;
@@ -180,6 +181,7 @@ export default function useEventHandlers({
   const { announcePolite } = useLiveAnnouncer();
   const applyAgentTemplate = useApplyAgentTemplate();
   const setAbortScroll = useSetRecoilState(store.abortScroll);
+  const setRecipeMessageMap = useSetRecoilState(recipeMessageMap);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -552,6 +554,11 @@ export default function useEventHandlers({
             if (prevState?.model != null && prevState.model !== submissionConvo.model) {
               update.model = prevState.model;
             }
+            if (prevState?.useDietaryPreferences !== undefined) {
+              update.useDietaryPreferences = prevState.useDietaryPreferences;
+            } else if (submissionConvo?.useDietaryPreferences !== undefined) {
+              update.useDietaryPreferences = submissionConvo.useDietaryPreferences;
+            }
             const cachedConvo = queryClient.getQueryData<TConversation>([
               QueryKeys.conversation,
               conversation.conversationId,
@@ -565,6 +572,15 @@ export default function useEventHandlers({
             return update;
           });
 
+          if (isNewConvo && conversation.conversationId) {
+            dataService
+              .updateConversationDietaryPreferences(
+                conversation.conversationId,
+                (submissionConvo as TConversation)?.useDietaryPreferences !== false,
+              )
+              .catch(() => {});
+          }
+
           if (conversation.conversationId && submission.ephemeralAgent) {
             applyAgentTemplate({
               targetId: conversation.conversationId,
@@ -577,6 +593,18 @@ export default function useEventHandlers({
 
           if (location.pathname === `/c/${Constants.NEW_CONVO}`) {
             navigate(`/c/${conversation.conversationId}`, { replace: true });
+          }
+
+          if (isNewConvo && conversation.conversationId) {
+            setRecipeMessageMap((prev) => {
+              const newMap = { ...prev };
+              const fromNew = newMap[Constants.NEW_CONVO];
+              if (fromNew && typeof fromNew === 'object') {
+                newMap[conversation.conversationId as string] = { ...fromNew };
+                delete newMap[Constants.NEW_CONVO];
+              }
+              return newMap;
+            });
           }
         }
       } finally {
@@ -649,6 +677,12 @@ export default function useEventHandlers({
             template: { conversationId: convoId },
             preset: tPresetSchema.parse(submission.conversation),
           });
+          dataService
+            .updateConversationDietaryPreferences(
+              convoId,
+              (submission.conversation as TConversation)?.useDietaryPreferences !== false,
+            )
+            .catch(() => {});
         }
         setIsSubmitting(false);
         return;
@@ -686,6 +720,21 @@ export default function useEventHandlers({
           template: { conversationId: receivedConvoId },
           preset: tPresetSchema.parse(submission.conversation),
         });
+        dataService
+          .updateConversationDietaryPreferences(
+            receivedConvoId,
+            (submission.conversation as TConversation)?.useDietaryPreferences !== false,
+          )
+          .catch(() => {});
+        setRecipeMessageMap((prev) => {
+          const newMap = { ...prev };
+          const fromNew = newMap[Constants.NEW_CONVO];
+          if (fromNew && typeof fromNew === 'object') {
+            newMap[receivedConvoId] = { ...fromNew };
+            delete newMap[Constants.NEW_CONVO];
+          }
+          return newMap;
+        });
       }
 
       setIsSubmitting(false);
@@ -699,6 +748,7 @@ export default function useEventHandlers({
       setIsSubmitting,
       getMessages,
       queryClient,
+      setRecipeMessageMap,
     ],
   );
 

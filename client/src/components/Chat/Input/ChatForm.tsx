@@ -24,6 +24,7 @@ import AttachFileChat from './Files/AttachFileChat';
 import FileFormChat from './Files/FileFormChat';
 import { cn, removeFocusRings } from '~/utils';
 import TextareaHeader from './TextareaHeader';
+import SelectedRecipeBanner from './SelectedRecipeBanner';
 import PromptsCommand from './PromptsCommand';
 import AudioRecorder from './AudioRecorder';
 import CollapseChat from './CollapseChat';
@@ -248,6 +249,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
             )}
           >
             <TextareaHeader addedConvo={addedConvo} setAddedConvo={setAddedConvo} />
+            <SelectedRecipeBanner />
             {/* WIP */}
             <EditBadges
               isEditingChatBadges={isEditingBadges}

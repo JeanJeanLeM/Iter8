@@ -1,7 +1,24 @@
-import { useState, useEffect } from 'react';
-import { Switch, useToastContext } from '@librechat/client';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Switch,
+  useToastContext,
+  Checkbox,
+  Label,
+  Input,
+  Button,
+  Tag,
+  Dropdown,
+  Textarea,
+} from '@librechat/client';
 import { useGetUserQuery, useUpdateMemoryPreferencesMutation } from '~/data-provider';
 import { useLocalize } from '~/hooks';
+import {
+  DIET_OPTIONS,
+  ALLERGY_OPTIONS,
+  ALLERGY_MAX_LENGTH,
+  COOKING_LEVEL_OPTIONS,
+  DIETARY_PREFERENCES_MAX_LENGTH,
+} from '~/constants/personalization';
 
 interface PersonalizationProps {
   hasMemoryOptOut: boolean;
@@ -16,6 +33,13 @@ export default function Personalization({
   const { showToast } = useToastContext();
   const { data: user } = useGetUserQuery();
   const [referenceSavedMemories, setReferenceSavedMemories] = useState(true);
+  const [selectedDiets, setSelectedDiets] = useState<string[]>([]);
+  const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
+  const [customAllergyInput, setCustomAllergyInput] = useState('');
+  const [cookingLevel, setCookingLevel] = useState<string>('');
+  const [dietaryPreferences, setDietaryPreferences] = useState('');
+  const [unitSystem, setUnitSystem] = useState<'si' | 'american' | ''>('');
+  const [showIngredientGrams, setShowIngredientGrams] = useState(false);
 
   const updateMemoryPreferencesMutation = useUpdateMemoryPreferencesMutation({
     onSuccess: () => {
@@ -24,13 +48,32 @@ export default function Personalization({
         status: 'success',
       });
     },
-    onError: () => {
+    onError: (_, variables) => {
       showToast({
         message: localize('com_ui_error_updating_preferences'),
         status: 'error',
       });
-      // Revert the toggle on error
-      setReferenceSavedMemories((prev) => !prev);
+      if (typeof variables.memories === 'boolean') {
+        setReferenceSavedMemories((prev) => !prev);
+      }
+      if (variables.diets !== undefined) {
+        setSelectedDiets(user?.personalization?.diets ?? []);
+      }
+      if (variables.allergies !== undefined) {
+        setSelectedAllergies(user?.personalization?.allergies ?? []);
+      }
+      if (variables.cookingLevel !== undefined) {
+        setCookingLevel(user?.personalization?.cookingLevel ?? '');
+      }
+      if (variables.dietaryPreferences !== undefined) {
+        setDietaryPreferences(user?.personalization?.dietaryPreferences ?? '');
+      }
+      if (variables.unitSystem !== undefined) {
+        setUnitSystem((user?.personalization?.unitSystem as 'si' | 'american' | '') ?? '');
+      }
+      if (variables.showIngredientGrams !== undefined) {
+        setShowIngredientGrams(user?.personalization?.showIngredientGrams ?? false);
+      }
     },
   });
 
@@ -41,10 +84,168 @@ export default function Personalization({
     }
   }, [user?.personalization?.memories]);
 
+  useEffect(() => {
+    if (user?.personalization?.diets !== undefined) {
+      setSelectedDiets(user.personalization.diets);
+    }
+  }, [user?.personalization?.diets]);
+
+  useEffect(() => {
+    if (user?.personalization?.allergies !== undefined) {
+      setSelectedAllergies(user.personalization.allergies);
+    }
+  }, [user?.personalization?.allergies]);
+
+  useEffect(() => {
+    if (user?.personalization?.cookingLevel !== undefined) {
+      setCookingLevel(user.personalization.cookingLevel);
+    }
+  }, [user?.personalization?.cookingLevel]);
+
+  useEffect(() => {
+    if (user?.personalization?.dietaryPreferences !== undefined) {
+      setDietaryPreferences(user.personalization.dietaryPreferences);
+    }
+  }, [user?.personalization?.dietaryPreferences]);
+
+  useEffect(() => {
+    if (user?.personalization?.unitSystem !== undefined) {
+      setUnitSystem(user.personalization.unitSystem ?? '');
+    }
+  }, [user?.personalization?.unitSystem]);
+
+  useEffect(() => {
+    if (user?.personalization?.showIngredientGrams !== undefined) {
+      setShowIngredientGrams(user.personalization.showIngredientGrams ?? false);
+    }
+  }, [user?.personalization?.showIngredientGrams]);
+
   const handleMemoryToggle = (checked: boolean) => {
     setReferenceSavedMemories(checked);
     updateMemoryPreferencesMutation.mutate({ memories: checked });
   };
+
+  const toggleDiet = useCallback(
+    (value: string) => {
+      const next = selectedDiets.includes(value)
+        ? selectedDiets.filter((d) => d !== value)
+        : [...selectedDiets, value];
+      setSelectedDiets(next);
+      updateMemoryPreferencesMutation.mutate({ diets: next });
+    },
+    [selectedDiets, updateMemoryPreferencesMutation],
+  );
+
+  const toggleAllergy = useCallback(
+    (value: string) => {
+      const next = selectedAllergies.includes(value)
+        ? selectedAllergies.filter((a) => a !== value)
+        : [...selectedAllergies, value];
+      setSelectedAllergies(next);
+      updateMemoryPreferencesMutation.mutate({ allergies: next });
+    },
+    [selectedAllergies, updateMemoryPreferencesMutation],
+  );
+
+  const customAllergies = selectedAllergies.filter(
+    (a) => !(ALLERGY_OPTIONS as readonly string[]).includes(a),
+  );
+
+  const addCustomAllergy = useCallback(() => {
+    const value = customAllergyInput.trim();
+    if (!value) {
+      return;
+    }
+    if (selectedAllergies.some((a) => a.toLowerCase() === value.toLowerCase())) {
+      showToast({
+        message: localize('com_ui_personalization_allergy_already_added'),
+        status: 'error',
+      });
+      return;
+    }
+    if (value.length > ALLERGY_MAX_LENGTH) {
+      showToast({
+        message: localize('com_ui_personalization_allergy_too_long', {
+          max: String(ALLERGY_MAX_LENGTH),
+        }),
+        status: 'error',
+      });
+      return;
+    }
+    const next = [...selectedAllergies, value];
+    setSelectedAllergies(next);
+    setCustomAllergyInput('');
+    updateMemoryPreferencesMutation.mutate({ allergies: next });
+  }, [
+    customAllergyInput,
+    selectedAllergies,
+    updateMemoryPreferencesMutation,
+    showToast,
+    localize,
+  ]);
+
+  const removeCustomAllergy = useCallback(
+    (value: string) => {
+      const next = selectedAllergies.filter((a) => a !== value);
+      setSelectedAllergies(next);
+      updateMemoryPreferencesMutation.mutate({ allergies: next });
+    },
+    [selectedAllergies, updateMemoryPreferencesMutation],
+  );
+
+  const handleCookingLevelChange = useCallback(
+    (value: string) => {
+      setCookingLevel(value);
+      updateMemoryPreferencesMutation.mutate({ cookingLevel: value });
+    },
+    [updateMemoryPreferencesMutation],
+  );
+
+  const handleUnitSystemChange = useCallback(
+    (value: string) => {
+      const v = value === 'si' || value === 'american' ? value : '';
+      setUnitSystem(v);
+      updateMemoryPreferencesMutation.mutate({ unitSystem: v });
+    },
+    [updateMemoryPreferencesMutation],
+  );
+
+  const handleShowIngredientGramsChange = useCallback(
+    (checked: boolean) => {
+      setShowIngredientGrams(checked);
+      updateMemoryPreferencesMutation.mutate({ showIngredientGrams: checked });
+    },
+    [updateMemoryPreferencesMutation],
+  );
+
+  const handleDietaryPreferencesBlur = useCallback(() => {
+    const value = dietaryPreferences.trim();
+    if (value.length > DIETARY_PREFERENCES_MAX_LENGTH) {
+      showToast({
+        message: localize('com_ui_personalization_dietary_preferences_too_long', {
+          max: String(DIETARY_PREFERENCES_MAX_LENGTH),
+        }),
+        status: 'error',
+      });
+      setDietaryPreferences(user?.personalization?.dietaryPreferences ?? '');
+      return;
+    }
+    updateMemoryPreferencesMutation.mutate({ dietaryPreferences: value });
+  }, [
+    dietaryPreferences,
+    updateMemoryPreferencesMutation,
+    showToast,
+    localize,
+    user?.personalization?.dietaryPreferences,
+  ]);
+
+  const cookingLevelOptions = [
+    { value: '', label: localize('com_ui_cooking_level_none') },
+    ...COOKING_LEVEL_OPTIONS.map((value) => ({
+      value,
+      label: localize(`com_ui_cooking_level_${value}`),
+    })),
+  ];
 
   if (!hasAnyPersonalizationFeature) {
     return (
@@ -85,6 +286,183 @@ export default function Personalization({
           </div>
         </>
       )}
+
+      {/* Recipes & dietary preferences */}
+      <div className="border-b border-border-medium pb-3">
+        <div className="text-base font-semibold">
+          {localize('com_ui_personalization_recipes_diet_section')}
+        </div>
+        <div className="mt-1 text-xs text-text-secondary">
+          {localize('com_ui_personalization_recipes_diet_description')}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <div>
+          <Label className="text-sm font-medium">{localize('com_ui_personalization_diets')}</Label>
+          <div className="mt-2 flex flex-wrap gap-3">
+            {DIET_OPTIONS.map((value) => (
+              <div key={value} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`diet-${value}`}
+                  checked={selectedDiets.includes(value)}
+                  onCheckedChange={() => toggleDiet(value)}
+                  disabled={updateMemoryPreferencesMutation.isLoading}
+                />
+                <label
+                  htmlFor={`diet-${value}`}
+                  className="cursor-pointer text-sm leading-none peer-disabled:cursor-not-allowed"
+                >
+                  {localize(`com_ui_diet_${value}`)}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">
+            {localize('com_ui_personalization_allergies')}
+          </Label>
+          <div className="mt-2 flex flex-wrap gap-3">
+            {ALLERGY_OPTIONS.map((value) => (
+              <div key={value} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`allergy-${value}`}
+                  checked={selectedAllergies.includes(value)}
+                  onCheckedChange={() => toggleAllergy(value)}
+                  disabled={updateMemoryPreferencesMutation.isLoading}
+                />
+                <label
+                  htmlFor={`allergy-${value}`}
+                  className="cursor-pointer text-sm leading-none peer-disabled:cursor-not-allowed"
+                >
+                  {localize(`com_ui_allergy_${value}`)}
+                </label>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4">
+            <Label className="text-xs text-text-secondary">
+              {localize('com_ui_personalization_allergy_custom_section')}
+            </Label>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Input
+                value={customAllergyInput}
+                onChange={(e) => setCustomAllergyInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomAllergy();
+                  }
+                }}
+                placeholder={localize('com_ui_personalization_allergy_add_placeholder')}
+                className="max-w-[220px]"
+                maxLength={ALLERGY_MAX_LENGTH + 1}
+                disabled={updateMemoryPreferencesMutation.isLoading}
+                aria-label={localize('com_ui_personalization_allergy_add_placeholder')}
+              />
+              <Button
+                type="button"
+                onClick={addCustomAllergy}
+                disabled={
+                  updateMemoryPreferencesMutation.isLoading || !customAllergyInput.trim()
+                }
+                className="h-10"
+              >
+                {localize('com_ui_personalization_allergy_add_button')}
+              </Button>
+            </div>
+            {customAllergies.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {customAllergies.map((value) => (
+                  <Tag
+                    key={value}
+                    label={value}
+                    onRemove={() => removeCustomAllergy(value)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex w-full items-center justify-between gap-4">
+          <Label className="text-sm font-medium shrink-0">
+            {localize('com_ui_personalization_cooking_level')}
+          </Label>
+          <Dropdown
+            value={cookingLevel}
+            options={cookingLevelOptions}
+            onChange={handleCookingLevelChange}
+            testId="cooking-level-selector"
+            sizeClasses="w-[180px]"
+            className="z-50"
+            aria-label={localize('com_ui_personalization_cooking_level')}
+          />
+        </div>
+
+        <div className="flex w-full items-center justify-between gap-4">
+          <div>
+            <Label className="text-sm font-medium">
+              {localize('com_ui_personalization_unit_system')}
+            </Label>
+            <div className="mt-1 text-xs text-text-secondary">
+              {localize('com_ui_personalization_unit_system_description')}
+            </div>
+          </div>
+          <Dropdown
+            value={unitSystem || 'none'}
+            options={[
+              { value: 'none', label: localize('com_ui_personalization_unit_system_none') },
+              { value: 'si', label: localize('com_ui_personalization_unit_system_si') },
+              { value: 'american', label: localize('com_ui_personalization_unit_system_american') },
+            ]}
+            onChange={(value) => handleUnitSystemChange(value === 'none' ? '' : value)}
+            testId="unit-system-selector"
+            sizeClasses="w-[180px]"
+            className="z-50"
+            aria-label={localize('com_ui_personalization_unit_system')}
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div id="show-ingredient-grams-label" className="text-sm font-medium">
+              {localize('com_ui_personalization_show_ingredient_grams')}
+            </div>
+            <div className="mt-1 text-xs text-text-secondary">
+              {localize('com_ui_personalization_show_ingredient_grams_description')}
+            </div>
+          </div>
+          <Switch
+            checked={showIngredientGrams}
+            onCheckedChange={handleShowIngredientGramsChange}
+            disabled={updateMemoryPreferencesMutation.isLoading}
+            aria-labelledby="show-ingredient-grams-label"
+          />
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">
+            {localize('com_ui_personalization_dietary_preferences')}
+          </Label>
+          <div className="mt-1 text-xs text-text-secondary">
+            {localize('com_ui_personalization_dietary_preferences_description')}
+          </div>
+          <Textarea
+            value={dietaryPreferences}
+            onChange={(e) => setDietaryPreferences(e.target.value)}
+            onBlur={handleDietaryPreferencesBlur}
+            placeholder={localize('com_ui_personalization_dietary_preferences_placeholder')}
+            className="mt-2 min-h-[80px]"
+            maxLength={DIETARY_PREFERENCES_MAX_LENGTH + 1}
+            disabled={updateMemoryPreferencesMutation.isLoading}
+            aria-label={localize('com_ui_personalization_dietary_preferences')}
+          />
+        </div>
+      </div>
     </div>
   );
 }

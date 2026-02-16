@@ -1,17 +1,22 @@
-import { useCallback, useMemo, memo } from 'react';
+import { useCallback, useMemo, memo, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { useRecoilValue } from 'recoil';
-import type { TMessage, TMessageContentParts } from 'librechat-data-provider';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import type { TMessage, TMessageContentParts, TRecipe } from 'librechat-data-provider';
 import type { TMessageProps, TMessageIcon } from '~/common';
 import { useAttachments, useLocalize, useMessageActions, useContentMetadata } from '~/hooks';
 import ContentParts from '~/components/Chat/Messages/Content/ContentParts';
 import PlaceholderRow from '~/components/Chat/Messages/ui/PlaceholderRow';
 import SiblingSwitch from '~/components/Chat/Messages/SiblingSwitch';
 import HoverButtons from '~/components/Chat/Messages/HoverButtons';
+import WriteRecipeHoverButton from '~/components/Chat/Messages/WriteRecipeHoverButton';
+import RecipeFamilyCarousel from '~/components/Recipes/RecipeFamilyCarousel';
+import { getAllContentText } from '~/utils/messages';
 import MessageIcon from '~/components/Chat/Messages/MessageIcon';
 import SubRow from '~/components/Chat/Messages/SubRow';
 import { cn, getMessageAriaLabel } from '~/utils';
 import { fontSizeAtom } from '~/store/fontSize';
+import { recipeConversationParentMap, recipeMessageMap } from '~/store';
+import { useRecipeQuery } from '~/data-provider';
 import store from '~/store';
 
 type ContentRenderProps = {
@@ -91,6 +96,50 @@ const ContentRender = memo(
 
     const { hasParallelContent } = useContentMetadata(msg);
 
+    const [addedRecipe, setAddedRecipe] = useState<TRecipe | null>(null);
+    const setParentMap = useSetRecoilState(recipeConversationParentMap);
+    const setRecipeMessageMap = useSetRecoilState(recipeMessageMap);
+    const parentMap = useRecoilValue(recipeConversationParentMap);
+    const persistedRecipeMap = useRecoilValue(recipeMessageMap);
+    const parentRecipeId = conversation?.conversationId ? parentMap[conversation.conversationId] ?? null : null;
+    const persistedRecipeId =
+      conversation?.conversationId && msg?.messageId
+        ? persistedRecipeMap[conversation.conversationId]?.[msg.messageId] ?? null
+        : null;
+    const { data: persistedRecipe } = useRecipeQuery(
+      addedRecipe ? null : persistedRecipeId,
+      { enabled: !!persistedRecipeId && !addedRecipe },
+    );
+    const recipeToShow = addedRecipe ?? persistedRecipe ?? null;
+    const handleRecipeAdded = useCallback(
+      (recipe: TRecipe) => {
+        setAddedRecipe(recipe);
+        const convId = conversation?.conversationId;
+        const msgId = msg?.messageId;
+        if (convId && recipe?._id) {
+          setParentMap((prev) => (prev[convId] ? prev : { ...prev, [convId]: recipe._id }));
+        }
+        if (convId && msgId && recipe?._id) {
+          setRecipeMessageMap((prev) => ({
+            ...prev,
+            [convId]: { ...(prev[convId] ?? {}), [msgId]: recipe._id },
+          }));
+        }
+      },
+      [conversation?.conversationId, msg?.messageId, setParentMap, setRecipeMessageMap],
+    );
+
+    /** Show "Écrire la recette" button for assistant messages from agents endpoint */
+    const showWriteRecipeButton = useMemo(() => {
+      if (!msg || msg.isCreatedByUser) return false;
+      return (
+        agent != null ||
+        conversation?.endpoint === 'agents' ||
+        !!conversation?.agent_id ||
+        (typeof msg.model === 'string' && msg.model.startsWith('agent_'))
+      );
+    }, [msg, msg?.model, agent, conversation?.endpoint, conversation?.agent_id]);
+
     if (!msg) {
       return null;
     }
@@ -161,6 +210,12 @@ const ContentRender = memo(
                 conversationId={conversation?.conversationId}
                 content={msg.content as Array<TMessageContentParts | undefined>}
               />
+              {recipeToShow && (
+                <RecipeFamilyCarousel
+                  recipe={recipeToShow}
+                  createdRecipeId={recipeToShow._id}
+                />
+              )}
             </div>
             {hasNoChildren && effectiveIsSubmitting ? (
               <PlaceholderRow />
@@ -184,6 +239,19 @@ const ContentRender = memo(
                   latestMessage={latestMessage}
                   handleFeedback={handleFeedback}
                   isLast={isLast}
+                  extraButtons={
+                    showWriteRecipeButton ? (
+                      <WriteRecipeHoverButton
+                        conversationId={conversation?.conversationId ?? null}
+                        isLast={isLast}
+                        isDisabled={effectiveIsSubmitting}
+                        recipeText={getAllContentText(msg)}
+                        onRecipeAdded={handleRecipeAdded}
+                        parentRecipeId={parentRecipeId}
+                        hideLinkForFirstRecipe={!!addedRecipe}
+                      />
+                    ) : undefined
+                  }
                 />
               </SubRow>
             )}

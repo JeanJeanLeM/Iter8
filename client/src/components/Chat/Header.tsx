@@ -9,9 +9,11 @@ import ModelSelector from './Menus/Endpoints/ModelSelector';
 import { useGetStartupConfig } from '~/data-provider';
 import ExportAndShareMenu from './ExportAndShareMenu';
 import BookmarkMenu from './Menus/BookmarkMenu';
+import DietaryPreferencesButton from './Menus/DietaryPreferencesButton';
 import { TemporaryChat } from './TemporaryChat';
 import AddMultiConvo from './AddMultiConvo';
 import { useHasAccess } from '~/hooks';
+import { RECIPE_APP_SIMPLE_UX } from '~/constants/recipeApp';
 import { cn } from '~/utils';
 
 const defaultInterface = getConfigDefaults().interface;
@@ -65,9 +67,12 @@ export default function Header() {
               )}
             >
               <ModelSelector startupConfig={startupConfig} />
-              {interfaceConfig.presets === true && interfaceConfig.modelSelect && <PresetsMenu />}
+              <DietaryPreferencesButton />
+              {!RECIPE_APP_SIMPLE_UX &&
+                interfaceConfig.presets === true &&
+                interfaceConfig.modelSelect && <PresetsMenu />}
               {hasAccessToBookmarks === true && <BookmarkMenu />}
-              {hasAccessToMultiConvo === true && <AddMultiConvo />}
+              {!RECIPE_APP_SIMPLE_UX && hasAccessToMultiConvo === true && <AddMultiConvo />}
               {isSmallScreen && (
                 <>
                   <ExportAndShareMenu

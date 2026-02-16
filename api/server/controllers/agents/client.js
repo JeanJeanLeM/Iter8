@@ -45,7 +45,7 @@ const {
 const { spendTokens, spendStructuredTokens } = require('~/models/spendTokens');
 const { encodeAndFormat } = require('~/server/services/Files/images/encode');
 const { createContextHandlers } = require('~/app/clients/prompts');
-const { getConvoFiles } = require('~/models/Conversation');
+const { getConvoFiles, getConvo } = require('~/models/Conversation');
 const BaseClient = require('~/app/clients/BaseClient');
 const { getRoleByName } = require('~/models/Role');
 const { loadAgent } = require('~/models/Agent');
@@ -496,6 +496,56 @@ class AgentClient extends BaseClient {
     if (withoutKeys) {
       const memoryContext = `${memoryInstructions}\n\n# Existing memory about the user:\n${withoutKeys}`;
       sharedRunContextParts.push(memoryContext);
+    }
+
+    /** User dietary context (diets, allergies, cooking level, preferences) – only when convo.useDietaryPreferences is not false */
+    let useDietaryPreferences = true;
+    try {
+      const convo = await getConvo(this.options.req.user?.id, this.conversationId);
+      if (convo && typeof convo.useDietaryPreferences === 'boolean') {
+        useDietaryPreferences = convo.useDietaryPreferences;
+      }
+    } catch (err) {
+      logger.debug('[AgentClient] Could not load convo for useDietaryPreferences', err);
+    }
+    const personalization = this.options.req.user?.personalization;
+    const diets = personalization?.diets?.filter(Boolean) ?? [];
+    const allergies = personalization?.allergies?.filter(Boolean) ?? [];
+    const cookingLevel = personalization?.cookingLevel?.trim();
+    const dietaryPreferences = personalization?.dietaryPreferences?.trim();
+    const preferencesSummary = personalization?.preferencesSummary?.trim();
+    const hasDietaryContext =
+      (diets.length > 0 ||
+        allergies.length > 0 ||
+        cookingLevel ||
+        dietaryPreferences ||
+        preferencesSummary) &&
+      useDietaryPreferences;
+    if (hasDietaryContext) {
+      const summaryBlock = preferencesSummary
+        ? `# User dietary context (respect when suggesting recipes)\n${preferencesSummary}`
+        : null;
+      const rawBlock =
+        !summaryBlock &&
+        (diets.length > 0 ||
+          allergies.length > 0 ||
+          cookingLevel ||
+          dietaryPreferences)
+          ? [
+              '# User dietary context (respect when suggesting recipes)',
+              diets.length > 0 ? `Diets: ${diets.join(', ')}.` : '',
+              allergies.length > 0 ? `Allergies: ${allergies.join(', ')}.` : '',
+              cookingLevel ? `Cooking level: ${cookingLevel}.` : '',
+              dietaryPreferences ? `What the user likes: ${dietaryPreferences}` : '',
+              'Do not suggest recipes containing these allergens or that conflict with these diets. Adapt complexity to the user\'s cooking level and preferences.',
+            ]
+                .filter(Boolean)
+                .join('\n')
+          : null;
+      const dietaryContext = summaryBlock || rawBlock;
+      if (dietaryContext) {
+        sharedRunContextParts.push(dietaryContext);
+      }
     }
 
     const sharedRunContext = sharedRunContextParts.join('\n\n');

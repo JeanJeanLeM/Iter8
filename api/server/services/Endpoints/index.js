@@ -41,13 +41,15 @@ const providerConfigMap = {
  * }}
  */
 function getProviderConfig({ provider, appConfig }) {
-  let getOptions = providerConfigMap[provider];
-  let overrideProvider = provider;
+  const normalizedProvider =
+    provider?.toLowerCase() === 'openai' ? EModelEndpoint.openAI : provider;
+  let getOptions = providerConfigMap[normalizedProvider];
+  let overrideProvider = normalizedProvider;
   /** @type {TEndpoint | undefined} */
   let customEndpointConfig;
 
-  if (!getOptions && providerConfigMap[provider.toLowerCase()] != null) {
-    overrideProvider = provider.toLowerCase();
+  if (!getOptions && providerConfigMap[normalizedProvider.toLowerCase()] != null) {
+    overrideProvider = normalizedProvider.toLowerCase();
     getOptions = providerConfigMap[overrideProvider];
   } else if (!getOptions) {
     customEndpointConfig = getCustomEndpointConfig({ endpoint: provider, appConfig });

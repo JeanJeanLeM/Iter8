@@ -14,6 +14,7 @@ import { useAgentsMapContext, useAssistantsMapContext, useLiveAnnouncer } from '
 import { useGetEndpointsQuery, useListAgentsQuery } from '~/data-provider';
 import { useModelSelectorChatContext } from './ModelSelectorChatContext';
 import useSelectMention from '~/hooks/Input/useSelectMention';
+import { RECIPE_APP_SIMPLE_UX } from '~/constants/recipeApp';
 import { filterItems } from './utils';
 
 type ModelSelectorContextType = {
@@ -65,20 +66,21 @@ export function ModelSelectorProvider({ children, startupConfig }: ModelSelector
   const modelSpecs = useMemo(() => {
     const specs = startupConfig?.modelSpecs?.list ?? [];
     if (!agentsMap) {
-      return specs;
+      return RECIPE_APP_SIMPLE_UX ? [] : specs;
     }
 
     /**
      * Filter modelSpecs to only include agents the user has access to.
      * Use agentsMap which already contains permission-filtered agents (consistent with other components).
      */
-    return specs.filter((spec) => {
+    let filtered = specs.filter((spec) => {
       if (spec.preset?.endpoint === EModelEndpoint.agents && spec.preset?.agent_id) {
         return spec.preset.agent_id in agentsMap;
       }
-      /** Keep non-agent modelSpecs */
-      return true;
+      /** Keep non-agent modelSpecs (unless simple UX) */
+      return !RECIPE_APP_SIMPLE_UX;
     });
+    return filtered;
   }, [startupConfig, agentsMap]);
 
   const permissionLevel = useAgentDefaultPermissionLevel();

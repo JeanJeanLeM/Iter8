@@ -1,17 +1,22 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useAtomValue } from 'jotai';
-import { useRecoilValue } from 'recoil';
-import type { TMessageContentParts } from 'librechat-data-provider';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import type { TMessageContentParts, TRecipe } from 'librechat-data-provider';
 import type { TMessageProps, TMessageIcon } from '~/common';
 import { useMessageHelpers, useLocalize, useAttachments, useContentMetadata } from '~/hooks';
 import MessageIcon from '~/components/Chat/Messages/MessageIcon';
 import ContentParts from './Content/ContentParts';
+import WriteRecipeHoverButton from './WriteRecipeHoverButton';
+import RecipeFamilyCarousel from '~/components/Recipes/RecipeFamilyCarousel';
+import { useRecipeQuery } from '~/data-provider';
 import { fontSizeAtom } from '~/store/fontSize';
+import { recipeConversationParentMap, recipeMessageMap } from '~/store';
 import SiblingSwitch from './SiblingSwitch';
 import MultiMessage from './MultiMessage';
 import HoverButtons from './HoverButtons';
 import SubRow from './SubRow';
 import { cn, getMessageAriaLabel } from '~/utils';
+import { getAllContentText } from '~/utils/messages';
 import store from '~/store';
 
 export default function Message(props: TMessageProps) {
@@ -76,6 +81,45 @@ export default function Message(props: TMessageProps) {
   );
 
   const { hasParallelContent } = useContentMetadata(message);
+
+  const [addedRecipe, setAddedRecipe] = useState<TRecipe | null>(null);
+  const setParentMap = useSetRecoilState(recipeConversationParentMap);
+  const setRecipeMessageMap = useSetRecoilState(recipeMessageMap);
+  const parentMap = useRecoilValue(recipeConversationParentMap);
+  const persistedRecipeMap = useRecoilValue(recipeMessageMap);
+  const parentRecipeId = conversation?.conversationId ? parentMap[conversation.conversationId] ?? null : null;
+  const persistedRecipeId =
+    conversation?.conversationId && message?.messageId
+      ? persistedRecipeMap[conversation.conversationId]?.[message.messageId] ?? null
+      : null;
+  const { data: persistedRecipe } = useRecipeQuery(
+    addedRecipe ? null : persistedRecipeId,
+    { enabled: !!persistedRecipeId && !addedRecipe },
+  );
+  const recipeToShow = addedRecipe ?? persistedRecipe ?? null;
+  const handleRecipeAdded = useCallback(
+    (recipe: TRecipe) => {
+      setAddedRecipe(recipe);
+      const convId = conversation?.conversationId;
+      const msgId = message?.messageId;
+      if (convId && recipe?._id) {
+        setParentMap((prev) => (prev[convId] ? prev : { ...prev, [convId]: recipe._id }));
+      }
+      if (convId && msgId && recipe?._id) {
+        setRecipeMessageMap((prev) => ({
+          ...prev,
+          [convId]: { ...(prev[convId] ?? {}), [msgId]: recipe._id },
+        }));
+      }
+    },
+    [conversation?.conversationId, message?.messageId, setParentMap, setRecipeMessageMap],
+  );
+
+  /** Show "Écrire la recette" button for all assistant messages from agents endpoint */
+  const showWriteRecipeButton = useMemo(() => {
+    if (!message || message.isCreatedByUser || isSubmitting) return false;
+    return agent != null || conversation?.endpoint === 'agents';
+  }, [message, agent, conversation?.endpoint, isSubmitting]);
 
   if (!message) {
     return null;
@@ -145,6 +189,12 @@ export default function Message(props: TMessageProps) {
                     isLatestMessage={messageId === latestMessage?.messageId}
                     content={message.content as Array<TMessageContentParts | undefined>}
                   />
+                  {recipeToShow && (
+                    <RecipeFamilyCarousel
+                      recipe={recipeToShow}
+                      createdRecipeId={recipeToShow._id}
+                    />
+                  )}
                 </div>
                 {isLast && isSubmitting ? (
                   <div className="mt-1 h-[27px] bg-transparent" />
@@ -167,6 +217,19 @@ export default function Message(props: TMessageProps) {
                       handleContinue={handleContinue}
                       latestMessage={latestMessage}
                       isLast={isLast}
+                      extraButtons={
+                        showWriteRecipeButton ? (
+                          <WriteRecipeHoverButton
+                            conversationId={conversation?.conversationId ?? null}
+                            isLast={isLast}
+                            isDisabled={isSubmitting}
+                            recipeText={getAllContentText(message)}
+                            onRecipeAdded={handleRecipeAdded}
+                            parentRecipeId={parentRecipeId}
+                            hideLinkForFirstRecipe={!!addedRecipe}
+                          />
+                        ) : undefined
+                      }
                     />
                   </SubRow>
                 )}

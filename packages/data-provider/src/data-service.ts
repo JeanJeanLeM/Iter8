@@ -731,6 +731,15 @@ export function updateConversation(
   return request.post(endpoints.updateConversation(), { arg: payload });
 }
 
+export function updateConversationDietaryPreferences(
+  conversationId: string,
+  useDietaryPreferences: boolean,
+): Promise<s.TConversation> {
+  return request.patch(endpoints.conversationDietaryPreferences(conversationId), {
+    useDietaryPreferences,
+  });
+}
+
 export function archiveConversation(
   payload: t.TArchiveConversationRequest,
 ): Promise<t.TArchiveConversationResponse> {
@@ -1006,8 +1015,25 @@ export const updateMemory = (
 };
 
 export const updateMemoryPreferences = (preferences: {
-  memories: boolean;
-}): Promise<{ updated: boolean; preferences: { memories: boolean } }> => {
+  memories?: boolean;
+  diets?: string[];
+  allergies?: string[];
+  cookingLevel?: string;
+  dietaryPreferences?: string;
+  unitSystem?: 'si' | 'american';
+  showIngredientGrams?: boolean;
+}): Promise<{
+  updated: boolean;
+  preferences: {
+    memories?: boolean;
+    diets?: string[];
+    allergies?: string[];
+    cookingLevel?: string;
+    dietaryPreferences?: string;
+    unitSystem?: string;
+    showIngredientGrams?: boolean;
+  };
+}> => {
   return request.patch(endpoints.memoryPreferences(), preferences);
 };
 
@@ -1016,6 +1042,60 @@ export const createMemory = (data: {
   value: string;
 }): Promise<{ created: boolean; memory: q.TUserMemory }> => {
   return request.post(endpoints.memories(), data);
+};
+
+/* Recipes */
+export const getRecipes = (params?: q.RecipesListParams): Promise<q.RecipesListResponse> => {
+  return request.get(endpoints.recipes(params));
+};
+
+export const getRecipe = (id: string): Promise<q.TRecipe> => {
+  return request.get(endpoints.recipe(id));
+};
+
+export const createRecipe = (data: Partial<q.TRecipe> & { title: string }): Promise<q.TRecipe> => {
+  return request.post(endpoints.recipes(), data);
+};
+
+export const updateRecipe = (
+  id: string,
+  data: Partial<q.TRecipe>,
+): Promise<q.TRecipe> => {
+  return request.put(endpoints.recipe(id), data);
+};
+
+export const deleteRecipe = (id: string): Promise<{ deleted: boolean }> => {
+  return request.delete(endpoints.recipe(id));
+};
+
+export const setRecipeVote = (
+  id: string,
+  value: 1 | -1,
+): Promise<q.RecipeVoteResponse> => {
+  return request.post(endpoints.recipeVote(id), { value });
+};
+
+/* Journal */
+export const getJournal = (
+  params?: q.JournalListParams,
+): Promise<q.JournalListResponse> => {
+  return request.get(endpoints.journal(params));
+};
+
+export const getJournalEntry = (
+  id: string,
+): Promise<q.TRealizationWithRecipe> => {
+  return request.get(endpoints.journalEntry(id));
+};
+
+export const createJournalEntry = (
+  data: q.CreateJournalEntryParams,
+): Promise<q.TRealization> => {
+  return request.post(endpoints.journal(), data);
+};
+
+export const deleteJournalEntry = (id: string): Promise<{ deleted: boolean }> => {
+  return request.delete(endpoints.journalEntry(id));
 };
 
 export function searchPrincipals(
