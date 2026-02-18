@@ -4,4 +4,6 @@ export { default as JournalCalendarView } from './JournalCalendarView';
 export { default as JournalEntryList } from './JournalEntryList';
 export { default as JournalEntryCard } from './JournalEntryCard';
 export { default as JournalEntryDetailDrawer } from './JournalEntryDetailDrawer';
+export { default as PlannedMealDetailDrawer } from './PlannedMealDetailDrawer';
+export { default as AddPlannedMealDialog } from './AddPlannedMealDialog';
 export { default as AddJournalEntryDialog } from './AddJournalEntryDialog';

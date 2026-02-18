@@ -8,6 +8,12 @@ export * from './Memories';
 export * from './Recipes';
 /* Journal */
 export * from './Journal';
+/* Shopping list */
+export * from './ShoppingList';
+/* Ingredients gallery */
+export * from './Ingredients';
+/* Meal planner */
+export * from './MealPlanner';
 export * from './Messages';
 export * from './Misc';
 export * from './Tools';

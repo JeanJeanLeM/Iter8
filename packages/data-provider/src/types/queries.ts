@@ -218,10 +218,30 @@ export type TRecipeStep = {
   order: number;
   instruction: string;
   ingredientsUsed?: string[];
+  /** Duration in minutes for this step (e.g. cooking time). Used for timer in step-by-step mode. */
+  durationMinutes?: number;
 };
 
 /** Duration in minutes, or object with prep/cook/total in minutes */
 export type TRecipeDuration = number | { prep?: number; cook?: number; total?: number };
+
+/** Recipe data sent as context to LLM when opening from book */
+export type TRecipeDataForContext = {
+  ingredients?: TRecipeIngredient[];
+  steps?: TRecipeStep[];
+  description?: string;
+  duration?: TRecipeDuration;
+  tags?: string[];
+  equipment?: string[];
+};
+
+/** Recipe selected as modification target - injected into agent context */
+export type TSelectedRecipeForVariation = {
+  recipeId: string;
+  title: string;
+  parentId?: string | null;
+  recipeData?: TRecipeDataForContext | null;
+};
 
 export type TRecipe = {
   _id: string;
@@ -229,6 +249,7 @@ export type TRecipe = {
   parentId: string | null;
   variationNote?: string;
   objective?: string;
+  emoji?: string;
   title: string;
   description?: string;
   portions?: number;
@@ -284,6 +305,7 @@ export type TRealization = {
 export type TRealizationWithRecipe = TRealization & {
   recipeTitle?: string;
   recipeImageUrl?: string;
+  recipeEmoji?: string;
   recipeParentId?: string | null;
   variationNote?: string;
 };
@@ -303,4 +325,131 @@ export type CreateJournalEntryParams = {
   recipeId: string;
   realizedAt?: string;
   comment?: string;
+};
+
+/* Shopping list */
+export type TShoppingListItem = {
+  _id: string;
+  userId: string;
+  name: string;
+  quantity?: number;
+  unit?: string;
+  bought: boolean;
+  sourceRealizationId?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ShoppingListParams = {
+  bought?: boolean;
+};
+
+export type ShoppingListResponse = {
+  items: TShoppingListItem[];
+};
+
+export type CreateShoppingListItemParams = {
+  name: string;
+  quantity?: number;
+  unit?: string;
+};
+
+export type CreateShoppingListItemsParams = {
+  items: Array<{ name: string; quantity?: number; unit?: string }>;
+};
+
+export type UpdateShoppingListItemParams = {
+  name?: string;
+  quantity?: number;
+  unit?: string;
+  bought?: boolean;
+};
+
+/* Ingredients gallery */
+export type TNutritionMicros = {
+  sodiumMg?: number;
+  calciumMg?: number;
+  ironMg?: number;
+  potassiumMg?: number;
+  vitaminCMg?: number;
+  vitaminARaeUg?: number;
+  vitaminDIu?: number;
+  folateUg?: number;
+  vitaminB12Ug?: number;
+  zincMg?: number;
+  seleniumUg?: number;
+  magnesiumMg?: number;
+};
+
+export type TIngredient = {
+  _id: string;
+  name: string;
+  displayName?: string;
+  imageUrl?: string;
+  energyKcal?: number;
+  proteinG?: number;
+  fatG?: number;
+  carbohydrateG?: number;
+  fiberG?: number;
+  nutritionMicros?: TNutritionMicros;
+  usdaFdcId?: number | string;
+  usdaDescription?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type IngredientsResponse = {
+  ingredients: TIngredient[];
+};
+
+export type CreateIngredientParams = {
+  name: string;
+  displayName?: string;
+};
+
+export type UpdateIngredientParams = {
+  displayName?: string;
+  imageUrl?: string;
+  energyKcal?: number;
+  proteinG?: number;
+  fatG?: number;
+  carbohydrateG?: number;
+  fiberG?: number;
+  nutritionMicros?: TNutritionMicros;
+  usdaFdcId?: number | string;
+  usdaDescription?: string;
+};
+
+/* Meal planner */
+export type MealPlanSlot = 'breakfast' | 'collation' | 'lunch' | 'dinner' | 'sortie';
+
+export type TPlannedMeal = {
+  _id: string;
+  userId: string;
+  date: string;
+  slot: MealPlanSlot;
+  recipeId?: string | null;
+  recipeTitle: string;
+  recipeDishType?: 'entree' | 'plat' | 'dessert' | null;
+  comment?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type UpdatePlannedMealParams = {
+  date?: string;
+  slot?: MealPlanSlot;
+  recipeId?: string | null;
+  recipeTitle?: string;
+  comment?: string;
+};
+
+export type MealPlannerCalendarParams = {
+  from: string;
+  to: string;
+};
+
+export type MealPlannerCalendarResponse = {
+  realizations: TRealizationWithRecipe[];
+  plannedMeals: TPlannedMeal[];
 };

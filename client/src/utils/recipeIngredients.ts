@@ -20,6 +20,8 @@ export interface FormattedIngredient {
   displayText: string;
   /** When showGrams and unit is volumetric, approximate grams (e.g. "≈ 120 g") */
   gramEquivalent?: string;
+  /** When set, quantity was rounded for display; exact scaled value (e.g. 1.78 for "2 œufs") */
+  roundedFrom?: number;
 }
 
 /** Ingredient name patterns that must be shown as whole numbers (egg, etc.) */
@@ -66,6 +68,59 @@ function isWholeIngredient(ing: TRecipeIngredient): boolean {
   const unit = (ing.unit ?? '').trim().toLowerCase();
   if (COUNT_UNITS.has(unit)) return true;
   return WHOLE_INGREDIENT_PATTERNS.some((re) => re.test(name));
+}
+
+function gcd(a: number, b: number): number {
+  a = Math.abs(Math.round(a));
+  b = Math.abs(Math.round(b));
+  while (b !== 0) {
+    const t = b;
+    b = a % b;
+    a = t;
+  }
+  return a;
+}
+
+function lcm(a: number, b: number): number {
+  if (a === 0 || b === 0) return 0;
+  return (Math.abs(a) * Math.abs(b)) / gcd(a, b);
+}
+
+/**
+ * Returns the smallest portion count S >= 1 for which all "whole" ingredients
+ * (eggs, etc.) scale to whole numbers when ratio = S / recipePortions.
+ * Used as the initial portions value when opening a recipe.
+ */
+export function getOptimalInitialPortions(recipe: {
+  portions?: number;
+  ingredients?: TRecipeIngredient[];
+}): number {
+  const P = recipe.portions ?? 1;
+  const ingredients = recipe.ingredients ?? [];
+  if (P <= 0) return 1;
+
+  const wholeWithQty = ingredients.filter(
+    (ing) => isWholeIngredient(ing) && ing.quantity != null && ing.quantity > 0,
+  );
+  if (wholeWithQty.length === 0) return P;
+
+  const terms: number[] = [];
+  for (const ing of wholeWithQty) {
+    const Q = Number(ing.quantity);
+    if (!Number.isFinite(Q)) continue;
+    const g = gcd(P, Q);
+    const term = g === 0 ? P : P / g;
+    if (term >= 1) terms.push(Math.round(term));
+  }
+  if (terms.length === 0) return P;
+
+  let S = terms[0];
+  for (let i = 1; i < terms.length; i++) {
+    S = lcm(S, terms[i]);
+  }
+  if (!Number.isFinite(S) || S < 1) return P;
+  const capped = Math.min(Math.max(1, Math.round(S)), 24);
+  return capped;
 }
 
 /**
@@ -199,10 +254,10 @@ const GRAMS_PER_TSP: Record<string, number> = {
   vanille: 4.3,
   bicarbonate: 4.6,
   baking_soda: 4.6,
-  extrait: 4.3,
-  vanilla_extract: 4.3,
-  extrait de vanille: 4.3,
-};
+    extrait: 4.3,
+    vanilla_extract: 4.3,
+    'extrait de vanille': 4.3,
+  };
 
 function getDensityKey(name: string, unit: string): string {
   const n = name.trim().toLowerCase();
@@ -275,7 +330,7 @@ function convertUnit(
       displayUnit = unit === 'kg' ? 'kg' : 'g';
     }
     gramEquivalent = unit === 'kg' ? qty * 1000 : qty;
-    return { displayQty, displayUnit, showGrams ? gramEquivalent : null };
+    return { displayQty, displayUnit, gramEquivalent: showGrams ? gramEquivalent : null };
   }
 
   if (unit === 'ml' || unit === 'l') {
@@ -294,7 +349,7 @@ function convertUnit(
     } else {
       displayUnit = unit === 'l' ? 'L' : 'ml';
     }
-    return { displayQty, displayUnit, null };
+    return { displayQty, displayUnit, gramEquivalent: null };
   }
 
   if (unit === 'oz' || unit === 'floz') {
@@ -310,7 +365,7 @@ function convertUnit(
     } else {
       displayUnit = unit === 'floz' ? 'fl oz' : 'oz';
     }
-    return { displayQty, displayUnit, showGrams && unit === 'oz' ? qty * OZ_TO_G : null };
+    return { displayQty, displayUnit, gramEquivalent: showGrams && unit === 'oz' ? qty * OZ_TO_G : null };
   }
 
   if (unit === 'tsp' || unit === 'tbsp' || unit === 'cup') {
@@ -343,10 +398,10 @@ function convertUnit(
 
   if (unit === 'pinch') {
     gramEquivalent = volumetricToGrams(qty, unit, ingredientName);
-    return { displayQty, displayUnit, showGrams ? gramEquivalent : null };
+    return { displayQty, displayUnit, gramEquivalent: showGrams ? gramEquivalent : null };
   }
 
-  return { displayQty, displayUnit, null };
+  return { displayQty, displayUnit, gramEquivalent: null };
 }
 
 /**
@@ -376,6 +431,12 @@ export function formatIngredient(
   const roundedQty = roundQuantity(displayQty, ing);
   const qtyStr = formatQty(roundedQty);
 
+  let roundedFrom: number | undefined;
+  if (isWholeIngredient(ing) && Number.isFinite(displayQty)) {
+    const diff = Math.abs(roundedQty - displayQty);
+    if (diff > 0.005) roundedFrom = displayQty;
+  }
+
   let displayText: string;
   if (displayUnit) {
     displayText = `${qtyStr} ${displayUnit} ${name}`;
@@ -390,7 +451,13 @@ export function formatIngredient(
     gramEquivalentStr = `≈ ${formatQty(gRounded)} g`;
   }
 
-  return { displayText, gramEquivalent: gramEquivalentStr };
+  return { displayText, gramEquivalent: gramEquivalentStr, roundedFrom };
+}
+
+/** Format exact quantity for tooltip (e.g. 1.78) */
+export function formatExactQuantity(qty: number): string {
+  if (!Number.isFinite(qty)) return String(qty);
+  return formatQty(qty);
 }
 
 /**

@@ -14,6 +14,44 @@ const { handleAbortError } = require('~/server/middleware');
 const { logViolation } = require('~/cache');
 const { saveMessage } = require('~/models');
 
+function formatRecipeDataForContext(recipeData) {
+  if (!recipeData || typeof recipeData !== 'object') return '';
+  const parts = [];
+  if (recipeData.description) {
+    parts.push(`Description: ${recipeData.description}`);
+  }
+  if (Array.isArray(recipeData.ingredients) && recipeData.ingredients.length > 0) {
+    const ingList = recipeData.ingredients
+      .map((i) => {
+        const qty = i.quantity != null ? `${i.quantity} ` : '';
+        const unit = i.unit ? `${i.unit} ` : '';
+        return `- ${qty}${unit}${i.name}${i.note ? ` (${i.note})` : ''}`;
+      })
+      .join('\n');
+    parts.push(`Ingrédients:\n${ingList}`);
+  }
+  if (Array.isArray(recipeData.steps) && recipeData.steps.length > 0) {
+    const stepList = recipeData.steps
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map((s) => `  ${s.order}. ${s.instruction}`)
+      .join('\n');
+    parts.push(`Étapes:\n${stepList}`);
+  }
+  if (recipeData.duration != null) {
+    const d = recipeData.duration;
+    const durStr = typeof d === 'number' ? `${d} min` : [d.prep, d.cook, d.total].filter(Boolean).join(' / ');
+    parts.push(`Durée: ${durStr}`);
+  }
+  if (Array.isArray(recipeData.tags) && recipeData.tags.length > 0) {
+    parts.push(`Tags: ${recipeData.tags.join(', ')}`);
+  }
+  if (Array.isArray(recipeData.equipment) && recipeData.equipment.length > 0) {
+    parts.push(`Équipement: ${recipeData.equipment.join(', ')}`);
+  }
+  if (parts.length === 0) return '';
+  return `\n[RECETTE_DONNÉES]\n${parts.join('\n\n')}\n[/RECETTE_DONNÉES]\n\n`;
+}
+
 function buildUserMessageWithRecipeContext(text, selectedRecipeForVariation) {
   if (!text || typeof text !== 'string') {
     return text ?? '';
@@ -25,9 +63,12 @@ function buildUserMessageWithRecipeContext(text, selectedRecipeForVariation) {
   ) {
     return text;
   }
-  const { recipeId, title, parentId } = selectedRecipeForVariation;
+  const { recipeId, title, parentId, recipeData } = selectedRecipeForVariation;
   const parentPart = parentId != null ? ` parentId=${parentId}` : '';
-  const prefix = `[RECETTE_CIBLE: id=${recipeId} titre=${title || 'Sans titre'}${parentPart}]\n\n`;
+  let prefix = `[RECETTE_CIBLE: id=${recipeId} titre=${title || 'Sans titre'}${parentPart}]\n\n`;
+  if (recipeData) {
+    prefix += formatRecipeDataForContext(recipeData);
+  }
   return prefix + text;
 }
 

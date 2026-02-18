@@ -53,6 +53,8 @@ router.post('/structure', async (req, res) => {
       steps: structured.steps,
       equipment: structured.equipment,
       tags: structured.tags,
+      restTimeMinutes: structured.restTimeMinutes,
+      maxStorageDays: structured.maxStorageDays,
     });
 
     res.status(201).json(recipe);
@@ -83,6 +85,7 @@ router.post('/:parentId/variation', async (req, res) => {
       userId: req.user.id,
       parentId,
       variationNote: body.variationNote ?? null,
+      emoji: body.emoji,
       title: body.title ?? 'Sans titre',
       description: body.description,
       portions: body.portions,
@@ -153,6 +156,105 @@ router.get('/family', async (req, res) => {
     const { logger } = require('@librechat/data-schemas');
     logger.error('[GET /api/recipes/family]', error?.message, error?.stack);
     res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/recipes/ai-images
+ * List all AI-generated images across the user's recipes, sorted by relevance to a recipe.
+ * Uses a lightweight find (no aggregation) to avoid MongoDB sort memory limits.
+ * Query: recipeId (current recipe for sorting), page (default 1), limit (default 10).
+ * Sort: same ingredients first, then same dishType, then same cuisineType.
+ */
+router.get('/ai-images', async (req, res) => {
+  try {
+    const mongoose = require('mongoose');
+    const Recipe = mongoose.models?.Recipe;
+    if (!Recipe) {
+      return res.status(500).json({ error: 'Recipe model not available.' });
+    }
+
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
+    const recipeId = req.query.recipeId ? String(req.query.recipeId) : null;
+
+    const recipesWithAiImages = await Recipe.find(
+      {
+        userId: new mongoose.Types.ObjectId(req.user.id),
+        'images.source': 'ai',
+      },
+      { _id: 1, title: 1, images: 1, dishType: 1, cuisineType: 1, 'ingredients.name': 1 },
+    ).lean().exec();
+
+    const flat = [];
+    for (const r of recipesWithAiImages) {
+      const images = Array.isArray(r.images) ? r.images : [];
+      const title = r.title || '';
+      const dishType = r.dishType || null;
+      const cuisineType = Array.isArray(r.cuisineType) ? r.cuisineType : [];
+      const ingredients = (r.ingredients || []).map((i) => (i.name || '').trim().toLowerCase()).filter(Boolean);
+      for (const img of images) {
+        if (img && img.source === 'ai' && img.url) {
+          flat.push({
+            url: img.url,
+            source: 'ai',
+            recipeId: r._id?.toString(),
+            recipeTitle: title,
+            dishType,
+            cuisineType,
+            ingredients,
+          });
+        }
+      }
+    }
+
+    if (recipeId && flat.length > 0) {
+      const currentRecipe = await Recipe.findOne(
+        {
+          _id: new mongoose.Types.ObjectId(recipeId),
+          userId: new mongoose.Types.ObjectId(req.user.id),
+        },
+        { dishType: 1, cuisineType: 1, 'ingredients.name': 1 },
+      ).lean().exec();
+
+      if (currentRecipe) {
+        const curIngredients = new Set(
+          (currentRecipe.ingredients || [])
+            .map((i) => (i.name || '').trim().toLowerCase())
+            .filter(Boolean),
+        );
+        const curDishType = currentRecipe.dishType || null;
+        const curCuisineType = new Set(Array.isArray(currentRecipe.cuisineType) ? currentRecipe.cuisineType : []);
+
+        flat.sort((a, b) => {
+          const ingredientScoreA = a.ingredients.filter((name) => curIngredients.has(name)).length;
+          const ingredientScoreB = b.ingredients.filter((name) => curIngredients.has(name)).length;
+          if (ingredientScoreB !== ingredientScoreA) return ingredientScoreB - ingredientScoreA;
+          const dishA = a.dishType === curDishType ? 1 : 0;
+          const dishB = b.dishType === curDishType ? 1 : 0;
+          if (dishB !== dishA) return dishB - dishA;
+          const cuisineA = (a.cuisineType || []).filter((c) => curCuisineType.has(c)).length;
+          const cuisineB = (b.cuisineType || []).filter((c) => curCuisineType.has(c)).length;
+          return cuisineB - cuisineA;
+        });
+      }
+    }
+
+    const total = flat.length;
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+    const skip = (page - 1) * limit;
+    const images = flat.slice(skip, skip + limit).map(({ url, source, recipeId: rid, recipeTitle }) => ({
+      url,
+      source,
+      recipeId: rid,
+      recipeTitle,
+    }));
+
+    res.json({ images, total, page, totalPages });
+  } catch (error) {
+    const { logger } = require('@librechat/data-schemas');
+    logger.error('[GET /api/recipes/ai-images] ' + String(error?.message || error));
+    res.status(500).json({ error: String(error?.message || 'Unknown error') });
   }
 });
 
@@ -237,6 +339,7 @@ router.post('/', async (req, res) => {
       parentId: body.parentId ?? null,
       variationNote: body.variationNote,
       objective: body.objective,
+      emoji: body.emoji,
       title: body.title ?? 'Sans titre',
       description: body.description,
       portions: body.portions,

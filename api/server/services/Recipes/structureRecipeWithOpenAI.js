@@ -26,7 +26,9 @@ Format JSON requis (identique au schéma de la base de données) :
     { "order": 1, "instruction": "string" }
   ],
   "equipment": ["string"],
-  "tags": ["string"]
+  "tags": ["string"],
+  "restTimeMinutes": number (optionnel, temps de repos/fermentation/marinade en minutes, ex: 720 pour 12h),
+  "maxStorageDays": number (optionnel, conservation max en jours, ex: 2 pour 48h)
 }
 
 Règles :
@@ -36,6 +38,8 @@ Règles :
 - steps : order 1-based, instruction claire et complète.
 - equipment : liste du matériel (four, saladier, etc.).
 - tags : dessert, plat, vegan, rapide, etc.
+- restTimeMinutes : si la recette a un temps de repos, fermentation ou marinade (ex. pain au levain 12h), indique-le en minutes. Sinon omets.
+- maxStorageDays : si le plat ne se conserve pas longtemps (ex. 1-2 jours), indique-le. Sinon omets ou mets 2 par défaut.
 
 Réponds UNIQUEMENT avec le JSON, rien d'autre.`;
 
@@ -104,6 +108,14 @@ function normalizeForDb(raw) {
     steps: Array.isArray(raw.steps) ? raw.steps : [],
     equipment: Array.isArray(raw.equipment) ? raw.equipment : [],
     tags: Array.isArray(raw.tags) ? raw.tags : [],
+    restTimeMinutes:
+      typeof raw.restTimeMinutes === 'number' && raw.restTimeMinutes >= 0
+        ? raw.restTimeMinutes
+        : undefined,
+    maxStorageDays:
+      typeof raw.maxStorageDays === 'number' && raw.maxStorageDays > 0
+        ? raw.maxStorageDays
+        : undefined,
   };
 
   recipe.ingredients = recipe.ingredients

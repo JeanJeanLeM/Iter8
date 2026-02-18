@@ -4,6 +4,9 @@ const {
   getRealization,
   createRealization,
   deleteRealization,
+  getRecipe,
+  createShoppingListItems,
+  deleteShoppingListItemsByRealizationId,
 } = require('~/models');
 const { requireJwtAuth } = require('~/server/middleware');
 
@@ -64,6 +67,7 @@ router.get('/:id', async (req, res) => {
 /**
  * POST /api/journal
  * Create a journal entry (realization). Body: { recipeId, realizedAt?, comment? }
+ * Also adds the recipe ingredients to the shopping list (name only), linked to this entry.
  */
 router.post('/', async (req, res) => {
   try {
@@ -72,13 +76,22 @@ router.post('/', async (req, res) => {
     if (!recipeId) {
       return res.status(400).json({ error: 'recipeId is required.' });
     }
+    const userId = req.user.id;
     const realizedAt = body.realizedAt ? new Date(body.realizedAt) : undefined;
     const entry = await createRealization({
-      userId: req.user.id,
+      userId,
       recipeId,
       realizedAt,
       comment: body.comment,
     });
+    const recipe = await getRecipe(userId, recipeId);
+    if (recipe?.ingredients?.length) {
+      await createShoppingListItems({
+        userId,
+        sourceRealizationId: entry._id,
+        items: recipe.ingredients.map((ing) => ({ name: ing.name })),
+      });
+    }
     res.status(201).json(entry);
   } catch (error) {
     if (error.message === 'Recipe not found') {
@@ -91,10 +104,14 @@ router.post('/', async (req, res) => {
 /**
  * DELETE /api/journal/:id
  * Delete a journal entry (must belong to the user).
+ * Also removes from the shopping list any ingredients that were added for this entry.
  */
 router.delete('/:id', async (req, res) => {
   try {
-    const deleted = await deleteRealization(req.user.id, req.params.id);
+    const userId = req.user.id;
+    const id = req.params.id;
+    await deleteShoppingListItemsByRealizationId(userId, id);
+    const deleted = await deleteRealization(userId, id);
     if (!deleted) {
       return res.status(404).json({ error: 'Journal entry not found.' });
     }

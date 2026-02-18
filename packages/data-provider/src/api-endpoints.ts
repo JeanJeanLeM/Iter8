@@ -388,6 +388,23 @@ export const journal = (params?: q.JournalListParams) =>
   `${BASE_URL}/api/journal${params ? buildQuery(params as Record<string, unknown>) : ''}`;
 export const journalEntry = (id: string) => `${BASE_URL}/api/journal/${encodeURIComponent(id)}`;
 
+/* Shopping list */
+export const shoppingList = (params?: q.ShoppingListParams) =>
+  `${BASE_URL}/api/shopping-list${params ? buildQuery(params as Record<string, unknown>) : ''}`;
+export const shoppingListItem = (id: string) =>
+  `${BASE_URL}/api/shopping-list/${encodeURIComponent(id)}`;
+
+/* Ingredients gallery */
+export const ingredients = () => `${BASE_URL}/api/ingredients`;
+export const ingredient = (id: string) =>
+  `${BASE_URL}/api/ingredients/${encodeURIComponent(id)}`;
+
+/* Meal planner */
+export const mealPlannerPlan = () => `${BASE_URL}/api/meal-planner/plan`;
+export const mealPlannerPlanApply = () => `${BASE_URL}/api/meal-planner/plan/apply`;
+export const mealPlannerCalendar = (params: q.MealPlannerCalendarParams) =>
+  `${BASE_URL}/api/meal-planner/calendar${buildQuery(params as Record<string, unknown>)}`;
+
 export const searchPrincipals = (params: q.PrincipalSearchParams) => {
   const { q: query, limit, types } = params;
   let url = `${BASE_URL}/api/permissions/search-principals?q=${encodeURIComponent(query)}`;

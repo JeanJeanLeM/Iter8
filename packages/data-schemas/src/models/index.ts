@@ -30,6 +30,9 @@ import { createGroupModel } from './group';
 import { createRecipeModel } from './recipe';
 import { createRecipeVoteModel } from './recipeVote';
 import { createRealizationModel } from './realization';
+import { createShoppingListItemModel } from './shoppingListItem';
+import { createPlannedMealModel } from './plannedMeal';
+import { createIngredientModel } from './ingredient';
 
 /**
  * Creates all database models for all collections
@@ -68,5 +71,8 @@ export function createModels(mongoose: typeof import('mongoose')) {
     Recipe: createRecipeModel(mongoose),
     RecipeVote: createRecipeVoteModel(mongoose),
     Realization: createRealizationModel(mongoose),
+    ShoppingListItem: createShoppingListItemModel(mongoose),
+    PlannedMeal: createPlannedMealModel(mongoose),
+    Ingredient: createIngredientModel(mongoose),
   };
 }

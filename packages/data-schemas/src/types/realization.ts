@@ -21,10 +21,11 @@ export interface IRealizationLean {
   updatedAt?: Date;
 }
 
-/** List item with recipe title and image for display */
+/** List item with recipe title and emoji for display */
 export interface IRealizationWithRecipe extends IRealizationLean {
   recipeTitle?: string;
   recipeImageUrl?: string;
+  recipeEmoji?: string;
   recipeParentId?: Types.ObjectId | null;
   variationNote?: string;
 }

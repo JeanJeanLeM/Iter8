@@ -15,6 +15,7 @@ export default function NewRecipeDialog({ open, onOpenChange }: NewRecipeDialogP
   const localize = useLocalize();
   const { showToast } = useToastContext();
   const [title, setTitle] = useState('');
+  const [emoji, setEmoji] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [dishType, setDishType] = useState<'entree' | 'plat' | 'dessert' | ''>('');
@@ -26,6 +27,7 @@ export default function NewRecipeDialog({ open, onOpenChange }: NewRecipeDialogP
       showToast({ message: localize('com_ui_recipe_created') });
       onOpenChange(false);
       setTitle('');
+      setEmoji('');
       setDescription('');
       setImageUrl('');
       setDishType('');
@@ -53,6 +55,7 @@ export default function NewRecipeDialog({ open, onOpenChange }: NewRecipeDialogP
     }
     createMutation.mutate({
       title: t,
+      emoji: emoji.trim() || undefined,
       description: description.trim() || undefined,
       imageUrl: imageUrl.trim() || undefined,
       dishType: dishType || undefined,
@@ -79,6 +82,19 @@ export default function NewRecipeDialog({ open, onOpenChange }: NewRecipeDialogP
               placeholder={localize('com_ui_recipe_title_placeholder')}
               className="w-full rounded border border-border-medium bg-surface-primary-alt px-3 py-2 text-text-primary"
               autoFocus
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-text-primary">
+              {localize('com_ui_recipe_emoji')}
+            </label>
+            <input
+              type="text"
+              value={emoji}
+              onChange={(e) => setEmoji(e.target.value)}
+              placeholder="🍽️"
+              maxLength={4}
+              className="w-16 rounded border border-border-medium bg-surface-primary-alt px-2 py-2 text-2xl text-text-primary"
             />
           </div>
           <div>

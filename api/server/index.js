@@ -82,8 +82,8 @@ const startServer = async () => {
 
   /* Middleware */
   app.use(noIndex);
-  app.use(express.json({ limit: '3mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '3mb' }));
+  app.use(express.json({ limit: '15mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '15mb' }));
   app.use(handleJsonParseError);
 
   /**
@@ -159,6 +159,9 @@ const startServer = async () => {
   app.use('/api/memories', routes.memories);
   app.use('/api/recipes', routes.recipes);
   app.use('/api/journal', routes.journal);
+  app.use('/api/shopping-list', routes.shoppingList);
+  app.use('/api/meal-planner', routes.mealPlanner);
+  app.use('/api/ingredients', routes.ingredients);
   app.use('/api/permissions', routes.accessPermissions);
 
   app.use('/api/tags', routes.tags);

@@ -13,6 +13,7 @@ const createOpenAIImageTools = require('./structured/OpenAIImageTools');
 const TavilySearchResults = require('./structured/TavilySearchResults');
 const createGeminiImageTool = require('./structured/GeminiImageGen');
 const UpdateRecipe = require('./structured/UpdateRecipe');
+const MealPlanner = require('./structured/MealPlanner');
 
 module.exports = {
   ...manifest,
@@ -29,4 +30,5 @@ module.exports = {
   createOpenAIImageTools,
   createGeminiImageTool,
   UpdateRecipe,
+  MealPlanner,
 };

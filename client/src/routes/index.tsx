@@ -24,6 +24,8 @@ import RecipeBookView from '~/components/Recipes/RecipeBookView';
 import RecipeDetailView from '~/components/Recipes/RecipeDetailView';
 import RecipeStepByStepView from '~/components/Recipes/RecipeStepByStepView';
 import { JournalView } from '~/components/Journal';
+import { ShoppingListView } from '~/components/ShoppingList';
+import { IngredientGalleryView } from '~/components/Ingredients';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -146,6 +148,14 @@ export const router = createBrowserRouter(
             {
               path: 'journal',
               element: <JournalView />,
+            },
+            {
+              path: 'shopping-list',
+              element: <ShoppingListView />,
+            },
+            {
+              path: 'ingredients',
+              element: <IngredientGalleryView />,
             },
           ],
         },

@@ -1,0 +1,2479 @@
+[
+  {
+    "name": "abricot",
+    "displayName": "Abricot",
+    "proteinG": 0.961,
+    "fatG": 0.405,
+    "carbohydrateG": 10.2,
+    "fiberG": 1.51,
+    "nutritionMicros": {
+      "ironMg": 0.163,
+      "magnesiumMg": 8.88,
+      "potassiumMg": 231,
+      "sodiumMg": 0,
+      "zincMg": 0.148,
+      "vitaminCMg": 3.07,
+      "calciumMg": 11.6
+    },
+    "usdaDescription": "Apricot, with skin, raw"
+  },
+  {
+    "name": "agneau",
+    "displayName": "Agneau",
+    "proteinG": 17.5,
+    "fatG": 18.6,
+    "carbohydrateG": -0.251,
+    "nutritionMicros": {
+      "ironMg": 1.64,
+      "magnesiumMg": 17.5,
+      "potassiumMg": 272,
+      "sodiumMg": 53.4,
+      "zincMg": 3.13,
+      "calciumMg": 6.58
+    },
+    "usdaDescription": "Lamb, ground, raw"
+  },
+  {
+    "name": "ail",
+    "displayName": "Ail",
+    "energyKcal": 143,
+    "proteinG": 6.62,
+    "fatG": 0.38,
+    "carbohydrateG": 28.2,
+    "fiberG": 2.7,
+    "nutritionMicros": {
+      "seleniumUg": 9.8,
+      "vitaminCMg": 10
+    },
+    "usdaDescription": "Garlic, raw"
+  },
+  {
+    "name": "amande",
+    "displayName": "Amande",
+    "proteinG": 7.337,
+    "fatG": 18.593,
+    "carbohydrateG": 7.403,
+    "fiberG": 3.24,
+    "nutritionMicros": {
+      "vitaminB12Ug": 0.028,
+      "folateUg": 14.167,
+      "calciumMg": 198.333,
+      "ironMg": 1.508,
+      "magnesiumMg": 94.343,
+      "potassiumMg": 275.033,
+      "sodiumMg": 39.932,
+      "zincMg": 1.143,
+      "seleniumUg": 0.397,
+      "vitaminDIu": 50.35,
+      "vitaminARaeUg": 41.4
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "ananas",
+    "displayName": "Ananas",
+    "proteinG": 0.461,
+    "fatG": 0.211,
+    "carbohydrateG": 14.1,
+    "fiberG": 0.935,
+    "nutritionMicros": {
+      "ironMg": 0.054,
+      "magnesiumMg": 13.4,
+      "potassiumMg": 137,
+      "sodiumMg": 0,
+      "zincMg": 0.107,
+      "vitaminCMg": 58.6,
+      "vitaminB12Ug": 0.11,
+      "calciumMg": 12.5
+    },
+    "usdaDescription": "Pineapple, raw"
+  },
+  {
+    "name": "anchois",
+    "displayName": "Anchois",
+    "proteinG": 26.9,
+    "fatG": 9.85,
+    "carbohydrateG": 2.41,
+    "nutritionMicros": {
+      "ironMg": 2.69,
+      "magnesiumMg": 228,
+      "potassiumMg": 298,
+      "sodiumMg": 5400,
+      "zincMg": 2.54,
+      "seleniumUg": 48.2,
+      "calciumMg": 240
+    },
+    "usdaDescription": "Anchovies, canned in olive oil, with salt, drained"
+  },
+  {
+    "name": "asperge",
+    "displayName": "Asperge",
+    "proteinG": 1.44,
+    "fatG": 0.216,
+    "carbohydrateG": 5.1,
+    "fiberG": 1.88,
+    "nutritionMicros": {
+      "ironMg": 0.444,
+      "magnesiumMg": 13.8,
+      "potassiumMg": 278,
+      "sodiumMg": 2.46,
+      "zincMg": 0.596,
+      "vitaminCMg": 9.15,
+      "vitaminB12Ug": 0.112,
+      "folateUg": 182,
+      "calciumMg": 20.6
+    },
+    "usdaDescription": "Asparagus, green, raw"
+  },
+  {
+    "name": "aubergine",
+    "displayName": "Aubergine",
+    "proteinG": 0.852,
+    "fatG": 0.12,
+    "carbohydrateG": 5.4,
+    "fiberG": 2.45,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 13.5,
+      "potassiumMg": 222,
+      "sodiumMg": 0.442,
+      "zincMg": 0.119,
+      "calciumMg": 11.1,
+      "folateUg": 20,
+      "vitaminCMg": 0.8
+    },
+    "usdaDescription": "Eggplant, raw"
+  },
+  {
+    "name": "avocat",
+    "displayName": "Avocat",
+    "proteinG": 1.81,
+    "fatG": 20.3,
+    "carbohydrateG": 8.32,
+    "nutritionMicros": {
+      "ironMg": 0.613,
+      "magnesiumMg": 32.8,
+      "potassiumMg": 576,
+      "sodiumMg": 0,
+      "zincMg": 0.46,
+      "vitaminCMg": 0,
+      "vitaminB12Ug": 0.167,
+      "folateUg": 129,
+      "calciumMg": 14.5
+    },
+    "usdaDescription": "Avocado, Hass, peeled, raw"
+  },
+  {
+    "name": "avoine",
+    "displayName": "Avoine",
+    "proteinG": 0.797,
+    "fatG": 2.75,
+    "carbohydrateG": 5.1,
+    "fiberG": 0,
+    "nutritionMicros": {
+      "vitaminB12Ug": 0.006,
+      "folateUg": 0,
+      "calciumMg": 148,
+      "ironMg": 0.261,
+      "magnesiumMg": 5.91,
+      "potassiumMg": 148,
+      "sodiumMg": 42,
+      "zincMg": 0.091,
+      "seleniumUg": 0,
+      "vitaminDIu": 68
+    },
+    "usdaDescription": "Oat milk, unsweetened, plain, refrigerated"
+  },
+  {
+    "name": "babeurre",
+    "displayName": "Babeurre",
+    "proteinG": 3.46,
+    "fatG": 1.08,
+    "carbohydrateG": 4.81,
+    "nutritionMicros": {
+      "ironMg": 0.013,
+      "magnesiumMg": 11,
+      "potassiumMg": 158,
+      "sodiumMg": 92.5,
+      "zincMg": 0.426,
+      "vitaminB12Ug": 0.039,
+      "calciumMg": 120,
+      "vitaminDIu": 21.7
+    },
+    "usdaDescription": "Buttermilk, low fat"
+  },
+  {
+    "name": "banane",
+    "displayName": "Banane",
+    "energyKcal": 91,
+    "proteinG": 0.735,
+    "fatG": 0.255,
+    "carbohydrateG": 21.55,
+    "fiberG": 1.7,
+    "nutritionMicros": {
+      "folateUg": 19.5,
+      "vitaminB12Ug": 0.222,
+      "vitaminCMg": 11,
+      "vitaminARaeUg": 1,
+      "ironMg": 0,
+      "magnesiumMg": 28,
+      "sodiumMg": 0,
+      "calciumMg": 5,
+      "potassiumMg": 326,
+      "zincMg": 0.16,
+      "seleniumUg": 0
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "bar",
+    "displayName": "Bar (légine)",
+    "proteinG": 14.9,
+    "fatG": 16.6,
+    "carbohydrateG": 0.139,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 16.6,
+      "potassiumMg": 236,
+      "sodiumMg": 109,
+      "zincMg": 0.295,
+      "seleniumUg": 69.4,
+      "calciumMg": 6.82
+    },
+    "usdaDescription": "Sea bass, Chilean, frozen, wild caught"
+  },
+  {
+    "name": "betterave",
+    "displayName": "Betterave",
+    "proteinG": 1.65,
+    "fatG": 0.223,
+    "carbohydrateG": 6.725,
+    "fiberG": 2.85,
+    "nutritionMicros": {
+      "ironMg": 1.794,
+      "magnesiumMg": 47.7,
+      "potassiumMg": 355.5,
+      "sodiumMg": 196,
+      "zincMg": 0.313,
+      "vitaminCMg": 6.59,
+      "vitaminB12Ug": 0.115,
+      "folateUg": 127.5,
+      "calciumMg": 43.3
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "beurre",
+    "displayName": "Beurre",
+    "fatG": 81.85,
+    "nutritionMicros": {
+      "ironMg": 0.045,
+      "magnesiumMg": 1.6,
+      "potassiumMg": 21,
+      "zincMg": 0.07,
+      "sodiumMg": 267,
+      "folateUg": 5,
+      "vitaminARaeUg": 758,
+      "vitaminDIu": 16,
+      "vitaminB12Ug": 0,
+      "calciumMg": 17.5,
+      "seleniumUg": 0
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "biscuit",
+    "displayName": "Biscuit",
+    "energyKcal": 430,
+    "proteinG": 5.79,
+    "fatG": 14.3,
+    "carbohydrateG": 69.6,
+    "fiberG": 3.3,
+    "nutritionMicros": {
+      "calciumMg": 29,
+      "ironMg": 2.28,
+      "magnesiumMg": 32.4,
+      "potassiumMg": 245,
+      "sodiumMg": 314,
+      "zincMg": 0.62,
+      "seleniumUg": 6,
+      "folateUg": 34,
+      "vitaminB12Ug": 0.07
+    },
+    "usdaDescription": "Cookies, oatmeal, soft, with raisins"
+  },
+  {
+    "name": "bison",
+    "displayName": "Bison",
+    "proteinG": 19.9,
+    "fatG": 8.88,
+    "carbohydrateG": -0.15,
+    "nutritionMicros": {
+      "ironMg": 2.17,
+      "magnesiumMg": 18.5,
+      "potassiumMg": 301,
+      "sodiumMg": 55.7,
+      "zincMg": 3.76,
+      "calciumMg": 6.83
+    },
+    "usdaDescription": "Bison, ground, raw"
+  },
+  {
+    "name": "boeuf",
+    "displayName": "Boeuf",
+    "energyKcal": 156.667,
+    "proteinG": 21.76,
+    "fatG": 9.542,
+    "carbohydrateG": 0.098,
+    "nutritionMicros": {
+      "ironMg": 2.155,
+      "magnesiumMg": 16.68,
+      "potassiumMg": 309,
+      "sodiumMg": 49.927,
+      "zincMg": 3.958,
+      "calciumMg": 9.035,
+      "seleniumUg": 23.783,
+      "vitaminB12Ug": 0.669,
+      "vitaminDIu": 0
+    },
+    "usdaDescription": "Source: USDA (moyenne de 15 aliments)"
+  },
+  {
+    "name": "boulgour",
+    "displayName": "Boulgour",
+    "proteinG": 11.8,
+    "fatG": 2.42,
+    "carbohydrateG": 75.9,
+    "fiberG": 11.7,
+    "nutritionMicros": {
+      "ironMg": 2.62,
+      "magnesiumMg": 119,
+      "potassiumMg": 358,
+      "sodiumMg": 2.18,
+      "zincMg": 2.15,
+      "vitaminB12Ug": 0.223,
+      "calciumMg": 34.1
+    },
+    "usdaDescription": "Bulgur, dry, raw"
+  },
+  {
+    "name": "brocoli",
+    "displayName": "Brocoli",
+    "energyKcal": 31,
+    "proteinG": 2.57,
+    "fatG": 0.34,
+    "carbohydrateG": 6.27,
+    "fiberG": 2.4,
+    "nutritionMicros": {
+      "calciumMg": 46,
+      "potassiumMg": 303,
+      "zincMg": 0.42,
+      "seleniumUg": 1.6,
+      "vitaminB12Ug": 0.191,
+      "ironMg": 0.69,
+      "magnesiumMg": 21,
+      "sodiumMg": 36,
+      "vitaminCMg": 91.3,
+      "folateUg": 65,
+      "vitaminARaeUg": 8
+    },
+    "usdaDescription": "Broccoli, raw"
+  },
+  {
+    "name": "cacahuete",
+    "displayName": "Cacahuète",
+    "proteinG": 23.6,
+    "fatG": 46.35,
+    "carbohydrateG": 24.6,
+    "fiberG": 7.165,
+    "nutritionMicros": {
+      "vitaminB12Ug": 0.38,
+      "folateUg": 97.3,
+      "calciumMg": 49.45,
+      "ironMg": 1.7,
+      "magnesiumMg": 186.5,
+      "potassiumMg": 645,
+      "sodiumMg": 111.245,
+      "zincMg": 2.92,
+      "seleniumUg": 19
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "carotte",
+    "displayName": "Carotte",
+    "energyKcal": 37,
+    "proteinG": 0.852,
+    "fatG": 0.32,
+    "carbohydrateG": 9.1,
+    "fiberG": 2.997,
+    "nutritionMicros": {
+      "ironMg": 0.223,
+      "magnesiumMg": 11.433,
+      "potassiumMg": 242.333,
+      "sodiumMg": 71.767,
+      "zincMg": 0.225,
+      "seleniumUg": 0,
+      "vitaminB12Ug": 0.116,
+      "folateUg": 29.233,
+      "calciumMg": 35.233,
+      "vitaminCMg": 2.2
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "celeri",
+    "displayName": "Céleri",
+    "proteinG": 0.492,
+    "fatG": 0.162,
+    "carbohydrateG": 3.32,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 10.9,
+      "potassiumMg": 265,
+      "sodiumMg": 97.2,
+      "zincMg": 0.093,
+      "seleniumUg": 0,
+      "vitaminB12Ug": 0.052,
+      "calciumMg": 46.3
+    },
+    "usdaDescription": "Celery, raw"
+  },
+  {
+    "name": "cerise",
+    "displayName": "Cerise",
+    "proteinG": 1.04,
+    "fatG": 0.192,
+    "carbohydrateG": 16.2,
+    "nutritionMicros": {
+      "ironMg": 0.105,
+      "magnesiumMg": 12.1,
+      "potassiumMg": 230,
+      "sodiumMg": 0,
+      "zincMg": 0.065,
+      "vitaminCMg": 10.4,
+      "vitaminB12Ug": 0.049,
+      "calciumMg": 12.3
+    },
+    "usdaDescription": "Cherries, sweet, dark red, raw"
+  },
+  {
+    "name": "champignon",
+    "displayName": "Champignon",
+    "proteinG": 2.659,
+    "fatG": 0.275,
+    "carbohydrateG": 6.474,
+    "fiberG": 2.881,
+    "nutritionMicros": {
+      "ironMg": 0.478,
+      "magnesiumMg": 12.085,
+      "potassiumMg": 344.909,
+      "sodiumMg": 1.922,
+      "zincMg": 0.621,
+      "seleniumUg": 5.76,
+      "vitaminB12Ug": 0.102,
+      "calciumMg": 1.403,
+      "vitaminDIu": 7.926,
+      "folateUg": 39.9
+    },
+    "usdaDescription": "Source: USDA (moyenne de 11 aliments)"
+  },
+  {
+    "name": "chia",
+    "displayName": "Chia",
+    "proteinG": 17,
+    "fatG": 32.9,
+    "carbohydrateG": 38.3,
+    "nutritionMicros": {
+      "ironMg": 6.04,
+      "magnesiumMg": 326,
+      "potassiumMg": 642,
+      "sodiumMg": 0,
+      "zincMg": 5.56,
+      "vitaminB12Ug": 0.202,
+      "calciumMg": 595
+    },
+    "usdaDescription": "Chia seeds, dry, raw"
+  },
+  {
+    "name": "chou",
+    "displayName": "Chou",
+    "proteinG": 1.07,
+    "fatG": 0.225,
+    "carbohydrateG": 5.56,
+    "fiberG": 1.23,
+    "nutritionMicros": {
+      "ironMg": 0.19,
+      "magnesiumMg": 13.025,
+      "potassiumMg": 234.75,
+      "sodiumMg": 13.675,
+      "zincMg": 0.246,
+      "calciumMg": 42.425,
+      "folateUg": 68,
+      "vitaminCMg": 41.5,
+      "vitaminB12Ug": 0.134
+    },
+    "usdaDescription": "Source: USDA (moyenne de 4 aliments)"
+  },
+  {
+    "name": "chou de bruxelles",
+    "displayName": "Chou de Bruxelles",
+    "proteinG": 3.98,
+    "fatG": 0.565,
+    "carbohydrateG": 9.62,
+    "fiberG": 4.78,
+    "nutritionMicros": {
+      "ironMg": 0.73,
+      "magnesiumMg": 25,
+      "potassiumMg": 477,
+      "sodiumMg": 25.7,
+      "zincMg": 0.366,
+      "calciumMg": 38.6,
+      "folateUg": 86,
+      "vitaminCMg": 143
+    },
+    "usdaDescription": "Brussels sprouts, raw"
+  },
+  {
+    "name": "chou fleur",
+    "displayName": "Chou-fleur",
+    "proteinG": 1.64,
+    "fatG": 0.238,
+    "carbohydrateG": 4.72,
+    "fiberG": 1.95,
+    "nutritionMicros": {
+      "ironMg": 0.334,
+      "magnesiumMg": 14.2,
+      "potassiumMg": 274,
+      "sodiumMg": 20,
+      "zincMg": 0.234,
+      "calciumMg": 20.4,
+      "folateUg": 97,
+      "vitaminCMg": 67.1
+    },
+    "usdaDescription": "Cauliflower, raw"
+  },
+  {
+    "name": "chou kale",
+    "displayName": "Chou kale",
+    "energyKcal": 35.5,
+    "proteinG": 2.93,
+    "fatG": 1.35,
+    "carbohydrateG": 4.86,
+    "fiberG": 4.1,
+    "nutritionMicros": {
+      "calciumMg": 202,
+      "potassiumMg": 246,
+      "zincMg": 0.33,
+      "vitaminB12Ug": 0.105,
+      "ironMg": 1.22,
+      "magnesiumMg": 28.85,
+      "sodiumMg": 34.5,
+      "vitaminARaeUg": 193.5,
+      "vitaminCMg": 55.6,
+      "folateUg": 63.5
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "collard",
+    "displayName": "Collard",
+    "proteinG": 2.97,
+    "fatG": 0.77,
+    "carbohydrateG": 7.02,
+    "fiberG": 3.82,
+    "nutritionMicros": {
+      "ironMg": 0.75,
+      "magnesiumMg": 49.5,
+      "potassiumMg": 410,
+      "sodiumMg": 18.4,
+      "zincMg": 0.459,
+      "calciumMg": 276,
+      "folateUg": 168,
+      "vitaminCMg": 89.4
+    },
+    "usdaDescription": "Collards, raw"
+  },
+  {
+    "name": "compote de pommes",
+    "displayName": "Compote de pommes",
+    "proteinG": 0.273,
+    "fatG": 0.162,
+    "carbohydrateG": 12.3,
+    "nutritionMicros": {
+      "ironMg": 0.045,
+      "magnesiumMg": 3.94,
+      "potassiumMg": 108,
+      "sodiumMg": 0.504,
+      "zincMg": 0.003,
+      "vitaminCMg": 43.7,
+      "calciumMg": 3.82
+    },
+    "usdaDescription": "Applesauce, unsweetened, with added vitamin C"
+  },
+  {
+    "name": "concombre",
+    "displayName": "Concombre",
+    "proteinG": 0.625,
+    "fatG": 0.178,
+    "carbohydrateG": 2.95,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 10.1,
+      "potassiumMg": 170,
+      "sodiumMg": 1.52,
+      "zincMg": 0.204,
+      "calciumMg": 16.3
+    },
+    "usdaDescription": "Cucumber, with peel, raw"
+  },
+  {
+    "name": "coquille saint-jacques",
+    "displayName": "Coquille Saint-Jacques",
+    "proteinG": 14.95,
+    "fatG": 0.456,
+    "carbohydrateG": 2.125,
+    "nutritionMicros": {
+      "ironMg": 0.193,
+      "magnesiumMg": 38.5,
+      "potassiumMg": 268.5,
+      "sodiumMg": 282.5,
+      "zincMg": 1.01,
+      "seleniumUg": 22.05,
+      "calciumMg": 12.25
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "cornichon",
+    "displayName": "Cornichon",
+    "energyKcal": 12,
+    "proteinG": 0.48,
+    "fatG": 0.43,
+    "carbohydrateG": 1.99,
+    "fiberG": 1,
+    "nutritionMicros": {
+      "folateUg": 8,
+      "sodiumMg": 808,
+      "vitaminARaeUg": 4,
+      "calciumMg": 54,
+      "potassiumMg": 112,
+      "zincMg": 0.11,
+      "vitaminB12Ug": 0.034,
+      "ironMg": 0.23,
+      "magnesiumMg": 7.1,
+      "vitaminCMg": 2.1
+    },
+    "usdaDescription": "Pickles, cucumber, dill or kosher dill"
+  },
+  {
+    "name": "courge",
+    "displayName": "Courge",
+    "proteinG": 0.987,
+    "fatG": 0.173,
+    "carbohydrateG": 7.165,
+    "fiberG": 1.668,
+    "nutritionMicros": {
+      "ironMg": 0.158,
+      "magnesiumMg": 16.167,
+      "potassiumMg": 307.667,
+      "sodiumMg": 0.104,
+      "zincMg": 0.199,
+      "vitaminCMg": 10.375,
+      "folateUg": 42.617,
+      "calciumMg": 20.5,
+      "vitaminB12Ug": 0.104
+    },
+    "usdaDescription": "Source: USDA (moyenne de 6 aliments)"
+  },
+  {
+    "name": "crabe des neiges",
+    "displayName": "Crabe des neiges",
+    "proteinG": 15.5,
+    "fatG": 0.294,
+    "carbohydrateG": 1.11,
+    "nutritionMicros": {
+      "ironMg": 0.276,
+      "magnesiumMg": 58.4,
+      "potassiumMg": 193,
+      "sodiumMg": 728,
+      "zincMg": 3.37,
+      "seleniumUg": 60,
+      "calciumMg": 97.8
+    },
+    "usdaDescription": "Snow crab, legs only, frozen  "
+  },
+  {
+    "name": "cranberry",
+    "displayName": "Cranberry",
+    "proteinG": 0,
+    "fatG": 0.338,
+    "carbohydrateG": 7.26,
+    "nutritionMicros": {
+      "ironMg": 0.126,
+      "magnesiumMg": 4.38,
+      "potassiumMg": 70.6,
+      "sodiumMg": 6.34,
+      "zincMg": 0.041,
+      "vitaminCMg": 0,
+      "vitaminB12Ug": 0.009,
+      "folateUg": 8.97,
+      "calciumMg": 6.64
+    },
+    "usdaDescription": "Cranberry juice, not fortified, from concentrate, shelf stable"
+  },
+  {
+    "name": "creme",
+    "displayName": "Crème",
+    "proteinG": 3.627,
+    "fatG": 29.033,
+    "carbohydrateG": 4.64,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 8.327,
+      "potassiumMg": 125.3,
+      "sodiumMg": 146.2,
+      "zincMg": 0.401,
+      "vitaminB12Ug": 0.036,
+      "calciumMg": 88.433
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "crustace",
+    "displayName": "Crustacé",
+    "proteinG": 17.1,
+    "fatG": 0.805,
+    "carbohydrateG": 0.243,
+    "nutritionMicros": {
+      "ironMg": 0.577,
+      "magnesiumMg": 32.8,
+      "potassiumMg": 190.5,
+      "sodiumMg": 403,
+      "zincMg": 2.209,
+      "seleniumUg": 32.65,
+      "calciumMg": 87.8
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "dinde",
+    "displayName": "Dinde",
+    "energyKcal": 220,
+    "proteinG": 22.2,
+    "fatG": 10.595,
+    "carbohydrateG": 0,
+    "nutritionMicros": {
+      "vitaminB12Ug": 0.497,
+      "calciumMg": 27.3,
+      "potassiumMg": 275,
+      "zincMg": 3.36,
+      "seleniumUg": 28.4,
+      "ironMg": 1.325,
+      "magnesiumMg": 23.2,
+      "sodiumMg": 85.1,
+      "vitaminARaeUg": 30
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "epeautre",
+    "displayName": "Épeautre",
+    "proteinG": 12.6,
+    "fatG": 3.1,
+    "carbohydrateG": 72.1,
+    "fiberG": 7.31,
+    "nutritionMicros": {
+      "ironMg": 3.2,
+      "magnesiumMg": 119,
+      "potassiumMg": 385,
+      "sodiumMg": 0.845,
+      "zincMg": 3.97,
+      "vitaminB12Ug": 0.235,
+      "calciumMg": 25.9
+    },
+    "usdaDescription": "Farro, pearled, dry, raw"
+  },
+  {
+    "name": "epinard",
+    "displayName": "Épinard",
+    "proteinG": 2.88,
+    "fatG": 0.611,
+    "carbohydrateG": 2.525,
+    "fiberG": 1.575,
+    "nutritionMicros": {
+      "ironMg": 1.155,
+      "magnesiumMg": 92.95,
+      "potassiumMg": 521,
+      "sodiumMg": 109,
+      "zincMg": 0.435,
+      "vitaminCMg": 28.4,
+      "seleniumUg": 0,
+      "vitaminB12Ug": 0.205,
+      "folateUg": 114.5,
+      "calciumMg": 67.5,
+      "vitaminARaeUg": 294.5
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "espadon",
+    "displayName": "Espadon",
+    "proteinG": 19.2,
+    "fatG": 8.12,
+    "carbohydrateG": 0.45,
+    "nutritionMicros": {
+      "ironMg": 0.096,
+      "magnesiumMg": 26.7,
+      "potassiumMg": 414,
+      "sodiumMg": 56.9,
+      "zincMg": 0.541,
+      "seleniumUg": 60.7,
+      "calciumMg": 3.62
+    },
+    "usdaDescription": "Swordfish, frozen, wild caught"
+  },
+  {
+    "name": "farine",
+    "displayName": "Farine",
+    "energyKcal": 370.083,
+    "proteinG": 13.249,
+    "fatG": 5.408,
+    "carbohydrateG": 69.721,
+    "fiberG": 8.332,
+    "nutritionMicros": {
+      "ironMg": 4.033,
+      "magnesiumMg": 105.368,
+      "potassiumMg": 533.107,
+      "sodiumMg": 6.081,
+      "zincMg": 1.889,
+      "seleniumUg": 15.754,
+      "vitaminB12Ug": 0.178,
+      "folateUg": 85.329,
+      "calciumMg": 57.55,
+      "vitaminCMg": 4.05
+    },
+    "usdaDescription": "Source: USDA (moyenne de 28 aliments)"
+  },
+  {
+    "name": "fenouil",
+    "displayName": "Fenouil",
+    "proteinG": 0.922,
+    "fatG": 0.14,
+    "carbohydrateG": 5.49,
+    "fiberG": 2.05,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 15,
+      "potassiumMg": 332,
+      "sodiumMg": 49,
+      "zincMg": 0.141,
+      "vitaminCMg": 14.7,
+      "folateUg": 37,
+      "calciumMg": 41.3
+    },
+    "usdaDescription": "Fennel, bulb, raw"
+  },
+  {
+    "name": "figue",
+    "displayName": "Figue",
+    "energyKcal": 249,
+    "proteinG": 3.3,
+    "fatG": 0.92,
+    "carbohydrateG": 63.9,
+    "fiberG": 9.8,
+    "nutritionMicros": {
+      "vitaminCMg": 1.2,
+      "folateUg": 9,
+      "ironMg": 2.03,
+      "magnesiumMg": 67.6,
+      "sodiumMg": 10,
+      "vitaminARaeUg": 0,
+      "calciumMg": 162,
+      "potassiumMg": 680,
+      "zincMg": 0.66,
+      "seleniumUg": 0.6,
+      "vitaminB12Ug": 0.106
+    },
+    "usdaDescription": "Figs, dried, uncooked"
+  },
+  {
+    "name": "fletan",
+    "displayName": "Flétan",
+    "proteinG": 19.1,
+    "fatG": 0.592,
+    "carbohydrateG": -0.06,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 23.1,
+      "potassiumMg": 430,
+      "sodiumMg": 108,
+      "zincMg": 0.327,
+      "seleniumUg": 53.7,
+      "calciumMg": 4.1
+    },
+    "usdaDescription": "Halibut, frozen, wild caught"
+  },
+  {
+    "name": "fonio",
+    "displayName": "Fonio",
+    "proteinG": 7.17,
+    "fatG": 1.69,
+    "carbohydrateG": 81.3,
+    "fiberG": 2.2,
+    "nutritionMicros": {
+      "ironMg": 2.66,
+      "magnesiumMg": 39.1,
+      "potassiumMg": 43.8,
+      "sodiumMg": 2.97,
+      "zincMg": 1.85,
+      "vitaminB12Ug": 0.025,
+      "calciumMg": 11.6
+    },
+    "usdaDescription": "Fonio, grain, dry, raw"
+  },
+  {
+    "name": "fraise",
+    "displayName": "Fraise",
+    "proteinG": 0.641,
+    "fatG": 0.22,
+    "carbohydrateG": 7.96,
+    "nutritionMicros": {
+      "ironMg": 0.255,
+      "magnesiumMg": 12.5,
+      "potassiumMg": 161,
+      "sodiumMg": 0,
+      "zincMg": 0.114,
+      "vitaminCMg": 59.6,
+      "calciumMg": 16.9
+    },
+    "usdaDescription": "Strawberries, raw"
+  },
+  {
+    "name": "framboise",
+    "displayName": "Framboise",
+    "proteinG": 1.01,
+    "fatG": 0.188,
+    "carbohydrateG": 12.9,
+    "nutritionMicros": {
+      "ironMg": 0.45,
+      "magnesiumMg": 19.2,
+      "potassiumMg": 156,
+      "sodiumMg": 0,
+      "zincMg": 0.221,
+      "vitaminCMg": 23,
+      "calciumMg": 16.4
+    },
+    "usdaDescription": "Raspberries, raw"
+  },
+  {
+    "name": "fromage",
+    "displayName": "Fromage",
+    "energyKcal": 314.222,
+    "proteinG": 21.101,
+    "fatG": 24.624,
+    "carbohydrateG": 4.477,
+    "nutritionMicros": {
+      "calciumMg": 685.588,
+      "ironMg": 0.21,
+      "magnesiumMg": 26.682,
+      "potassiumMg": 125.2,
+      "sodiumMg": 972.176,
+      "zincMg": 3.079,
+      "vitaminARaeUg": 220.125,
+      "vitaminB12Ug": 0.067,
+      "seleniumUg": 22.875,
+      "folateUg": 12.667,
+      "vitaminDIu": 50.118
+    },
+    "usdaDescription": "Source: USDA (moyenne de 17 aliments)"
+  },
+  {
+    "name": "fromage cottage",
+    "displayName": "Fromage cottage",
+    "proteinG": 11.6,
+    "fatG": 4.22,
+    "carbohydrateG": 4.6,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 9.19,
+      "potassiumMg": 124,
+      "sodiumMg": 350,
+      "zincMg": 0.454,
+      "vitaminB12Ug": 0.047,
+      "calciumMg": 88.3
+    },
+    "usdaDescription": "Cottage cheese, full fat, large or small curd"
+  },
+  {
+    "name": "graine",
+    "displayName": "Graine",
+    "energyKcal": 612,
+    "proteinG": 23.267,
+    "fatG": 48.167,
+    "carbohydrateG": 20.1,
+    "fiberG": 7.533,
+    "nutritionMicros": {
+      "ironMg": 5.98,
+      "magnesiumMg": 386.667,
+      "potassiumMg": 679,
+      "sodiumMg": 177.333,
+      "zincMg": 5.973,
+      "seleniumUg": 39.567,
+      "calciumMg": 77.133,
+      "vitaminARaeUg": 1,
+      "vitaminB12Ug": 0.76,
+      "folateUg": 169,
+      "vitaminCMg": 0
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "haricots",
+    "displayName": "Haricots",
+    "energyKcal": 21,
+    "proteinG": 18.157,
+    "fatG": 1.209,
+    "carbohydrateG": 21.122,
+    "fiberG": 4.173,
+    "nutritionMicros": {
+      "calciumMg": 127.107,
+      "ironMg": 4.197,
+      "potassiumMg": 1059.481,
+      "magnesiumMg": 123.33,
+      "zincMg": 2.399,
+      "sodiumMg": 160.9,
+      "vitaminB12Ug": 0.121
+    },
+    "usdaDescription": "Source: USDA (moyenne de 27 aliments)"
+  },
+  {
+    "name": "homard",
+    "displayName": "Homard",
+    "proteinG": 13,
+    "fatG": 0.367,
+    "carbohydrateG": 0.886,
+    "nutritionMicros": {
+      "ironMg": 0.173,
+      "magnesiumMg": 39,
+      "potassiumMg": 213,
+      "sodiumMg": 509,
+      "zincMg": 1.54,
+      "seleniumUg": 63.1,
+      "calciumMg": 71.6
+    },
+    "usdaDescription": "Lobster, tail only, frozen, wild caught"
+  },
+  {
+    "name": "houmous",
+    "displayName": "Houmous",
+    "energyKcal": 229,
+    "proteinG": 7.35,
+    "fatG": 17.1,
+    "carbohydrateG": 14.9,
+    "fiberG": 5.4,
+    "nutritionMicros": {
+      "vitaminCMg": 0,
+      "folateUg": 36,
+      "ironMg": 2.41,
+      "magnesiumMg": 71.1,
+      "sodiumMg": 438,
+      "vitaminARaeUg": 1,
+      "vitaminB12Ug": 0.143,
+      "calciumMg": 41,
+      "potassiumMg": 289,
+      "zincMg": 1.38,
+      "seleniumUg": 16.2
+    },
+    "usdaDescription": "Hummus, commercial"
+  },
+  {
+    "name": "huile",
+    "displayName": "Huile",
+    "energyKcal": 833,
+    "proteinG": 0,
+    "fatG": 99.1,
+    "carbohydrateG": 0.84,
+    "nutritionMicros": {
+      "ironMg": 0.05,
+      "calciumMg": 1,
+      "zincMg": 0.02,
+      "potassiumMg": 0,
+      "magnesiumMg": 0,
+      "sodiumMg": 0
+    },
+    "usdaDescription": "Source: USDA (moyenne de 9 aliments)"
+  },
+  {
+    "name": "jambon",
+    "displayName": "Jambon",
+    "energyKcal": 113.5,
+    "proteinG": 18.15,
+    "fatG": 3.705,
+    "carbohydrateG": 1.315,
+    "nutritionMicros": {
+      "ironMg": 0.72,
+      "magnesiumMg": 19.55,
+      "sodiumMg": 1035,
+      "potassiumMg": 454.5,
+      "zincMg": 1.64,
+      "calciumMg": 5.5
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "jus",
+    "displayName": "Jus",
+    "proteinG": 0.19,
+    "nutritionMicros": {
+      "ironMg": 0.226,
+      "magnesiumMg": 11.387,
+      "potassiumMg": 184,
+      "sodiumMg": 5.233,
+      "zincMg": 0.079,
+      "vitaminCMg": 0,
+      "folateUg": 5.277,
+      "calciumMg": 14.467,
+      "vitaminB12Ug": 0.081
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "ketchup",
+    "displayName": "Ketchup",
+    "energyKcal": 117,
+    "proteinG": 1.11,
+    "fatG": 0.55,
+    "carbohydrateG": 26.8,
+    "nutritionMicros": {
+      "calciumMg": 14,
+      "ironMg": 0.43,
+      "magnesiumMg": 13.5,
+      "potassiumMg": 249,
+      "sodiumMg": 949,
+      "zincMg": 0.16
+    },
+    "usdaDescription": "Ketchup, restaurant"
+  },
+  {
+    "name": "khorasan",
+    "displayName": "Khorasan",
+    "proteinG": 14.8,
+    "fatG": 2.8,
+    "carbohydrateG": 71.8,
+    "fiberG": 10.5,
+    "nutritionMicros": {
+      "ironMg": 3.87,
+      "magnesiumMg": 130,
+      "potassiumMg": 450,
+      "sodiumMg": 3.94,
+      "zincMg": 4.46,
+      "vitaminB12Ug": 0.258,
+      "calciumMg": 24.1
+    },
+    "usdaDescription": "Khorasan, grain, dry, raw"
+  },
+  {
+    "name": "kiwi",
+    "displayName": "Kiwi",
+    "energyKcal": 58,
+    "proteinG": 1.035,
+    "fatG": 0.54,
+    "carbohydrateG": 13.9,
+    "fiberG": 2.565,
+    "nutritionMicros": {
+      "ironMg": 0.138,
+      "magnesiumMg": 15.25,
+      "potassiumMg": 250,
+      "sodiumMg": 3.64,
+      "zincMg": 0.298,
+      "vitaminCMg": 66.75,
+      "folateUg": 29.4,
+      "calciumMg": 29.7,
+      "vitaminB12Ug": 0.061,
+      "seleniumUg": 0.2,
+      "vitaminARaeUg": 4
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "lait",
+    "displayName": "Lait",
+    "energyKcal": 46.75,
+    "proteinG": 3.36,
+    "fatG": 1.533,
+    "carbohydrateG": 4.908,
+    "nutritionMicros": {
+      "potassiumMg": 158.75,
+      "zincMg": 0.433,
+      "magnesiumMg": 12.1,
+      "sodiumMg": 39.25,
+      "vitaminB12Ug": 0.06,
+      "seleniumUg": 1.95,
+      "vitaminARaeUg": 59.25,
+      "vitaminDIu": 42.5,
+      "folateUg": 1.5,
+      "ironMg": 0,
+      "calciumMg": 126.75
+    },
+    "usdaDescription": "Source: USDA (moyenne de 4 aliments)"
+  },
+  {
+    "name": "laitue",
+    "displayName": "Laitue",
+    "energyKcal": 17,
+    "proteinG": 0.986,
+    "fatG": 0.133,
+    "carbohydrateG": 3.6,
+    "fiberG": 1.8,
+    "nutritionMicros": {
+      "vitaminARaeUg": 436,
+      "vitaminCMg": 9.713,
+      "folateUg": 50,
+      "vitaminB12Ug": 0.065,
+      "calciumMg": 31.84,
+      "potassiumMg": 250,
+      "zincMg": 0.258,
+      "seleniumUg": 0.4,
+      "ironMg": 0.394,
+      "magnesiumMg": 11.442,
+      "sodiumMg": 23.225
+    },
+    "usdaDescription": "Source: USDA (moyenne de 5 aliments)"
+  },
+  {
+    "name": "lentille",
+    "displayName": "Lentille",
+    "proteinG": 23.6,
+    "fatG": 1.92,
+    "carbohydrateG": 62.2,
+    "nutritionMicros": {
+      "ironMg": 7.16,
+      "magnesiumMg": 107,
+      "potassiumMg": 949,
+      "sodiumMg": 0,
+      "zincMg": 3.86,
+      "calciumMg": 61.8
+    },
+    "usdaDescription": "Lentils, dry"
+  },
+  {
+    "name": "lin",
+    "displayName": "Lin",
+    "proteinG": 18,
+    "fatG": 37.3,
+    "carbohydrateG": 34.4,
+    "fiberG": 23.1,
+    "nutritionMicros": {
+      "vitaminB12Ug": 0.393,
+      "folateUg": 41.4,
+      "calciumMg": 230,
+      "ironMg": 5.78,
+      "magnesiumMg": 372,
+      "potassiumMg": 793,
+      "sodiumMg": 36.7,
+      "zincMg": 4.74,
+      "seleniumUg": 136
+    },
+    "usdaDescription": "Flaxseed, ground"
+  },
+  {
+    "name": "mahi-mahi",
+    "displayName": "Mahi-mahi",
+    "proteinG": 19.8,
+    "fatG": 0.377,
+    "carbohydrateG": 0.287,
+    "nutritionMicros": {
+      "ironMg": 0.052,
+      "magnesiumMg": 28,
+      "potassiumMg": 408,
+      "sodiumMg": 51.9,
+      "zincMg": 0.296,
+      "seleniumUg": 50.2,
+      "calciumMg": 6
+    },
+    "usdaDescription": "Mahi mahi, frozen, wild caught"
+  },
+  {
+    "name": "mais",
+    "displayName": "Maïs",
+    "proteinG": 5.175,
+    "fatG": 2.985,
+    "carbohydrateG": 45.7,
+    "fiberG": 4.735,
+    "nutritionMicros": {
+      "ironMg": 1.044,
+      "magnesiumMg": 59.55,
+      "potassiumMg": 257,
+      "sodiumMg": 1.365,
+      "zincMg": 1.088,
+      "vitaminB12Ug": 0.19,
+      "calciumMg": 56.328
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "mandarine",
+    "displayName": "Mandarine",
+    "proteinG": 1.04,
+    "fatG": 0.458,
+    "carbohydrateG": 13.4,
+    "fiberG": 1.33,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 12.6,
+      "potassiumMg": 167,
+      "sodiumMg": 0,
+      "zincMg": 0.069,
+      "vitaminCMg": 21.2,
+      "calciumMg": 44
+    },
+    "usdaDescription": "Mandarin, seedless, peeled, raw"
+  },
+  {
+    "name": "mango",
+    "displayName": "Mango",
+    "proteinG": 0.625,
+    "fatG": 0.627,
+    "carbohydrateG": 16.35,
+    "fiberG": 1.52,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 10.45,
+      "potassiumMg": 184.5,
+      "sodiumMg": 0,
+      "zincMg": 0.084,
+      "vitaminCMg": 96.75,
+      "vitaminB12Ug": 0.09,
+      "calciumMg": 11.2
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "melon",
+    "displayName": "Melon",
+    "energyKcal": 34,
+    "proteinG": 0.676,
+    "fatG": 0.198,
+    "carbohydrateG": 8.155,
+    "fiberG": 0.8,
+    "nutritionMicros": {
+      "sodiumMg": 25.6,
+      "potassiumMg": 183,
+      "vitaminCMg": 13.3,
+      "folateUg": 14,
+      "ironMg": 0.19,
+      "magnesiumMg": 11.25,
+      "vitaminARaeUg": 232,
+      "calciumMg": 7.79,
+      "seleniumUg": 1.7,
+      "zincMg": 0.25,
+      "vitaminB12Ug": 0.04
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "millet",
+    "displayName": "Millet",
+    "proteinG": 10,
+    "fatG": 4.19,
+    "carbohydrateG": 74.4,
+    "fiberG": 2.62,
+    "nutritionMicros": {
+      "ironMg": 2.53,
+      "magnesiumMg": 106,
+      "potassiumMg": 214,
+      "sodiumMg": 0,
+      "zincMg": 2.26,
+      "vitaminB12Ug": 0.192,
+      "calciumMg": 9.1,
+      "seleniumUg": 23.1
+    },
+    "usdaDescription": "Millet, whole grain"
+  },
+  {
+    "name": "morue",
+    "displayName": "Morue",
+    "proteinG": 14.2,
+    "fatG": 0.216,
+    "carbohydrateG": 0.524,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 17.9,
+      "potassiumMg": 192,
+      "sodiumMg": 354,
+      "zincMg": 0.269,
+      "seleniumUg": 22.3,
+      "calciumMg": 9.01
+    },
+    "usdaDescription": "Cod, Pacific or Alaskan, frozen, wild caught"
+  },
+  {
+    "name": "moutarde",
+    "displayName": "Moutarde",
+    "energyKcal": 61,
+    "proteinG": 4.25,
+    "fatG": 3.38,
+    "carbohydrateG": 5.3,
+    "fiberG": 4.3,
+    "nutritionMicros": {
+      "zincMg": 0.64,
+      "folateUg": 7,
+      "vitaminCMg": 0.4,
+      "vitaminARaeUg": 4,
+      "ironMg": 1.59,
+      "magnesiumMg": 47.7,
+      "sodiumMg": 1100,
+      "seleniumUg": 34,
+      "calciumMg": 63,
+      "potassiumMg": 150,
+      "vitaminB12Ug": 0.069
+    },
+    "usdaDescription": "Mustard, prepared, yellow"
+  },
+  {
+    "name": "mure",
+    "displayName": "Mûre",
+    "proteinG": 1.53,
+    "fiberG": 5.3,
+    "nutritionMicros": {
+      "ironMg": 0.208,
+      "magnesiumMg": 20.6,
+      "potassiumMg": 167,
+      "sodiumMg": 1.55,
+      "zincMg": 0.189,
+      "vitaminCMg": 15.4,
+      "calciumMg": 15.4
+    },
+    "usdaDescription": "Blackberries, raw"
+  },
+  {
+    "name": "myrtille",
+    "displayName": "Myrtille",
+    "proteinG": 0.703,
+    "fatG": 0.306,
+    "carbohydrateG": 14.6,
+    "nutritionMicros": {
+      "ironMg": 0.34,
+      "magnesiumMg": 6.18,
+      "potassiumMg": 85.6,
+      "sodiumMg": 0,
+      "zincMg": 0.085,
+      "vitaminCMg": 8.06,
+      "calciumMg": 11.7
+    },
+    "usdaDescription": "Blueberries, raw"
+  },
+  {
+    "name": "navet",
+    "displayName": "Navet",
+    "proteinG": 0.953,
+    "fatG": 0.119,
+    "carbohydrateG": 7.27,
+    "fiberG": 1.92,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 10.4,
+      "potassiumMg": 262,
+      "sodiumMg": 12.8,
+      "zincMg": 0.156,
+      "vitaminCMg": 26.8,
+      "vitaminB12Ug": 0.118,
+      "folateUg": 60.2,
+      "calciumMg": 32.7
+    },
+    "usdaDescription": "Turnips, raw"
+  },
+  {
+    "name": "nectarine",
+    "displayName": "Nectarine",
+    "energyKcal": 39,
+    "proteinG": 1.06,
+    "fatG": 0.28,
+    "carbohydrateG": 9.18,
+    "fiberG": 1.5,
+    "nutritionMicros": {
+      "potassiumMg": 131,
+      "sodiumMg": 13,
+      "vitaminCMg": 2.9,
+      "calciumMg": 2,
+      "vitaminB12Ug": 0.025,
+      "zincMg": 0.21,
+      "seleniumUg": 0,
+      "vitaminARaeUg": 21,
+      "ironMg": 0.3,
+      "magnesiumMg": 8.8,
+      "folateUg": 6
+    },
+    "usdaDescription": "Nectarines, raw"
+  },
+  {
+    "name": "nuts",
+    "displayName": "Nuts",
+    "energyKcal": 620,
+    "proteinG": 15.635,
+    "fatG": 57.29,
+    "carbohydrateG": 21.46,
+    "fiberG": 6.976,
+    "nutritionMicros": {
+      "vitaminCMg": 0,
+      "calciumMg": 119.354,
+      "potassiumMg": 604.2,
+      "zincMg": 3.266,
+      "seleniumUg": 59.4,
+      "vitaminB12Ug": 0.252,
+      "ironMg": 3.414,
+      "magnesiumMg": 194.2,
+      "folateUg": 35,
+      "vitaminARaeUg": 2,
+      "sodiumMg": 26.076
+    },
+    "usdaDescription": "Source: USDA (moyenne de 10 aliments)"
+  },
+  {
+    "name": "oats",
+    "displayName": "Oats",
+    "proteinG": 13,
+    "fatG": 5.845,
+    "carbohydrateG": 69.25,
+    "nutritionMicros": {
+      "ironMg": 4.07,
+      "magnesiumMg": 127.5,
+      "potassiumMg": 363,
+      "sodiumMg": 0.49,
+      "zincMg": 2.79,
+      "seleniumUg": 27.2,
+      "vitaminB12Ug": 0.127,
+      "folateUg": 31,
+      "calciumMg": 48.4
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "oeuf",
+    "displayName": "Oeuf",
+    "energyKcal": 292.889,
+    "proteinG": 26.611,
+    "fatG": 18.919,
+    "carbohydrateG": 1.727,
+    "fiberG": 0,
+    "nutritionMicros": {
+      "ironMg": 3.429,
+      "magnesiumMg": 28.943,
+      "sodiumMg": 334.857,
+      "calciumMg": 117.857,
+      "potassiumMg": 305.571,
+      "zincMg": 2.564,
+      "vitaminDIu": 205.2,
+      "seleniumUg": 34.933,
+      "vitaminARaeUg": 180,
+      "vitaminB12Ug": 0.063,
+      "folateUg": 71
+    },
+    "usdaDescription": "Source: USDA (moyenne de 9 aliments)"
+  },
+  {
+    "name": "oignon",
+    "displayName": "Oignon",
+    "energyKcal": 101.25,
+    "proteinG": 1.795,
+    "fatG": 3.67,
+    "carbohydrateG": 15.63,
+    "fiberG": 1.925,
+    "nutritionMicros": {
+      "potassiumMg": 163.75,
+      "seleniumUg": 1.525,
+      "vitaminB12Ug": 0.127,
+      "vitaminCMg": 5.967,
+      "folateUg": 31,
+      "magnesiumMg": 12.525,
+      "sodiumMg": 94.5,
+      "ironMg": 0.452,
+      "calciumMg": 20.25,
+      "zincMg": 0.27
+    },
+    "usdaDescription": "Source: USDA (moyenne de 4 aliments)"
+  },
+  {
+    "name": "oignon vert",
+    "displayName": "Oignon vert",
+    "proteinG": 0.669,
+    "fiberG": 2.3,
+    "nutritionMicros": {
+      "ironMg": 1.04,
+      "magnesiumMg": 18.9,
+      "potassiumMg": 232,
+      "sodiumMg": 9.95,
+      "zincMg": 0.248,
+      "calciumMg": 59.4
+    },
+    "usdaDescription": "Green onion, (scallion), bulb and greens, root removed, raw"
+  },
+  {
+    "name": "olive",
+    "displayName": "Olive",
+    "energyKcal": 130,
+    "proteinG": 1.15,
+    "fatG": 12.9,
+    "carbohydrateG": 4.96,
+    "fiberG": 4,
+    "nutritionMicros": {
+      "potassiumMg": 43,
+      "sodiumMg": 1620,
+      "zincMg": 0.09,
+      "calciumMg": 121,
+      "ironMg": 0.31,
+      "magnesiumMg": 12.4,
+      "vitaminB12Ug": 0,
+      "folateUg": 0,
+      "vitaminCMg": 0,
+      "vitaminARaeUg": 25
+    },
+    "usdaDescription": "Olives, green, Manzanilla, stuffed with pimiento"
+  },
+  {
+    "name": "orange",
+    "displayName": "Orange",
+    "energyKcal": 47,
+    "proteinG": 0.819,
+    "fatG": 0.277,
+    "carbohydrateG": 10.7,
+    "fiberG": 2,
+    "nutritionMicros": {
+      "ironMg": 0.155,
+      "magnesiumMg": 10.533,
+      "potassiumMg": 176.333,
+      "sodiumMg": 4.768,
+      "zincMg": 0.058,
+      "vitaminCMg": 38.833,
+      "vitaminB12Ug": 0.054,
+      "folateUg": 27.933,
+      "calciumMg": 21.697,
+      "seleniumUg": 0
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "pain",
+    "displayName": "Pain",
+    "energyKcal": 262,
+    "proteinG": 10.865,
+    "fatG": 3.57,
+    "carbohydrateG": 46.15,
+    "fiberG": 4.15,
+    "nutritionMicros": {
+      "seleniumUg": 24.5,
+      "vitaminB12Ug": 0.154,
+      "calciumMg": 187,
+      "potassiumMg": 183.5,
+      "zincMg": 1.32,
+      "ironMg": 2.96,
+      "magnesiumMg": 51.75,
+      "sodiumMg": 463.5,
+      "folateUg": 42
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "pamplemousse",
+    "displayName": "Pamplemousse",
+    "energyKcal": 37,
+    "proteinG": 0.56,
+    "fatG": 0.484,
+    "carbohydrateG": 8.345,
+    "fiberG": 0.2,
+    "nutritionMicros": {
+      "ironMg": 0.043,
+      "magnesiumMg": 8.675,
+      "potassiumMg": 134.5,
+      "sodiumMg": 1.015,
+      "zincMg": 0.034,
+      "vitaminCMg": 31.75,
+      "vitaminB12Ug": 0.011,
+      "folateUg": 15.5,
+      "calciumMg": 12.44
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "panais",
+    "displayName": "Panais",
+    "proteinG": 1.27,
+    "fatG": 0.538,
+    "carbohydrateG": 19.3,
+    "fiberG": 5.35,
+    "nutritionMicros": {
+      "ironMg": 0.505,
+      "magnesiumMg": 22,
+      "potassiumMg": 493,
+      "sodiumMg": 0.491,
+      "zincMg": 0.328,
+      "vitaminCMg": 11.8,
+      "folateUg": 83.4,
+      "calciumMg": 44.2
+    },
+    "usdaDescription": "Parsnips, raw"
+  },
+  {
+    "name": "pasteque",
+    "displayName": "Pastèque",
+    "proteinG": 0.701,
+    "fatG": 0.966,
+    "carbohydrateG": 3.27,
+    "fiberG": 1.54,
+    "nutritionMicros": {
+      "ironMg": 0.011,
+      "magnesiumMg": 10.535,
+      "potassiumMg": 194.5,
+      "sodiumMg": 1.88,
+      "zincMg": 0.111,
+      "vitaminCMg": 6.775,
+      "folateUg": 20.8,
+      "calciumMg": 12.38,
+      "vitaminB12Ug": 0.029
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "patate douce",
+    "displayName": "Patate douce",
+    "proteinG": 1.58,
+    "fatG": 0.375,
+    "carbohydrateG": 17.3,
+    "nutritionMicros": {
+      "ironMg": 0.398,
+      "magnesiumMg": 19.1,
+      "potassiumMg": 486,
+      "sodiumMg": 0,
+      "zincMg": 0.337,
+      "vitaminCMg": 14.8,
+      "seleniumUg": 0,
+      "vitaminB12Ug": 0.124,
+      "calciumMg": 22.3
+    },
+    "usdaDescription": "Sweet potatoes, orange flesh, without skin, raw"
+  },
+  {
+    "name": "pawpaw",
+    "displayName": "Pawpaw",
+    "proteinG": 1.15,
+    "fiberG": 3.3,
+    "nutritionMicros": {
+      "ironMg": 0.075,
+      "magnesiumMg": 10.6,
+      "potassiumMg": 221,
+      "sodiumMg": 0.351,
+      "zincMg": 0.085,
+      "vitaminCMg": 27.6,
+      "folateUg": 116,
+      "calciumMg": 9.91
+    },
+    "usdaDescription": "Pawpaw, peeled, seeded, raw"
+  },
+  {
+    "name": "peche",
+    "displayName": "Pêche",
+    "energyKcal": 42,
+    "proteinG": 0.91,
+    "fatG": 0.27,
+    "carbohydrateG": 10.1,
+    "fiberG": 1.5,
+    "nutritionMicros": {
+      "potassiumMg": 122,
+      "sodiumMg": 13,
+      "vitaminCMg": 4.1,
+      "folateUg": 6,
+      "ironMg": 0.34,
+      "magnesiumMg": 8,
+      "vitaminARaeUg": 24,
+      "calciumMg": 4,
+      "vitaminB12Ug": 0.025,
+      "zincMg": 0.23,
+      "seleniumUg": 2.1
+    },
+    "usdaDescription": "Peaches, yellow, raw"
+  },
+  {
+    "name": "petit epeautre",
+    "displayName": "Petit épeautre",
+    "proteinG": 15.1,
+    "fatG": 3.81,
+    "carbohydrateG": 68.7,
+    "fiberG": 8.91,
+    "nutritionMicros": {
+      "ironMg": 3.69,
+      "magnesiumMg": 140,
+      "potassiumMg": 432,
+      "sodiumMg": 0,
+      "zincMg": 5.23,
+      "vitaminB12Ug": 0.264,
+      "calciumMg": 41.4
+    },
+    "usdaDescription": "Einkorn, grain, dry, raw"
+  },
+  {
+    "name": "plantain",
+    "displayName": "Plantain",
+    "proteinG": 1.187,
+    "fatG": 0.856,
+    "carbohydrateG": 31.267,
+    "fiberG": 2.147,
+    "nutritionMicros": {
+      "ironMg": 0.323,
+      "magnesiumMg": 31.7,
+      "potassiumMg": 403.333,
+      "sodiumMg": 0,
+      "zincMg": 0.16,
+      "vitaminCMg": 19.233,
+      "vitaminB12Ug": 0.181,
+      "calciumMg": 4.183
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "poire",
+    "displayName": "Poire",
+    "energyKcal": 57,
+    "proteinG": 0.346,
+    "fatG": 0.266,
+    "carbohydrateG": 14.95,
+    "fiberG": 2.87,
+    "nutritionMicros": {
+      "ironMg": 0.085,
+      "magnesiumMg": 6.095,
+      "potassiumMg": 104.5,
+      "sodiumMg": 3.699,
+      "zincMg": 0.089,
+      "vitaminCMg": 4.955,
+      "calciumMg": 8.995,
+      "vitaminARaeUg": 1,
+      "folateUg": 6,
+      "seleniumUg": 0.2,
+      "vitaminB12Ug": 0.026
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "poireau",
+    "displayName": "Poireau",
+    "proteinG": 1.47,
+    "fiberG": 3,
+    "nutritionMicros": {
+      "ironMg": 0.761,
+      "magnesiumMg": 15.7,
+      "potassiumMg": 319,
+      "sodiumMg": 17.7,
+      "zincMg": 0.293,
+      "vitaminB12Ug": 0.208,
+      "calciumMg": 51.4
+    },
+    "usdaDescription": "Leeks, bulb and greens, root removed, raw"
+  },
+  {
+    "name": "pois",
+    "displayName": "Pois",
+    "proteinG": 4.73,
+    "fatG": 1.15,
+    "carbohydrateG": 12.7,
+    "nutritionMicros": {
+      "ironMg": 1.14,
+      "magnesiumMg": 21.9,
+      "potassiumMg": 109,
+      "sodiumMg": 207,
+      "zincMg": 0.712,
+      "calciumMg": 28.2
+    },
+    "usdaDescription": "Peas, green, sweet, canned, sodium added, sugar added, drained and rinsed"
+  },
+  {
+    "name": "pois a oil noir",
+    "displayName": "Pois à œil noir",
+    "proteinG": 14.06,
+    "fatG": 1.86,
+    "carbohydrateG": 40.5,
+    "nutritionMicros": {
+      "ironMg": 3.505,
+      "magnesiumMg": 105.65,
+      "potassiumMg": 689,
+      "sodiumMg": 115.23,
+      "zincMg": 2.153,
+      "calciumMg": 49.6
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "pois chiche",
+    "displayName": "Pois chiche",
+    "proteinG": 14.16,
+    "fatG": 4.685,
+    "carbohydrateG": 40.35,
+    "nutritionMicros": {
+      "ironMg": 3.065,
+      "magnesiumMg": 81.7,
+      "potassiumMg": 603.5,
+      "sodiumMg": 105.39,
+      "zincMg": 1.922,
+      "calciumMg": 75.75
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "poisson",
+    "displayName": "Poisson",
+    "energyKcal": 73.333,
+    "proteinG": 17.725,
+    "fatG": 3.787,
+    "carbohydrateG": 0.01,
+    "nutritionMicros": {
+      "ironMg": 0.348,
+      "magnesiumMg": 21.8,
+      "potassiumMg": 276.125,
+      "sodiumMg": 165.125,
+      "zincMg": 0.392,
+      "seleniumUg": 26.898,
+      "calciumMg": 11.405,
+      "vitaminB12Ug": 0.223,
+      "vitaminDIu": 24.333,
+      "vitaminCMg": 0,
+      "vitaminARaeUg": 3
+    },
+    "usdaDescription": "Source: USDA (moyenne de 8 aliments)"
+  },
+  {
+    "name": "poivron",
+    "displayName": "Poivron",
+    "proteinG": 0.868,
+    "fatG": 0.14,
+    "carbohydrateG": 5.758,
+    "fiberG": 1.53,
+    "nutritionMicros": {
+      "ironMg": 0.205,
+      "magnesiumMg": 10.406,
+      "potassiumMg": 191.75,
+      "sodiumMg": 0,
+      "zincMg": 0.157,
+      "vitaminCMg": 120.375,
+      "vitaminB12Ug": 0.303,
+      "folateUg": 32.071,
+      "calciumMg": 8.33,
+      "seleniumUg": 0.075
+    },
+    "usdaDescription": "Source: USDA (moyenne de 8 aliments)"
+  },
+  {
+    "name": "pomme",
+    "displayName": "Pomme",
+    "proteinG": 0.154,
+    "fatG": 0.175,
+    "carbohydrateG": 14.25,
+    "fiberG": 2.092,
+    "nutritionMicros": {
+      "ironMg": 0.031,
+      "magnesiumMg": 4.732,
+      "potassiumMg": 102.533,
+      "sodiumMg": 1.049,
+      "zincMg": 0.017,
+      "vitaminCMg": 51.2,
+      "vitaminB12Ug": 0.027,
+      "folateUg": 0.65,
+      "calciumMg": 5.622
+    },
+    "usdaDescription": "Source: USDA (moyenne de 6 aliments)"
+  },
+  {
+    "name": "pomme de terre",
+    "displayName": "Pomme de terre",
+    "proteinG": 2.047,
+    "fatG": 0.291,
+    "carbohydrateG": 16.7,
+    "nutritionMicros": {
+      "ironMg": 0.383,
+      "magnesiumMg": 23.833,
+      "potassiumMg": 456,
+      "sodiumMg": 2.613,
+      "zincMg": 0.381,
+      "vitaminCMg": 18.5,
+      "seleniumUg": 0,
+      "vitaminB12Ug": 0.149,
+      "calciumMg": 6.29
+    },
+    "usdaDescription": "Source: USDA (moyenne de 3 aliments)"
+  },
+  {
+    "name": "porc",
+    "displayName": "Porc",
+    "energyKcal": 500,
+    "proteinG": 23.233,
+    "fatG": 18.108,
+    "carbohydrateG": 0.139,
+    "nutritionMicros": {
+      "ironMg": 0.709,
+      "magnesiumMg": 22.967,
+      "potassiumMg": 367.833,
+      "sodiumMg": 342.367,
+      "zincMg": 1.92,
+      "calciumMg": 5.97
+    },
+    "usdaDescription": "Source: USDA (moyenne de 6 aliments)"
+  },
+  {
+    "name": "poulet",
+    "displayName": "Poulet",
+    "energyKcal": 161,
+    "proteinG": 21.144,
+    "fatG": 6.769,
+    "carbohydrateG": -0.171,
+    "nutritionMicros": {
+      "ironMg": 0.566,
+      "magnesiumMg": 22.433,
+      "potassiumMg": 278,
+      "sodiumMg": 71.322,
+      "zincMg": 1.265,
+      "calciumMg": 7.547,
+      "vitaminB12Ug": 0.647,
+      "seleniumUg": 29.9,
+      "vitaminARaeUg": 7,
+      "vitaminDIu": 2
+    },
+    "usdaDescription": "Source: USDA (moyenne de 9 aliments)"
+  },
+  {
+    "name": "prune",
+    "displayName": "Prune",
+    "proteinG": 0.578,
+    "fatG": 0.282,
+    "carbohydrateG": 13.5,
+    "fiberG": 1.35,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 6.62,
+      "potassiumMg": 186,
+      "sodiumMg": 0,
+      "zincMg": 0.045,
+      "vitaminCMg": 1.82,
+      "calciumMg": 4.03
+    },
+    "usdaDescription": "Plum, black, with skin, raw"
+  },
+  {
+    "name": "radicchio",
+    "displayName": "Radicchio",
+    "proteinG": 1.31,
+    "fatG": 0.143,
+    "carbohydrateG": 4.96,
+    "fiberG": 2.11,
+    "nutritionMicros": {
+      "ironMg": 0.401,
+      "magnesiumMg": 13,
+      "potassiumMg": 335,
+      "sodiumMg": 8.08,
+      "zincMg": 0.2,
+      "vitaminCMg": 6.18,
+      "folateUg": 117,
+      "calciumMg": 30.9
+    },
+    "usdaDescription": "Radicchio, raw"
+  },
+  {
+    "name": "radis",
+    "displayName": "Radis",
+    "proteinG": 0.656,
+    "fatG": 0.083,
+    "carbohydrateG": 4.06,
+    "fiberG": 1.31,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 8.94,
+      "potassiumMg": 198,
+      "sodiumMg": 51.2,
+      "zincMg": 0.104,
+      "vitaminCMg": 17.8,
+      "folateUg": 63.2,
+      "calciumMg": 21.5
+    },
+    "usdaDescription": "Radishes, red, raw"
+  },
+  {
+    "name": "raisin",
+    "displayName": "Raisin",
+    "proteinG": 0.541,
+    "fatG": 0.237,
+    "carbohydrateG": 17.55,
+    "nutritionMicros": {
+      "ironMg": 0.13,
+      "magnesiumMg": 6.955,
+      "potassiumMg": 136.45,
+      "sodiumMg": 5.345,
+      "zincMg": 0.034,
+      "vitaminCMg": 26.783,
+      "vitaminB12Ug": 0.027,
+      "folateUg": 1.197,
+      "calciumMg": 9.29
+    },
+    "usdaDescription": "Source: USDA (moyenne de 4 aliments)"
+  },
+  {
+    "name": "restaurant",
+    "displayName": "Restaurant",
+    "energyKcal": 209.25,
+    "proteinG": 6.423,
+    "fatG": 8.71,
+    "carbohydrateG": 26.325,
+    "fiberG": 3.067,
+    "nutritionMicros": {
+      "magnesiumMg": 25.625,
+      "vitaminDIu": 0,
+      "calciumMg": 45.75,
+      "potassiumMg": 169.5,
+      "zincMg": 0.975,
+      "vitaminARaeUg": 21,
+      "sodiumMg": 360.75,
+      "ironMg": 1.465,
+      "vitaminCMg": 2.3,
+      "seleniumUg": 8.833,
+      "vitaminB12Ug": 0.158
+    },
+    "usdaDescription": "Source: USDA (moyenne de 4 aliments)"
+  },
+  {
+    "name": "riz",
+    "displayName": "Riz",
+    "proteinG": 7.605,
+    "fatG": 2.805,
+    "carbohydrateG": 77.6,
+    "fiberG": 2.887,
+    "nutritionMicros": {
+      "ironMg": 0.925,
+      "magnesiumMg": 95.125,
+      "potassiumMg": 208.325,
+      "sodiumMg": 0.225,
+      "zincMg": 1.87,
+      "vitaminB12Ug": 0.14,
+      "calciumMg": 9.035,
+      "seleniumUg": 10.7
+    },
+    "usdaDescription": "Source: USDA (moyenne de 4 aliments)"
+  },
+  {
+    "name": "riz sauvage",
+    "displayName": "Riz sauvage",
+    "proteinG": 12.8,
+    "fatG": 1.7,
+    "carbohydrateG": 75.7,
+    "fiberG": 4.26,
+    "nutritionMicros": {
+      "ironMg": 1.53,
+      "magnesiumMg": 108,
+      "potassiumMg": 299,
+      "sodiumMg": 1.01,
+      "zincMg": 5.84,
+      "vitaminB12Ug": 0.393,
+      "calciumMg": 7.97
+    },
+    "usdaDescription": "Wild rice, dry, raw"
+  },
+  {
+    "name": "roquette",
+    "displayName": "Roquette",
+    "proteinG": 1.65,
+    "fatG": 0.325,
+    "carbohydrateG": 5.37,
+    "fiberG": 2.28,
+    "nutritionMicros": {
+      "ironMg": 1.39,
+      "magnesiumMg": 42.6,
+      "potassiumMg": 407,
+      "sodiumMg": 86.9,
+      "zincMg": 0.348,
+      "vitaminCMg": 101,
+      "folateUg": 149,
+      "calciumMg": 204
+    },
+    "usdaDescription": "Arugula, baby, raw"
+  },
+  {
+    "name": "rutabaga",
+    "displayName": "Rutabaga",
+    "proteinG": 0.888,
+    "fiberG": 2.9,
+    "nutritionMicros": {
+      "ironMg": 0.137,
+      "magnesiumMg": 15.4,
+      "potassiumMg": 267,
+      "sodiumMg": 4.59,
+      "zincMg": 0.211,
+      "vitaminB12Ug": 0.199,
+      "calciumMg": 42
+    },
+    "usdaDescription": "Rutabaga, peeled, raw"
+  },
+  {
+    "name": "sarrasin",
+    "displayName": "Sarrasin",
+    "proteinG": 11.1,
+    "fatG": 3.04,
+    "carbohydrateG": 71.1,
+    "fiberG": 4.05,
+    "nutritionMicros": {
+      "ironMg": 2.44,
+      "magnesiumMg": 203,
+      "potassiumMg": 414,
+      "sodiumMg": 0,
+      "zincMg": 2.24,
+      "vitaminB12Ug": 0.278,
+      "calciumMg": 13.6,
+      "seleniumUg": 13.6
+    },
+    "usdaDescription": "Buckwheat, whole grain"
+  },
+  {
+    "name": "sauce",
+    "displayName": "Sauce",
+    "energyKcal": 37,
+    "proteinG": 1.425,
+    "fatG": 0.835,
+    "carbohydrateG": 7.395,
+    "fiberG": 1.8,
+    "nutritionMicros": {
+      "magnesiumMg": 16.85,
+      "zincMg": 0.2,
+      "calciumMg": 27.5,
+      "potassiumMg": 288.5,
+      "ironMg": 0.6,
+      "vitaminARaeUg": 28,
+      "sodiumMg": 537.5,
+      "vitaminB12Ug": 0.176
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "saucisse",
+    "displayName": "Saucisse",
+    "energyKcal": 295.8,
+    "proteinG": 15.84,
+    "fatG": 24.28,
+    "carbohydrateG": 2.394,
+    "nutritionMicros": {
+      "calciumMg": 26.2,
+      "potassiumMg": 332.2,
+      "zincMg": 2.276,
+      "vitaminB12Ug": 0.302,
+      "folateUg": 3.333,
+      "ironMg": 1.498,
+      "magnesiumMg": 19.76,
+      "sodiumMg": 817.2,
+      "vitaminARaeUg": 10.75,
+      "seleniumUg": 17.55,
+      "vitaminCMg": 19.2
+    },
+    "usdaDescription": "Source: USDA (moyenne de 5 aliments)"
+  },
+  {
+    "name": "sesame",
+    "displayName": "Sesame",
+    "proteinG": 19.7,
+    "fatG": 62.4,
+    "carbohydrateG": 14.2,
+    "fiberG": 8.37,
+    "nutritionMicros": {
+      "vitaminB12Ug": 0.595,
+      "folateUg": 108,
+      "calciumMg": 116,
+      "ironMg": 7,
+      "magnesiumMg": 357,
+      "potassiumMg": 408,
+      "sodiumMg": 63.6,
+      "zincMg": 6.04,
+      "seleniumUg": 46.5
+    },
+    "usdaDescription": "Sesame butter, creamy"
+  },
+  {
+    "name": "shallot",
+    "displayName": "Shallot",
+    "proteinG": 1.38,
+    "fiberG": 2.2,
+    "nutritionMicros": {
+      "ironMg": 0.332,
+      "magnesiumMg": 15.1,
+      "potassiumMg": 252,
+      "sodiumMg": 3.64,
+      "zincMg": 0.282,
+      "vitaminB12Ug": 0.177,
+      "calciumMg": 26.1
+    },
+    "usdaDescription": "Shallots, bulb, peeled, root removed, raw"
+  },
+  {
+    "name": "snapper",
+    "displayName": "Snapper",
+    "proteinG": 20.7,
+    "fatG": 0.569,
+    "carbohydrateG": 0.441,
+    "nutritionMicros": {
+      "ironMg": 0.201,
+      "magnesiumMg": 27.5,
+      "potassiumMg": 349,
+      "sodiumMg": 93.1,
+      "zincMg": 0.364,
+      "seleniumUg": 71.4,
+      "calciumMg": 13.9
+    },
+    "usdaDescription": "Snapper, frozen, wild caught"
+  },
+  {
+    "name": "soja",
+    "displayName": "Soja",
+    "proteinG": 3.165,
+    "fatG": 2.04,
+    "carbohydrateG": 2.145,
+    "fiberG": 0,
+    "nutritionMicros": {
+      "vitaminB12Ug": 0.046,
+      "folateUg": 17.75,
+      "calciumMg": 128,
+      "ironMg": 0.455,
+      "magnesiumMg": 19.5,
+      "potassiumMg": 138,
+      "sodiumMg": 36.85,
+      "zincMg": 0.288,
+      "seleniumUg": 0.97,
+      "vitaminDIu": 106.1,
+      "vitaminARaeUg": 58.2
+    },
+    "usdaDescription": "Source: USDA (moyenne de 2 aliments)"
+  },
+  {
+    "name": "sorgho",
+    "displayName": "Sorgho",
+    "proteinG": 10.425,
+    "fatG": 4.995,
+    "carbohydrateG": 72.675,
+    "fiberG": 12.622,
+    "nutritionMicros": {
+      "ironMg": 5.59,
+      "magnesiumMg": 156.5,
+      "potassiumMg": 441.75,
+      "sodiumMg": 0.812,
+      "zincMg": 2.193,
+      "vitaminB12Ug": 0.219,
+      "calciumMg": 22.985
+    },
+    "usdaDescription": "Source: USDA (moyenne de 4 aliments)"
+  },
+  {
+    "name": "squid",
+    "displayName": "Squid",
+    "proteinG": 8.81,
+    "fatG": 0.551,
+    "carbohydrateG": 0.932,
+    "nutritionMicros": {
+      "ironMg": 0,
+      "magnesiumMg": 10.5,
+      "potassiumMg": 9.48,
+      "sodiumMg": 272,
+      "zincMg": 0.527,
+      "seleniumUg": 20.9,
+      "calciumMg": 10.6
+    },
+    "usdaDescription": "Squid (calamari), frozen, tubes only"
+  },
+  {
+    "name": "sucre",
+    "displayName": "Sucre",
+    "energyKcal": 385,
+    "proteinG": 0,
+    "fatG": 0.32,
+    "carbohydrateG": 99.6,
+    "nutritionMicros": {
+      "ironMg": 0.05,
+      "magnesiumMg": 0.3,
+      "sodiumMg": 1,
+      "calciumMg": 1,
+      "potassiumMg": 2,
+      "zincMg": 0.01
+    },
+    "usdaDescription": "Sugars, granulated"
+  },
+  {
+    "name": "thon",
+    "displayName": "Thon",
+    "proteinG": 24.7,
+    "fatG": 0.388,
+    "carbohydrateG": -0.104,
+    "nutritionMicros": {
+      "ironMg": 0.591,
+      "magnesiumMg": 35.5,
+      "potassiumMg": 420,
+      "sodiumMg": 94.4,
+      "zincMg": 0.352,
+      "seleniumUg": 76.5,
+      "calciumMg": 3.19
+    },
+    "usdaDescription": "Tuna, ahi or yellowfin, frozen, wild caught"
+  },
+  {
+    "name": "tomate",
+    "displayName": "Tomate",
+    "energyKcal": 22.5,
+    "proteinG": 1.41,
+    "fatG": 0.425,
+    "carbohydrateG": 6.999,
+    "fiberG": 2.028,
+    "nutritionMicros": {
+      "ironMg": 1.115,
+      "magnesiumMg": 17.466,
+      "potassiumMg": 349.111,
+      "sodiumMg": 125.178,
+      "zincMg": 0.192,
+      "vitaminCMg": 18.7,
+      "vitaminB12Ug": 0.072,
+      "folateUg": 12.963,
+      "calciumMg": 19.022,
+      "seleniumUg": 0,
+      "vitaminARaeUg": 23.9
+    },
+    "usdaDescription": "Source: USDA (moyenne de 9 aliments)"
+  },
+  {
+    "name": "tomatille",
+    "displayName": "Tomatille",
+    "proteinG": 1.06,
+    "fiberG": 1.7,
+    "nutritionMicros": {
+      "ironMg": 0.245,
+      "magnesiumMg": 13.5,
+      "potassiumMg": 239,
+      "sodiumMg": 0.311,
+      "zincMg": 0.159,
+      "vitaminCMg": 2.18,
+      "folateUg": 16.4,
+      "calciumMg": 7.14
+    },
+    "usdaDescription": "Tomatillos, dehusked, raw"
+  },
+  {
+    "name": "yaourt",
+    "displayName": "Yaourt",
+    "energyKcal": 72,
+    "proteinG": 7.038,
+    "fatG": 1.895,
+    "carbohydrateG": 6.848,
+    "fiberG": 0.6,
+    "nutritionMicros": {
+      "magnesiumMg": 11.68,
+      "ironMg": 0.032,
+      "sodiumMg": 39.02,
+      "vitaminARaeUg": 0.5,
+      "calciumMg": 122.6,
+      "potassiumMg": 159,
+      "zincMg": 0.498,
+      "seleniumUg": 9.85,
+      "vitaminDIu": 15.956,
+      "vitaminB12Ug": 0.051,
+      "vitaminCMg": 0.2,
+      "folateUg": 20
+    },
+    "usdaDescription": "Source: USDA (moyenne de 5 aliments)"
+  }
+]

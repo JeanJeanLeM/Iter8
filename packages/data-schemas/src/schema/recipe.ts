@@ -16,6 +16,7 @@ const stepSchema = new Schema(
     order: { type: Number, required: true },
     instruction: { type: String, required: true },
     ingredientsUsed: { type: [String], default: [] },
+    durationMinutes: { type: Number },
   },
   { _id: false },
 );
@@ -36,6 +37,7 @@ const recipeSchema: Schema<IRecipe> = new Schema(
     },
     variationNote: { type: String },
     objective: { type: String },
+    emoji: { type: String },
     title: { type: String, required: true },
     description: { type: String },
     portions: { type: Number },
@@ -57,6 +59,8 @@ const recipeSchema: Schema<IRecipe> = new Schema(
       ],
       default: undefined,
     },
+    restTimeMinutes: { type: Number },
+    maxStorageDays: { type: Number },
   },
   { timestamps: true },
 );

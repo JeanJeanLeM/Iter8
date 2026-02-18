@@ -474,6 +474,119 @@ Guidelines:
   required: ['prompt'],
 };
 
+/** Meal planner tool JSON schema */
+export const mealPlannerSchema: ExtendedJsonSchema = {
+  type: 'object',
+  properties: {
+    action: {
+      type: 'string',
+      enum: ['get_calendar', 'add_meal', 'update_meal', 'delete_meal', 'add_comment'],
+      description:
+        'get_calendar: list planned meals in a date range. add_meal: add a meal. update_meal: update an existing planned meal. delete_meal: remove a planned meal. add_comment: add a comment for a past meal (journal/realization).',
+    },
+    fromDate: {
+      type: 'string',
+      description: 'Start date for get_calendar (YYYY-MM-DD).',
+    },
+    toDate: {
+      type: 'string',
+      description: 'End date for get_calendar (YYYY-MM-DD).',
+    },
+    date: {
+      type: 'string',
+      description: 'Date for add_meal, delete_meal (by date+slot+recipeTitle), or add_comment (YYYY-MM-DD).',
+    },
+    slot: {
+      type: 'string',
+      enum: ['breakfast', 'collation', 'lunch', 'dinner', 'sortie'],
+      description: 'Meal slot: breakfast (petit-déjeuner), collation (snack), lunch (midi), dinner (soir), or sortie (outing/restaurant).',
+    },
+    recipeTitle: {
+      type: 'string',
+      description:
+        'Dish name (free text or recipe title). For add_meal/update_meal: will be matched to user recipes when possible. For delete_meal: identify meal to delete. For add_comment: recipe eaten.',
+    },
+    comment: {
+      type: 'string',
+      description:
+        'Note for add_meal (future meal) or comment text for add_comment (past meal feedback).',
+    },
+    plannedMealId: {
+      type: 'string',
+      description: 'ID of the planned meal for update_meal or delete_meal.',
+    },
+  },
+  required: ['action'],
+  additionalProperties: false,
+};
+
+/** Update recipe tool JSON schema */
+export const updateRecipeSchema: ExtendedJsonSchema = {
+  type: 'object',
+  properties: {
+    title: { type: 'string', description: 'Recipe title' },
+    description: { type: 'string', description: 'Recipe description or summary' },
+    portions: {
+      type: 'number',
+      description: 'Number of portions (ingredient quantities are for this count)',
+    },
+    duration: {
+      description: 'Duration: number (total minutes) or { prep, cook, total }',
+    },
+    ingredients: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: 'Ingredient name' },
+          quantity: { type: 'number', description: 'Quantity for the given portions' },
+          unit: { type: 'string', description: 'Unit (g, ml, tbsp, etc.)' },
+          note: { type: 'string', description: 'Optional note (e.g. "finely chopped")' },
+        },
+        required: ['name'],
+      },
+      description: 'List of ingredients',
+    },
+    steps: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          order: { type: 'number', description: 'Step order (1-based)' },
+          instruction: { type: 'string', description: 'Step instruction' },
+          ingredientsUsed: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Ingredient names used in this step',
+          },
+        },
+        required: ['order', 'instruction'],
+      },
+      description: 'Recipe steps in order',
+    },
+    equipment: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'Required equipment (e.g. oven, mixer)',
+    },
+    tags: {
+      type: 'array',
+      items: { type: 'string' },
+      description: 'Tags (e.g. dessert, vegan, quick)',
+    },
+    objective: {
+      type: 'string',
+      description: 'Objective of the recipe for new/standalone recipes',
+    },
+    variationNote: {
+      type: 'string',
+      description: 'When creating a variation: short text explaining what was changed. REQUIRED when modifying an existing recipe.',
+    },
+  },
+  required: ['title'],
+  additionalProperties: false,
+};
+
 /** Tool definitions registry - maps tool names to their definitions */
 export const toolDefinitions: Record<string, ToolRegistryDefinition> = {
   google: {
@@ -599,6 +712,26 @@ Generated image IDs will be returned in the response, so you can refer to them i
     schema: geminiImageGenSchema,
     toolType: 'builtin',
     responseFormat: 'content_and_artifact',
+  },
+  meal_planner: {
+    name: 'meal_planner',
+    description:
+      'Manage the meal planner: get calendar (list planned meals), add a meal, update a meal, delete a meal, or add a comment for a past meal. ' +
+      'Use get_calendar to see planned meals in a date range. Use add_meal with date (YYYY-MM-DD), slot (lunch/dinner), recipeTitle; optionally comment. ' +
+      'Use update_meal with plannedMealId and fields to change (recipeTitle, comment). ' +
+      'Use delete_meal with plannedMealId or with date, slot, recipeTitle to identify the meal. ' +
+      'Use add_comment for feedback on a meal already eaten: date, slot, recipeTitle, comment (recipe must exist in user book).',
+    schema: mealPlannerSchema,
+    toolType: 'builtin',
+  },
+  update_recipe: {
+    name: 'update_recipe',
+    description:
+      'Update or propose a structured recipe (title, ingredients, steps, duration, equipment, portions, tags). ' +
+      'Quantities can be expressed for X portions. Use this tool to output a complete recipe that the user can view and save to their recipe book. ' +
+      'For new recipes: include "objective" describing the recipe goal. For variations/modifications: ALWAYS include "variationNote" with a short text explaining what was changed.',
+    schema: updateRecipeSchema,
+    toolType: 'builtin',
   },
 };
 

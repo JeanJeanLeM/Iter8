@@ -1,0 +1,1011 @@
+{
+  "abricot": {
+    "displayName": "Abricot",
+    "usdaDescriptions": [
+      "Apricot, with skin, raw"
+    ]
+  },
+  "agneau": {
+    "displayName": "Agneau",
+    "usdaDescriptions": [
+      "Lamb, ground, raw"
+    ]
+  },
+  "ail": {
+    "displayName": "Ail",
+    "usdaDescriptions": [
+      "Garlic, raw"
+    ]
+  },
+  "amande": {
+    "displayName": "Amande",
+    "usdaDescriptions": [
+      "Almond butter, creamy",
+      "Almond milk, unsweetened, plain, refrigerated",
+      "Almond milk, unsweetened, plain, shelf stable"
+    ]
+  },
+  "ananas": {
+    "displayName": "Ananas",
+    "usdaDescriptions": [
+      "Pineapple, raw"
+    ]
+  },
+  "anchois": {
+    "displayName": "Anchois",
+    "usdaDescriptions": [
+      "Anchovies, canned in olive oil, with salt, drained"
+    ]
+  },
+  "asperge": {
+    "displayName": "Asperge",
+    "usdaDescriptions": [
+      "Asparagus, green, raw"
+    ]
+  },
+  "aubergine": {
+    "displayName": "Aubergine",
+    "usdaDescriptions": [
+      "Eggplant, raw"
+    ]
+  },
+  "avocat": {
+    "displayName": "Avocat",
+    "usdaDescriptions": [
+      "Avocado, Hass, peeled, raw"
+    ]
+  },
+  "avoine": {
+    "displayName": "Avoine",
+    "usdaDescriptions": [
+      "Oat milk, unsweetened, plain, refrigerated"
+    ]
+  },
+  "babeurre": {
+    "displayName": "Babeurre",
+    "usdaDescriptions": [
+      "Buttermilk, low fat"
+    ]
+  },
+  "banane": {
+    "displayName": "Banane",
+    "usdaDescriptions": [
+      "Bananas, overripe, raw",
+      "Bananas, ripe and slightly ripe, raw"
+    ]
+  },
+  "bar": {
+    "displayName": "Bar (légine)",
+    "usdaDescriptions": [
+      "Sea bass, Chilean, frozen, wild caught"
+    ]
+  },
+  "betterave": {
+    "displayName": "Betterave",
+    "usdaDescriptions": [
+      "Beet greens, raw",
+      "Beets, raw"
+    ]
+  },
+  "beurre": {
+    "displayName": "Beurre",
+    "usdaDescriptions": [
+      "Butter, stick, salted",
+      "Butter, stick, unsalted"
+    ]
+  },
+  "biscuit": {
+    "displayName": "Biscuit",
+    "usdaDescriptions": [
+      "Cookies, oatmeal, soft, with raisins"
+    ]
+  },
+  "bison": {
+    "displayName": "Bison",
+    "usdaDescriptions": [
+      "Bison, ground, raw"
+    ]
+  },
+  "boeuf": {
+    "displayName": "Boeuf",
+    "usdaDescriptions": [
+      "Beef, chuck, roast, boneless, choice, raw",
+      "Beef, flank, steak, boneless, choice, raw",
+      "Beef, ground, 80% lean meat / 20% fat, raw",
+      "Beef, ground, 90% lean meat / 10% fat, raw",
+      "Beef, loin, tenderloin roast, separable lean only, boneless, trimmed to 0\" fat, select, cooked, roasted",
+      "Beef, loin, top loin steak, boneless, lip-on, separable lean only, trimmed to 1/8\" fat, choice, raw",
+      "Beef, ribeye, steak, boneless, choice, raw",
+      "Beef, round, eye of round roast, boneless, separable lean only, trimmed to 0\" fat, select, raw",
+      "Beef, round, top round roast, boneless, separable lean only, trimmed to 0\" fat, select, raw",
+      "Beef, round, top round, boneless, choice, raw",
+      "Beef, short loin (NY strip steak), raw",
+      "Beef, short loin, porterhouse steak, separable lean only, trimmed to 1/8\" fat, select, raw",
+      "Beef, short loin, t-bone steak, bone-in, separable lean only, trimmed to 1/8\" fat, choice, cooked, grilled",
+      "Beef, top sirloin steak, raw",
+      "Beef, tenderloin steak, raw"
+    ]
+  },
+  "boulgour": {
+    "displayName": "Boulgour",
+    "usdaDescriptions": [
+      "Bulgur, dry, raw"
+    ]
+  },
+  "brocoli": {
+    "displayName": "Brocoli",
+    "usdaDescriptions": [
+      "Broccoli, raw"
+    ]
+  },
+  "cacahuete": {
+    "displayName": "Cacahuète",
+    "usdaDescriptions": [
+      "Peanut butter, creamy",
+      "Peanuts, raw"
+    ]
+  },
+  "carotte": {
+    "displayName": "Carotte",
+    "usdaDescriptions": [
+      "Carrots, baby, raw",
+      "Carrots, frozen, unprepared",
+      "Carrots, mature, raw"
+    ]
+  },
+  "celeri": {
+    "displayName": "Céleri",
+    "usdaDescriptions": [
+      "Celery, raw"
+    ]
+  },
+  "cerise": {
+    "displayName": "Cerise",
+    "usdaDescriptions": [
+      "Cherries, sweet, dark red, raw"
+    ]
+  },
+  "champignon": {
+    "displayName": "Champignon",
+    "usdaDescriptions": [
+      "Mushroom, beech",
+      "Mushroom, crimini",
+      "Mushroom, enoki",
+      "Mushroom, king oyster",
+      "Mushroom, lion's mane",
+      "Mushroom, maitake",
+      "Mushroom, oyster",
+      "Mushroom, pioppini",
+      "Mushroom, portabella",
+      "Mushrooms, shiitake",
+      "Mushrooms, white button"
+    ]
+  },
+  "chia": {
+    "displayName": "Chia",
+    "usdaDescriptions": [
+      "Chia seeds, dry, raw"
+    ]
+  },
+  "chou": {
+    "displayName": "Chou",
+    "usdaDescriptions": [
+      "Cabbage, bok choy, raw",
+      "Cabbage, green, raw",
+      "Cabbage, napa, leaf, destemmed, raw",
+      "Cabbage, red, raw"
+    ]
+  },
+  "chou de bruxelles": {
+    "displayName": "Chou de Bruxelles",
+    "usdaDescriptions": [
+      "Brussels sprouts, raw"
+    ]
+  },
+  "chou fleur": {
+    "displayName": "Chou-fleur",
+    "usdaDescriptions": [
+      "Cauliflower, raw"
+    ]
+  },
+  "chou kale": {
+    "displayName": "Chou kale",
+    "usdaDescriptions": [
+      "Kale, frozen, cooked, boiled, drained, without salt",
+      "Kale, raw"
+    ]
+  },
+  "collard": {
+    "displayName": "Collard",
+    "usdaDescriptions": [
+      "Collards, raw"
+    ]
+  },
+  "compote de pommes": {
+    "displayName": "Compote de pommes",
+    "usdaDescriptions": [
+      "Applesauce, unsweetened, with added vitamin C"
+    ]
+  },
+  "concombre": {
+    "displayName": "Concombre",
+    "usdaDescriptions": [
+      "Cucumber, with peel, raw"
+    ]
+  },
+  "coquille saint-jacques": {
+    "displayName": "Coquille Saint-Jacques",
+    "usdaDescriptions": [
+      "Scallops, bay, Patagonian, frozen, wild caught",
+      "Scallops, sea, frozen, wild caught"
+    ]
+  },
+  "cornichon": {
+    "displayName": "Cornichon",
+    "usdaDescriptions": [
+      "Pickles, cucumber, dill or kosher dill"
+    ]
+  },
+  "courge": {
+    "displayName": "Courge",
+    "usdaDescriptions": [
+      "Squash, pie pumpkin, peeled, seeded, raw",
+      "Squash, spaghetti, peeled, seeded, raw",
+      "Squash, summer, green, zucchini, includes skin, raw",
+      "Squash, summer, yellow, includes skin, raw",
+      "Squash, winter, acorn, raw",
+      "Squash, winter, butternut, raw"
+    ]
+  },
+  "crabe des neiges": {
+    "displayName": "Crabe des neiges",
+    "usdaDescriptions": [
+      "Snow crab, legs only, frozen  "
+    ]
+  },
+  "cranberry": {
+    "displayName": "Cranberry",
+    "usdaDescriptions": [
+      "Cranberry juice, not fortified, from concentrate, shelf stable"
+    ]
+  },
+  "creme": {
+    "displayName": "Crème",
+    "usdaDescriptions": [
+      "Cream cheese, full fat, block",
+      "Cream, heavy",
+      "Cream, sour, full fat"
+    ]
+  },
+  "crustace": {
+    "displayName": "Crustacé",
+    "usdaDescriptions": [
+      "Crustaceans, crab, blue swimming, lump, pasteurized, refrigerated",
+      "Crustaceans, shrimp, farm raised, raw"
+    ]
+  },
+  "dinde": {
+    "displayName": "Dinde",
+    "usdaDescriptions": [
+      "Turkey, ground, 93% lean, 7% fat, pan-broiled crumbles",
+      "Turkey, ground, 93% lean/ 7% fat, raw"
+    ]
+  },
+  "epeautre": {
+    "displayName": "Épeautre",
+    "usdaDescriptions": [
+      "Farro, pearled, dry, raw"
+    ]
+  },
+  "epinard": {
+    "displayName": "Épinard",
+    "usdaDescriptions": [
+      "Spinach, baby",
+      "Spinach, mature"
+    ]
+  },
+  "espadon": {
+    "displayName": "Espadon",
+    "usdaDescriptions": [
+      "Swordfish, frozen, wild caught"
+    ]
+  },
+  "farine": {
+    "displayName": "Farine",
+    "usdaDescriptions": [
+      "Flour, 00",
+      "Flour, almond",
+      "Flour, amaranth",
+      "Flour, barley",
+      "Flour, bread, white, enriched, unbleached",
+      "Flour, buckwheat",
+      "Flour, cassava",
+      "Flour, chestnut",
+      "Flour, coconut",
+      "Flour, corn, yellow, fine meal, enriched",
+      "Flour, oat, whole grain",
+      "Flour, pastry, unenriched, unbleached",
+      "Flour, potato",
+      "Flour, quinoa",
+      "Flour, rice, brown",
+      "Flour, rice, glutinous",
+      "Flour, rice, white, unenriched",
+      "Flour, rye",
+      "Flour, semolina, coarse and semi-coarse",
+      "Flour, semolina, fine",
+      "Flour, sorghum",
+      "Flour, soy, defatted",
+      "Flour, soy, full-fat",
+      "Flour, spelt, whole grain",
+      "Flour, wheat, all-purpose, enriched, bleached",
+      "Flour, wheat, all-purpose, enriched, unbleached",
+      "Flour, wheat, all-purpose, unenriched, unbleached",
+      "Flour, whole wheat, unenriched"
+    ]
+  },
+  "fenouil": {
+    "displayName": "Fenouil",
+    "usdaDescriptions": [
+      "Fennel, bulb, raw"
+    ]
+  },
+  "figue": {
+    "displayName": "Figue",
+    "usdaDescriptions": [
+      "Figs, dried, uncooked"
+    ]
+  },
+  "fletan": {
+    "displayName": "Flétan",
+    "usdaDescriptions": [
+      "Halibut, frozen, wild caught"
+    ]
+  },
+  "fonio": {
+    "displayName": "Fonio",
+    "usdaDescriptions": [
+      "Fonio, grain, dry, raw"
+    ]
+  },
+  "fraise": {
+    "displayName": "Fraise",
+    "usdaDescriptions": [
+      "Strawberries, raw"
+    ]
+  },
+  "framboise": {
+    "displayName": "Framboise",
+    "usdaDescriptions": [
+      "Raspberries, raw"
+    ]
+  },
+  "fromage": {
+    "displayName": "Fromage",
+    "usdaDescriptions": [
+      "Cheese, American, restaurant",
+      "Cheese, cheddar",
+      "Cheese, cotija, solid",
+      "Cheese, cottage, lowfat, 2% milkfat",
+      "Cheese, dry white, queso seco",
+      "Cheese, feta, whole milk, crumbled",
+      "Cheese, monterey jack, solid",
+      "Cheese, mozzarella, low moisture, part-skim",
+      "Cheese, oaxaca, solid",
+      "Cheese, parmesan, grated",
+      "Cheese, parmesan, grated, refrigerated",
+      "Cheese, pasteurized process cheese food or product, American, singles",
+      "Cheese, pasteurized process, American, vitamin D fortified",
+      "Cheese, provolone, sliced",
+      "Cheese, queso fresco, solid",
+      "Cheese, ricotta, whole milk",
+      "Cheese, swiss"
+    ]
+  },
+  "fromage cottage": {
+    "displayName": "Fromage cottage",
+    "usdaDescriptions": [
+      "Cottage cheese, full fat, large or small curd"
+    ]
+  },
+  "graine": {
+    "displayName": "Graine",
+    "usdaDescriptions": [
+      "Seeds, pumpkin seeds (pepitas), raw",
+      "Seeds, sunflower seed kernels, dry roasted, with salt added",
+      "Seeds, sunflower seed, kernel, raw"
+    ]
+  },
+  "haricots": {
+    "displayName": "Haricots",
+    "usdaDescriptions": [
+      "Beans, Dry, Black (0% moisture)",
+      "Beans, Dry, Brown (0% moisture)",
+      "Beans, Dry, Carioca (0% moisture)",
+      "Beans, Dry, Cranberry (0% moisture)",
+      "Beans, Dry, Dark Red Kidney (0% moisture)",
+      "Beans, Dry, Flor de Mayo (0% moisture)",
+      "Beans, Dry, Great Northern (0% moisture)",
+      "Beans, Dry, Light Red Kidney (0% moisture)",
+      "Beans, Dry, Light Tan (0% moisture)",
+      "Beans, Dry, Medium Red (0% moisture)",
+      "Beans, Dry, Navy (0% moisture)",
+      "Beans, Dry, Pink (0% moisture)",
+      "Beans, Dry, Pinto (0% moisture)",
+      "Beans, Dry, Red (0% moisture)",
+      "Beans, Dry, Small Red (0% moisture)",
+      "Beans, Dry, Small White (0% moisture)",
+      "Beans, Dry, Tan (0% moisture)",
+      "Beans, black, canned, sodium added, drained and rinsed",
+      "Beans, cannellini, canned, sodium added, drained and rinsed",
+      "Beans, cannellini, dry",
+      "Beans, great northern, canned, sodium added, drained and rinsed",
+      "Beans, kidney, dark red, canned, sodium added, sugar added, drained and rinsed",
+      "Beans, kidney, light red, canned, sodium added, sugar added, drained and rinsed",
+      "Beans, navy, canned, sodium added, drained and rinsed",
+      "Beans, pinto, canned, sodium added, drained and rinsed",
+      "Beans, snap, green, canned, regular pack, drained solids",
+      "Beans, snap, green, raw"
+    ]
+  },
+  "homard": {
+    "displayName": "Homard",
+    "usdaDescriptions": [
+      "Lobster, tail only, frozen, wild caught"
+    ]
+  },
+  "houmous": {
+    "displayName": "Houmous",
+    "usdaDescriptions": [
+      "Hummus, commercial"
+    ]
+  },
+  "huile": {
+    "displayName": "Huile",
+    "usdaDescriptions": [
+      "Oil, canola",
+      "Oil, coconut",
+      "Oil, corn",
+      "Oil, olive, extra light",
+      "Oil, olive, extra virgin",
+      "Oil, peanut",
+      "Oil, safflower",
+      "Oil, soybean",
+      "Oil, sunflower"
+    ]
+  },
+  "jambon": {
+    "displayName": "Jambon",
+    "usdaDescriptions": [
+      "Ham, sliced, pre-packaged, deli meat (96%fat free, water added)",
+      "Ham, sliced, restaurant"
+    ]
+  },
+  "jus": {
+    "displayName": "Jus",
+    "usdaDescriptions": [
+      "Juice, pomegranate, from concentrate, shelf-stable",
+      "Juice, prune, shelf-stable",
+      "Juice, tart cherry, from concentrate, shelf-stable"
+    ]
+  },
+  "ketchup": {
+    "displayName": "Ketchup",
+    "usdaDescriptions": [
+      "Ketchup, restaurant"
+    ]
+  },
+  "khorasan": {
+    "displayName": "Khorasan",
+    "usdaDescriptions": [
+      "Khorasan, grain, dry, raw"
+    ]
+  },
+  "kiwi": {
+    "displayName": "Kiwi",
+    "usdaDescriptions": [
+      "Kiwifruit (kiwi), green, peeled, raw",
+      "Kiwifruit, green, raw"
+    ]
+  },
+  "lait": {
+    "displayName": "Lait",
+    "usdaDescriptions": [
+      "Milk, lowfat, fluid, 1% milkfat, with added vitamin A and vitamin D",
+      "Milk, nonfat, fluid, with added vitamin A and vitamin D (fat free or skim)",
+      "Milk, reduced fat, fluid, 2% milkfat, with added vitamin A and vitamin D",
+      "Milk, whole, 3.25% milkfat, with added vitamin D"
+    ]
+  },
+  "laitue": {
+    "displayName": "Laitue",
+    "usdaDescriptions": [
+      "Lettuce, cos or romaine, raw",
+      "Lettuce, iceberg, raw",
+      "Lettuce, leaf, green, raw",
+      "Lettuce, leaf, red, raw",
+      "Lettuce, romaine, green, raw"
+    ]
+  },
+  "lentille": {
+    "displayName": "Lentille",
+    "usdaDescriptions": [
+      "Lentils, dry"
+    ]
+  },
+  "lin": {
+    "displayName": "Lin",
+    "usdaDescriptions": [
+      "Flaxseed, ground"
+    ]
+  },
+  "mahi-mahi": {
+    "displayName": "Mahi-mahi",
+    "usdaDescriptions": [
+      "Mahi mahi, frozen, wild caught"
+    ]
+  },
+  "mais": {
+    "displayName": "Maïs",
+    "usdaDescriptions": [
+      "Corn flour, masa harina, white or yellow, dry, raw",
+      "Corn, sweet, yellow and white kernels,  fresh, raw"
+    ]
+  },
+  "mandarine": {
+    "displayName": "Mandarine",
+    "usdaDescriptions": [
+      "Mandarin, seedless, peeled, raw"
+    ]
+  },
+  "mango": {
+    "displayName": "Mango",
+    "usdaDescriptions": [
+      "Mango, Ataulfo, peeled, raw",
+      "Mango, Tommy Atkins, peeled, raw"
+    ]
+  },
+  "melon": {
+    "displayName": "Melon",
+    "usdaDescriptions": [
+      "Melons, cantaloupe, raw",
+      "Melons, honeydew, raw"
+    ]
+  },
+  "millet": {
+    "displayName": "Millet",
+    "usdaDescriptions": [
+      "Millet, whole grain"
+    ]
+  },
+  "morue": {
+    "displayName": "Morue",
+    "usdaDescriptions": [
+      "Cod, Pacific or Alaskan, frozen, wild caught"
+    ]
+  },
+  "moutarde": {
+    "displayName": "Moutarde",
+    "usdaDescriptions": [
+      "Mustard, prepared, yellow"
+    ]
+  },
+  "mure": {
+    "displayName": "Mûre",
+    "usdaDescriptions": [
+      "Blackberries, raw"
+    ]
+  },
+  "myrtille": {
+    "displayName": "Myrtille",
+    "usdaDescriptions": [
+      "Blueberries, raw"
+    ]
+  },
+  "navet": {
+    "displayName": "Navet",
+    "usdaDescriptions": [
+      "Turnips, raw"
+    ]
+  },
+  "nectarine": {
+    "displayName": "Nectarine",
+    "usdaDescriptions": [
+      "Nectarines, raw"
+    ]
+  },
+  "nuts": {
+    "displayName": "Nuts",
+    "usdaDescriptions": [
+      "Nuts, almonds, dry roasted, with salt added",
+      "Nuts, almonds, whole, raw",
+      "Nuts, brazilnuts, raw",
+      "Nuts, cashew nuts, raw",
+      "Nuts, hazelnuts or filberts, raw",
+      "Nuts, macadamia nuts, raw",
+      "Nuts, pecans, halves, raw",
+      "Nuts, pine nuts, raw",
+      "Nuts, pistachio nuts, raw",
+      "Nuts, walnuts, English, halves, raw"
+    ]
+  },
+  "oats": {
+    "displayName": "Oats",
+    "usdaDescriptions": [
+      "Oats, whole grain, rolled, old fashioned",
+      "Oats, whole grain, steel cut"
+    ]
+  },
+  "oeuf": {
+    "displayName": "Oeuf",
+    "usdaDescriptions": [
+      "Egg, white, dried",
+      "Egg, white, raw, frozen, pasteurized",
+      "Egg, whole, dried",
+      "Egg, whole, raw, frozen, pasteurized",
+      "Egg, yolk, dried",
+      "Egg, yolk, raw, frozen, pasteurized",
+      "Eggs, Grade A, Large, egg white",
+      "Eggs, Grade A, Large, egg whole",
+      "Eggs, Grade A, Large, egg yolk"
+    ]
+  },
+  "oignon": {
+    "displayName": "Oignon",
+    "usdaDescriptions": [
+      "Onion rings, breaded, par fried, frozen, prepared, heated in oven",
+      "Onions, red, raw",
+      "Onions, white, raw",
+      "Onions, yellow, raw"
+    ]
+  },
+  "oignon vert": {
+    "displayName": "Oignon vert",
+    "usdaDescriptions": [
+      "Green onion, (scallion), bulb and greens, root removed, raw"
+    ]
+  },
+  "olive": {
+    "displayName": "Olive",
+    "usdaDescriptions": [
+      "Olives, green, Manzanilla, stuffed with pimiento"
+    ]
+  },
+  "orange": {
+    "displayName": "Orange",
+    "usdaDescriptions": [
+      "Orange juice, no pulp, not fortified, from concentrate, refrigerated",
+      "Orange juice, no pulp, not fortified, not from concentrate, refrigerated",
+      "Oranges, raw, navels"
+    ]
+  },
+  "pain": {
+    "displayName": "Pain",
+    "usdaDescriptions": [
+      "Bread, white, commercially prepared",
+      "Bread, whole-wheat, commercially prepared"
+    ]
+  },
+  "pamplemousse": {
+    "displayName": "Pamplemousse",
+    "usdaDescriptions": [
+      "Grapefruit juice, red, not fortified, not from concentrate, refrigerated",
+      "Grapefruit juice, white, canned or bottled, unsweetened"
+    ]
+  },
+  "panais": {
+    "displayName": "Panais",
+    "usdaDescriptions": [
+      "Parsnips, raw"
+    ]
+  },
+  "pasteque": {
+    "displayName": "Pastèque",
+    "usdaDescriptions": [
+      "Watermelon, seedless, flesh only, raw",
+      "Watermelon, seedless, rind only, raw"
+    ]
+  },
+  "patate douce": {
+    "displayName": "Patate douce",
+    "usdaDescriptions": [
+      "Sweet potatoes, orange flesh, without skin, raw"
+    ]
+  },
+  "pawpaw": {
+    "displayName": "Pawpaw",
+    "usdaDescriptions": [
+      "Pawpaw, peeled, seeded, raw"
+    ]
+  },
+  "peche": {
+    "displayName": "Pêche",
+    "usdaDescriptions": [
+      "Peaches, yellow, raw"
+    ]
+  },
+  "petit epeautre": {
+    "displayName": "Petit épeautre",
+    "usdaDescriptions": [
+      "Einkorn, grain, dry, raw"
+    ]
+  },
+  "plantain": {
+    "displayName": "Plantain",
+    "usdaDescriptions": [
+      "Plantains, overripe, raw",
+      "Plantains, ripe, raw",
+      "Plantains, underripe, raw"
+    ]
+  },
+  "poire": {
+    "displayName": "Poire",
+    "usdaDescriptions": [
+      "Pear, Anjou, green, with skin, raw",
+      "Pears, raw, bartlett"
+    ]
+  },
+  "poireau": {
+    "displayName": "Poireau",
+    "usdaDescriptions": [
+      "Leeks, bulb and greens, root removed, raw"
+    ]
+  },
+  "pois": {
+    "displayName": "Pois",
+    "usdaDescriptions": [
+      "Peas, green, sweet, canned, sodium added, sugar added, drained and rinsed"
+    ]
+  },
+  "pois a oil noir": {
+    "displayName": "Pois à œil noir",
+    "usdaDescriptions": [
+      "Blackeye pea, canned, sodium added, drained and rinsed",
+      "Blackeye pea, dry"
+    ]
+  },
+  "pois chiche": {
+    "displayName": "Pois chiche",
+    "usdaDescriptions": [
+      "Chickpeas (garbanzo beans, bengal gram), canned, sodium added, drained and rinsed",
+      "Chickpeas, (garbanzo beans, bengal gram), dry"
+    ]
+  },
+  "poisson": {
+    "displayName": "Poisson",
+    "usdaDescriptions": [
+      "Fish, catfish, farm raised, raw",
+      "Fish, cod, Atlantic, wild caught, raw",
+      "Fish, haddock, raw",
+      "Fish, pollock, raw",
+      "Fish, salmon, Atlantic, farm raised, raw",
+      "Fish, salmon, sockeye, wild caught, raw",
+      "Fish, tilapia, farm raised, raw",
+      "Fish, tuna, light, canned in water, drained solids"
+    ]
+  },
+  "poivron": {
+    "displayName": "Poivron",
+    "usdaDescriptions": [
+      "Peppers, banana or Hungarian wax, seeded, raw",
+      "Peppers, bell, green, raw",
+      "Peppers, bell, orange, raw",
+      "Peppers, bell, red, raw",
+      "Peppers, bell, yellow, raw",
+      "Peppers, jalapeno, seeded, raw",
+      "Peppers, poblano, seeded, raw",
+      "Peppers, serrano, seeded, raw"
+    ]
+  },
+  "pomme": {
+    "displayName": "Pomme",
+    "usdaDescriptions": [
+      "Apple juice, with added vitamin C, from concentrate, shelf stable",
+      "Apples, fuji, with skin, raw",
+      "Apples, gala, with skin, raw",
+      "Apples, granny smith, with skin, raw",
+      "Apples, honeycrisp, with skin, raw",
+      "Apples, red delicious, with skin, raw"
+    ]
+  },
+  "pomme de terre": {
+    "displayName": "Pomme de terre",
+    "usdaDescriptions": [
+      "Potatoes, gold, without skin, raw",
+      "Potatoes, red, without skin, raw",
+      "Potatoes, russet, without skin, raw"
+    ]
+  },
+  "porc": {
+    "displayName": "Porc",
+    "usdaDescriptions": [
+      "Pork, belly, with skin, raw",
+      "Pork, chop, center cut, raw",
+      "Pork, cured, bacon, cooked, restaurant",
+      "Pork, ground, raw",
+      "Pork, loin, boneless, raw",
+      "Pork, loin, tenderloin, boneless, raw"
+    ]
+  },
+  "poulet": {
+    "displayName": "Poulet",
+    "usdaDescriptions": [
+      "Chicken, breast, boneless, skinless, raw",
+      "Chicken, breast, meat and skin, raw",
+      "Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised",
+      "Chicken, broilers or fryers, drumstick, meat only, cooked, braised",
+      "Chicken, drumstick, meat and skin, raw",
+      "Chicken, ground, with additives, raw",
+      "Chicken, thigh, boneless, skinless, raw",
+      "Chicken, thigh, meat and skin, raw",
+      "Chicken, wing, meat and skin, raw"
+    ]
+  },
+  "prune": {
+    "displayName": "Prune",
+    "usdaDescriptions": [
+      "Plum, black, with skin, raw"
+    ]
+  },
+  "radicchio": {
+    "displayName": "Radicchio",
+    "usdaDescriptions": [
+      "Radicchio, raw"
+    ]
+  },
+  "radis": {
+    "displayName": "Radis",
+    "usdaDescriptions": [
+      "Radishes, red, raw"
+    ]
+  },
+  "raisin": {
+    "displayName": "Raisin",
+    "usdaDescriptions": [
+      "Grape juice, purple, with added vitamin C, from concentrate, shelf stable",
+      "Grape juice, white, with added vitamin C, from concentrate, shelf stable",
+      "Grapes, green, seedless, raw",
+      "Grapes, red, seedless, raw"
+    ]
+  },
+  "restaurant": {
+    "displayName": "Restaurant",
+    "usdaDescriptions": [
+      "Restaurant, Chinese, fried rice, without meat",
+      "Restaurant, Chinese, sweet and sour pork",
+      "Restaurant, Latino, pupusas con frijoles (pupusas, bean)",
+      "Restaurant, Latino, tamale, pork"
+    ]
+  },
+  "riz": {
+    "displayName": "Riz",
+    "usdaDescriptions": [
+      "Rice, black, unenriched, raw",
+      "Rice, brown, long grain, unenriched, raw",
+      "Rice, red, unenriched, dry, raw",
+      "Rice, white, long grain, unenriched, raw"
+    ]
+  },
+  "riz sauvage": {
+    "displayName": "Riz sauvage",
+    "usdaDescriptions": [
+      "Wild rice, dry, raw"
+    ]
+  },
+  "roquette": {
+    "displayName": "Roquette",
+    "usdaDescriptions": [
+      "Arugula, baby, raw"
+    ]
+  },
+  "rutabaga": {
+    "displayName": "Rutabaga",
+    "usdaDescriptions": [
+      "Rutabaga, peeled, raw"
+    ]
+  },
+  "sarrasin": {
+    "displayName": "Sarrasin",
+    "usdaDescriptions": [
+      "Buckwheat, whole grain"
+    ]
+  },
+  "sauce": {
+    "displayName": "Sauce",
+    "usdaDescriptions": [
+      "Sauce, pasta, spaghetti/marinara, ready-to-serve",
+      "Sauce, salsa, ready-to-serve"
+    ]
+  },
+  "saucisse": {
+    "displayName": "Saucisse",
+    "usdaDescriptions": [
+      "Frankfurter, beef, unheated",
+      "Sausage, Italian, pork, mild, cooked, pan-fried",
+      "Sausage, breakfast sausage, beef, pre-cooked, unprepared",
+      "Sausage, pork, chorizo, link or ground, cooked, pan-fried",
+      "Sausage, turkey, breakfast links, mild, raw"
+    ]
+  },
+  "sesame": {
+    "displayName": "Sesame",
+    "usdaDescriptions": [
+      "Sesame butter, creamy"
+    ]
+  },
+  "shallot": {
+    "displayName": "Shallot",
+    "usdaDescriptions": [
+      "Shallots, bulb, peeled, root removed, raw"
+    ]
+  },
+  "snapper": {
+    "displayName": "Snapper",
+    "usdaDescriptions": [
+      "Snapper, frozen, wild caught"
+    ]
+  },
+  "soja": {
+    "displayName": "Soja",
+    "usdaDescriptions": [
+      "Soy milk, sweetened, plain, refrigerated",
+      "Soy milk, unsweetened, plain, shelf stable"
+    ]
+  },
+  "sorgho": {
+    "displayName": "Sorgho",
+    "usdaDescriptions": [
+      "Sorghum bran, white, unenriched, dry, raw",
+      "Sorghum flour, white, pearled, unenriched, dry, raw",
+      "Sorghum grain, white, pearled, unenriched, dry, raw",
+      "Sorghum, whole grain, white, dry, raw"
+    ]
+  },
+  "squid": {
+    "displayName": "Squid",
+    "usdaDescriptions": [
+      "Squid (calamari), frozen, tubes only"
+    ]
+  },
+  "sucre": {
+    "displayName": "Sucre",
+    "usdaDescriptions": [
+      "Sugars, granulated"
+    ]
+  },
+  "thon": {
+    "displayName": "Thon",
+    "usdaDescriptions": [
+      "Tuna, ahi or yellowfin, frozen, wild caught"
+    ]
+  },
+  "tomate": {
+    "displayName": "Tomate",
+    "usdaDescriptions": [
+      "Tomato juice, with added ingredients, from concentrate, shelf stable",
+      "Tomato, paste, canned, without salt added",
+      "Tomato, puree, canned",
+      "Tomato, roma",
+      "Tomato, sauce, canned, with salt added",
+      "Tomatoes, canned, red, ripe, diced",
+      "Tomatoes, crushed, canned",
+      "Tomatoes, grape, raw",
+      "Tomatoes, whole, canned, solids and liquids, with salt added"
+    ]
+  },
+  "tomatille": {
+    "displayName": "Tomatille",
+    "usdaDescriptions": [
+      "Tomatillos, dehusked, raw"
+    ]
+  },
+  "yaourt": {
+    "displayName": "Yaourt",
+    "usdaDescriptions": [
+      "Yogurt, Greek, plain, nonfat",
+      "Yogurt, Greek, plain, whole milk",
+      "Yogurt, Greek, strawberry, nonfat",
+      "Yogurt, plain, nonfat",
+      "Yogurt, plain, whole milk"
+    ]
+  }
+}

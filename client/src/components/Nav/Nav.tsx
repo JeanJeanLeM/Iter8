@@ -10,7 +10,7 @@ import {
   startTransition,
 } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, NotebookPen } from 'lucide-react';
+import { BookOpen, NotebookPen, ShoppingCart, CalendarDays, LayoutGrid } from 'lucide-react';
 import { useRecoilValue } from 'recoil';
 import { motion } from 'framer-motion';
 import { Skeleton, useMediaQuery } from '@librechat/client';
@@ -25,7 +25,7 @@ import {
   useLocalStorage,
   useNavScrolling,
 } from '~/hooks';
-import { useConversationsInfiniteQuery, useTitleGeneration } from '~/data-provider';
+import { useConversationsInfiniteQuery, useTitleGeneration, useListAgentsQuery } from '~/data-provider';
 import { Conversations } from '~/components/Conversations';
 import SearchBar from './SearchBar';
 import NewChat from './NewChat';
@@ -126,6 +126,101 @@ const JournalNavLink = memo(
   },
 );
 JournalNavLink.displayName = 'JournalNavLink';
+
+const ShoppingListNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const location = useLocation();
+    const isActive =
+      location.pathname === '/shopping-list' ||
+      location.pathname.startsWith('/shopping-list');
+    return (
+      <Link
+        to="/shopping-list"
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className={cn(
+          'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt',
+          isActive && 'bg-surface-active-alt',
+        )}
+      >
+        <ShoppingCart className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_shopping_list')}</span>
+      </Link>
+    );
+  },
+);
+ShoppingListNavLink.displayName = 'ShoppingListNavLink';
+
+const IngredientGalleryNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const location = useLocation();
+    const isActive =
+      location.pathname === '/ingredients' ||
+      location.pathname.startsWith('/ingredients');
+    return (
+      <Link
+        to="/ingredients"
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className={cn(
+          'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt',
+          isActive && 'bg-surface-active-alt',
+        )}
+      >
+        <LayoutGrid className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_ingredient_gallery')}</span>
+      </Link>
+    );
+  },
+);
+IngredientGalleryNavLink.displayName = 'IngredientGalleryNavLink';
+
+const MealPlannerNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const { data: agentsResponse } = useListAgentsQuery({ limit: 100 });
+    const mealPlannerAgent = useMemo(() => {
+      return agentsResponse?.data?.find((agent) => agent.name === 'Planificateur de repas');
+    }, [agentsResponse]);
+
+    if (!mealPlannerAgent) {
+      return null;
+    }
+
+    return (
+      <Link
+        to={`/c/new?agent_id=${mealPlannerAgent.id}`}
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt"
+      >
+        <CalendarDays className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_meal_planner_assistant')}</span>
+      </Link>
+    );
+  },
+);
+MealPlannerNavLink.displayName = 'MealPlannerNavLink';
 
 const Nav = memo(
   ({
@@ -300,6 +395,21 @@ const Nav = memo(
               localize={localize}
             />
             <JournalNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+            <ShoppingListNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+            <IngredientGalleryNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+            <MealPlannerNavLink
               isSmallScreen={isSmallScreen}
               itemToggleNav={itemToggleNav}
               localize={localize}

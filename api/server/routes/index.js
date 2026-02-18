@@ -28,6 +28,9 @@ const user = require('./user');
 const mcp = require('./mcp');
 const recipes = require('./recipes');
 const journal = require('./journal');
+const shoppingList = require('./shoppingList');
+const mealPlanner = require('./mealPlanner');
+const ingredients = require('./ingredients');
 
 module.exports = {
   mcp,
@@ -60,4 +63,7 @@ module.exports = {
   accessPermissions,
   recipes,
   journal,
+  shoppingList,
+  mealPlanner,
+  ingredients,
 };

@@ -11,6 +11,8 @@ export interface IRecipeStep {
   order: number;
   instruction: string;
   ingredientsUsed?: string[];
+  /** Duration in minutes for this step (e.g. cooking time). Used for timer in step-by-step mode. */
+  durationMinutes?: number;
 }
 
 /** Duration in minutes, or object with prep/cook/total in minutes */
@@ -21,6 +23,7 @@ export interface IRecipe extends Document {
   parentId: Types.ObjectId | null;
   variationNote?: string;
   objective?: string;
+  emoji?: string;
   title: string;
   description?: string;
   portions?: number;
@@ -35,6 +38,10 @@ export interface IRecipe extends Document {
   imageUrl?: string;
   /** Gallery: multiple images (IA + upload). When set, imageUrl is kept in sync with first image for cards. */
   images?: Array<{ url: string; source: 'ai' | 'upload' }>;
+  /** Rest / fermentation / marinade time in minutes (e.g. 720 for 12h). */
+  restTimeMinutes?: number;
+  /** Max storage in days (e.g. 2 for 48h). */
+  maxStorageDays?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -45,6 +52,7 @@ export interface IRecipeLean {
   parentId: Types.ObjectId | null;
   variationNote?: string;
   objective?: string;
+  emoji?: string;
   title: string;
   description?: string;
   portions?: number;
@@ -58,6 +66,8 @@ export interface IRecipeLean {
   diet?: string[];
   imageUrl?: string;
   images?: Array<{ url: string; source: 'ai' | 'upload' }>;
+  restTimeMinutes?: number;
+  maxStorageDays?: number;
   variationCount?: number;
   score?: number;
   userVote?: number;

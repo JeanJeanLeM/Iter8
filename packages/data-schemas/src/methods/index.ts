@@ -24,6 +24,9 @@ import { createShareMethods, type ShareMethods } from './share';
 import { createRecipeMethods, type RecipeMethods } from './recipe';
 import { createRecipeVoteMethods, type RecipeVoteMethods } from './recipeVote';
 import { createRealizationMethods, type RealizationMethods } from './realization';
+import { createShoppingListItemMethods, type ShoppingListItemMethods } from './shoppingListItem';
+import { createPlannedMealMethods, type PlannedMealMethods } from './plannedMeal';
+import { createIngredientMethods, type IngredientMethods } from './ingredient';
 
 export type AllMethods = UserMethods &
   SessionMethods &
@@ -42,7 +45,10 @@ export type AllMethods = UserMethods &
   PluginAuthMethods &
   RecipeMethods &
   RecipeVoteMethods &
-  RealizationMethods;
+  RealizationMethods &
+  ShoppingListItemMethods &
+  PlannedMealMethods &
+  IngredientMethods;
 
 /**
  * Creates all database methods for all collections
@@ -68,6 +74,9 @@ export function createMethods(mongoose: typeof import('mongoose')): AllMethods {
     ...createRecipeMethods(mongoose),
     ...createRecipeVoteMethods(mongoose),
     ...createRealizationMethods(mongoose),
+    ...createShoppingListItemMethods(mongoose),
+    ...createPlannedMealMethods(mongoose),
+    ...createIngredientMethods(mongoose),
   };
 }
 
@@ -90,4 +99,7 @@ export type {
   RecipeMethods,
   RecipeVoteMethods,
   RealizationMethods,
+  ShoppingListItemMethods,
+  PlannedMealMethods,
+  IngredientMethods,
 };

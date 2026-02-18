@@ -28,3 +28,6 @@ export { default as groupSchema } from './group';
 export { default as recipeSchema } from './recipe';
 export { default as recipeVoteSchema } from './recipeVote';
 export { default as realizationSchema } from './realization';
+export { default as shoppingListItemSchema } from './shoppingListItem';
+export { default as plannedMealSchema } from './plannedMeal';
+export { default as ingredientSchema } from './ingredient';

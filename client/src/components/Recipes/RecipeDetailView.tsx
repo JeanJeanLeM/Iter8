@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { useDocumentTitle, useLocalize } from '~/hooks';
+import { useDocumentTitle, useLocalize, useNewConvo } from '~/hooks';
 import {
   useRecipeQuery,
   useRecipesQuery,
+  useRecipeAiImagesQuery,
   useUpdateRecipeMutation,
   useGenerateRecipeImageMutation,
 } from '~/data-provider';
@@ -30,15 +31,24 @@ import {
   Smartphone,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
+  AlertCircle,
 } from 'lucide-react';
 import type { TRecipeIngredient, TRecipeDuration } from 'librechat-data-provider';
 import type { TRecipeStep } from 'librechat-data-provider';
 import { useGetUserQuery } from '~/data-provider';
-import { formatIngredient as formatIngredientUtil, type FormattedIngredient } from '~/utils/recipeIngredients';
+import {
+  formatIngredient as formatIngredientUtil,
+  formatExactQuantity,
+  getOptimalInitialPortions,
+  type FormattedIngredient,
+} from '~/utils/recipeIngredients';
 import RecipeVoteButtons from './RecipeVoteButtons';
 import RecipeCard from './RecipeCard';
 import RecipeVariationsCarousel from './RecipeVariationsCarousel';
 import ParentRecipeSelectorModal from './ParentRecipeSelectorModal';
+import { useConversationsMentioningRecipe } from '~/hooks/Recipes/useConversationsMentioningRecipe';
+import { useSetRecoilState } from 'recoil';
+import { selectedRecipeForVariation } from '~/store';
 import { cn } from '~/utils';
 
 function formatDurationMinutes(min: number): string {
@@ -159,10 +169,28 @@ export default function RecipeDetailView() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [changeParentModalOpen, setChangeParentModalOpen] = useState(false);
   const [imageGalleryModalOpen, setImageGalleryModalOpen] = useState<'none' | 'all' | 'ai'>('none');
+  const [aiGalleryPage, setAiGalleryPage] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (recipe?.portions != null && recipe?.ingredients?.length != null) {
+      setPortionsChosen(getOptimalInitialPortions(recipe));
+    }
+  }, [recipe?._id, recipe?.portions, recipe?.ingredients?.length]);
 
   const updateRecipeMutation = useUpdateRecipeMutation();
   const generateRecipeImageMutation = useGenerateRecipeImageMutation();
+  const { newConversation } = useNewConvo();
+  const setSelectedRecipeForVariation = useSetRecoilState(selectedRecipeForVariation);
+  const { conversations, isLoading: conversationsLoading } =
+    useConversationsMentioningRecipe(recipe?._id);
+
+  const { data: aiImagesData, isLoading: aiImagesLoading } = useRecipeAiImagesQuery(
+    recipe?._id ?? null,
+    aiGalleryPage,
+    imageGalleryModalOpen === 'ai',
+    10,
+  );
 
   const recipeImages = useMemo(() => {
     if (!recipe) return [];
@@ -187,7 +215,7 @@ export default function RecipeDetailView() {
     () => recipeImages.filter((img) => img.source === 'ai'),
     [recipeImages],
   );
-  const canAddAiImage = !hasAiImage && !generateRecipeImageMutation.isPending;
+  const canAddAiImage = !hasAiImage && !generateRecipeImageMutation.isLoading;
   const galleryImages =
     imageGalleryModalOpen === 'ai' ? aiImagesOnly : recipeImages;
   const galleryRecipeIndices = useMemo(
@@ -242,6 +270,24 @@ export default function RecipeDetailView() {
     } else {
       copyUrl(url);
     }
+  };
+
+  const handleOpenInNewChat = () => {
+    if (!recipe) return;
+    setSelectedRecipeForVariation({
+      recipeId: recipe._id,
+      title: recipe.title,
+      parentId: recipe.parentId ? String(recipe.parentId) : null,
+      recipeData: {
+        ingredients: recipe.ingredients,
+        steps: recipe.steps,
+        description: recipe.description,
+        duration: recipe.duration,
+        tags: recipe.tags,
+        equipment: recipe.equipment,
+      },
+    });
+    newConversation();
   };
 
   const handleImageFromDevice = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -309,6 +355,19 @@ export default function RecipeDetailView() {
       data: { images: reordered, imageUrl: reordered[0].url },
     });
     setCurrentImageIndex(0);
+  };
+
+  /** Add a global AI image to the current recipe and close the AI gallery modal. */
+  const handleSelectGlobalAiImage = (url: string) => {
+    if (!recipe) return;
+    const newImages = [...recipeImages, { url, source: 'ai' as const }];
+    updateRecipeMutation.mutate(
+      {
+        id: recipe._id,
+        data: { images: newImages, imageUrl: url },
+      },
+      { onSuccess: () => setImageGalleryModalOpen('none') },
+    );
   };
 
   function copyUrl(url: string) {
@@ -483,18 +542,19 @@ export default function RecipeDetailView() {
             onChange={handleImageFromDevice}
           />
           <div className="relative">
-            {/* Loading overlay: always on top when generating so user cannot miss it */}
-            {generateRecipeImageMutation.isPending && (
+            {/* Loading overlay when generating AND we already have an image to cover */}
+            {generateRecipeImageMutation.isLoading && (currentImage || isDisplayingParentImage) && (
               <div
-                className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-lg bg-surface-primary/90 dark:bg-surface-primary/95"
+                className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-lg bg-black/50 dark:bg-black/60 backdrop-blur-sm"
                 aria-live="polite"
                 role="status"
+                aria-label={localize('com_ui_recipe_image_generating')}
               >
-                <Spinner className="h-14 w-14 text-text-primary" />
-                <span className="text-base font-semibold text-text-primary">
+                <Spinner className="h-14 w-14 text-white" />
+                <span className="text-base font-semibold text-white">
                   {localize('com_ui_recipe_image_generating')}
                 </span>
-                <span className="text-sm text-text-secondary">
+                <span className="text-sm text-white/90">
                   {localize('com_ui_recipe_image_generating_hint')}
                 </span>
               </div>
@@ -552,7 +612,7 @@ export default function RecipeDetailView() {
                       variant="outline"
                       size="sm"
                       onClick={handleSetAsMainImage}
-                      disabled={updateRecipeMutation.isPending}
+                      disabled={updateRecipeMutation.isLoading}
                     >
                       {localize('com_ui_recipe_image_set_as_main')}
                     </Button>
@@ -576,11 +636,27 @@ export default function RecipeDetailView() {
                   variant="outline"
                   size="sm"
                   onClick={handleUseParentImage}
-                  disabled={updateRecipeMutation.isPending}
+                  disabled={updateRecipeMutation.isLoading}
                   className="self-center"
                 >
                   {localize('com_ui_recipe_use_parent_image')}
                 </Button>
+              </div>
+            ) : generateRecipeImageMutation.isLoading ? (
+              /* No image yet: show loading state directly in the placeholder so it's always visible on web */
+              <div
+                className="flex aspect-video w-full flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-border-medium bg-surface-active-alt"
+                role="status"
+                aria-live="polite"
+                aria-label={localize('com_ui_recipe_image_generating')}
+              >
+                <Spinner className="h-16 w-16 text-text-primary" />
+                <span className="text-base font-semibold text-text-primary">
+                  {localize('com_ui_recipe_image_generating')}
+                </span>
+                <span className="text-sm text-text-secondary">
+                  {localize('com_ui_recipe_image_generating_hint')}
+                </span>
               </div>
             ) : (
               <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border-medium bg-surface-active-alt text-text-secondary">
@@ -594,7 +670,7 @@ export default function RecipeDetailView() {
               variant="outline"
               size="sm"
               onClick={handleAddImageFromDevice}
-              disabled={updateRecipeMutation.isPending || generateRecipeImageMutation.isPending}
+              disabled={updateRecipeMutation.isLoading || generateRecipeImageMutation.isLoading}
               className="flex items-center gap-2"
               title={localize('com_ui_recipe_image_device_permission')}
             >
@@ -607,8 +683,8 @@ export default function RecipeDetailView() {
               size="sm"
               onClick={() => setImageGalleryModalOpen('all')}
               disabled={
-                updateRecipeMutation.isPending ||
-                generateRecipeImageMutation.isPending ||
+                updateRecipeMutation.isLoading ||
+                generateRecipeImageMutation.isLoading ||
                 recipeImages.length === 0
               }
               className="flex items-center gap-2"
@@ -621,18 +697,15 @@ export default function RecipeDetailView() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setImageGalleryModalOpen('ai')}
+              onClick={() => {
+                setAiGalleryPage(1);
+                setImageGalleryModalOpen('ai');
+              }}
               disabled={
-                updateRecipeMutation.isPending ||
-                generateRecipeImageMutation.isPending ||
-                aiImagesOnly.length === 0
+                updateRecipeMutation.isLoading || generateRecipeImageMutation.isLoading
               }
               className="flex items-center gap-2"
-              title={
-                aiImagesOnly.length === 0
-                  ? localize('com_ui_recipe_image_ai_gallery_empty')
-                  : localize('com_ui_recipe_image_ai_gallery_tooltip')
-              }
+              title={localize('com_ui_recipe_image_ai_gallery_tooltip')}
             >
               <Sparkles className="h-4 w-4 shrink-0" />
               {localize('com_ui_recipe_image_ai_gallery')}
@@ -642,28 +715,38 @@ export default function RecipeDetailView() {
               variant="outline"
               size="sm"
               onClick={handleAddImageByAI}
-              disabled={!canAddAiImage || generateRecipeImageMutation.isPending}
-              className="flex items-center gap-2"
+              disabled={!canAddAiImage || generateRecipeImageMutation.isLoading}
+              aria-busy={generateRecipeImageMutation.isLoading}
+              aria-label={
+                generateRecipeImageMutation.isLoading
+                  ? localize('com_ui_recipe_image_generating')
+                  : localize('com_ui_recipe_image_ai')
+              }
+              className={cn(
+                'flex items-center gap-2',
+                generateRecipeImageMutation.isLoading &&
+                  'ring-2 ring-amber-500/70 ring-offset-2 ring-offset-surface-primary dark:ring-offset-surface-primary',
+              )}
               title={
-                generateRecipeImageMutation.isPending
+                generateRecipeImageMutation.isLoading
                   ? localize('com_ui_recipe_image_generating')
                   : hasAiImage
                     ? localize('com_ui_recipe_image_ai_already')
                     : localize('com_ui_recipe_image_ai_coming')
               }
             >
-              {generateRecipeImageMutation.isPending ? (
+              {generateRecipeImageMutation.isLoading ? (
                 <Spinner className="h-4 w-4 shrink-0" />
               ) : (
                 <Sparkles className="h-4 w-4 shrink-0" />
               )}
-              {generateRecipeImageMutation.isPending
+              {generateRecipeImageMutation.isLoading
                 ? localize('com_ui_recipe_image_ai_generating')
                 : localize('com_ui_recipe_image_ai')}
             </Button>
           </div>
 
-          {/* Modal: Galerie / Galerie IA - choisir une image comme image principale */}
+          {/* Modal: Galerie (current recipe) / Galerie IA (all user AI images, paginated) */}
           <OGDialog
             open={imageGalleryModalOpen !== 'none'}
             onOpenChange={(open) => !open && setImageGalleryModalOpen('none')}
@@ -674,11 +757,80 @@ export default function RecipeDetailView() {
                   ? localize('com_ui_recipe_image_ai_gallery')
                   : localize('com_ui_recipe_image_gallery')}
               </OGDialogTitle>
-              {galleryImages.length === 0 ? (
+              {imageGalleryModalOpen === 'ai' ? (
+                <>
+                  {aiImagesLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Spinner className="h-10 w-10 text-text-primary" />
+                    </div>
+                  ) : !aiImagesData?.images?.length ? (
+                    <p className="py-4 text-center text-sm text-text-secondary">
+                      {localize('com_ui_recipe_image_ai_gallery_global_empty')}
+                    </p>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {aiImagesData.images.map((img, i) => (
+                          <button
+                            key={`${img.url}-${img.recipeId}-${i}`}
+                            type="button"
+                            onClick={() => handleSelectGlobalAiImage(img.url)}
+                            disabled={updateRecipeMutation.isLoading}
+                            className="relative aspect-video overflow-hidden rounded-lg border-2 border-border-medium bg-surface-active-alt transition hover:border-green-500/50"
+                          >
+                            <img
+                              src={img.url}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                            <span className="absolute bottom-0 left-0 right-0 bg-black/60 px-2 py-1 text-xs text-white truncate">
+                              {img.recipeTitle || ''}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                      {aiImagesData.totalPages > 1 && (
+                        <div className="mt-4 flex items-center justify-center gap-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setAiGalleryPage((p) => Math.max(1, p - 1))}
+                            disabled={aiGalleryPage <= 1}
+                            className="gap-1"
+                          >
+                            <ChevronLeftIcon className="h-4 w-4" />
+                            {localize('com_ui_recipe_image_prev')}
+                          </Button>
+                          <span className="text-sm text-text-secondary">
+                            {localize('com_ui_recipe_image_page', {
+                              page: String(aiGalleryPage),
+                              total: String(aiImagesData.totalPages),
+                            })}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              setAiGalleryPage((p) =>
+                                Math.min(aiImagesData.totalPages, p + 1),
+                              )
+                            }
+                            disabled={aiGalleryPage >= aiImagesData.totalPages}
+                            className="gap-1"
+                          >
+                            {localize('com_ui_recipe_image_next')}
+                            <ChevronRightIcon className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </>
+              ) : galleryImages.length === 0 ? (
                 <p className="py-4 text-center text-sm text-text-secondary">
-                  {imageGalleryModalOpen === 'ai'
-                    ? localize('com_ui_recipe_image_ai_gallery_empty')
-                    : localize('com_ui_recipe_image_gallery_empty')}
+                  {localize('com_ui_recipe_image_gallery_empty')}
                 </p>
               ) : (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -690,7 +842,7 @@ export default function RecipeDetailView() {
                         key={`${img.url}-${i}`}
                         type="button"
                         onClick={() => !isMain && handleSetAsMainByIndex(recipeIndex)}
-                        disabled={isMain || updateRecipeMutation.isPending}
+                        disabled={isMain || updateRecipeMutation.isLoading}
                         className={cn(
                           'relative aspect-video overflow-hidden rounded-lg border-2 bg-surface-active-alt transition',
                           isMain
@@ -727,6 +879,43 @@ export default function RecipeDetailView() {
           </OGDialog>
         </section>
 
+        {/* Chats où cette recette est mentionnée */}
+        <section className="mb-6 rounded-lg border border-border-medium bg-surface-primary-alt p-4">
+          <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-text-primary">
+            <MessageCircle className="h-5 w-5 text-text-secondary" />
+            {localize('com_ui_recipe_chats_mentioning')}
+          </h2>
+          {conversationsLoading ? (
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
+              <Spinner className="h-4 w-4" />
+              {localize('com_ui_loading')}
+            </div>
+          ) : conversations.length === 0 ? (
+            <p className="text-sm text-text-secondary">
+              {localize('com_ui_recipe_no_chats_mentioning')}
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {conversations.map(({ id, title }) => (
+                <li
+                  key={id}
+                  className="flex items-center justify-between gap-2 rounded-lg border border-border-medium bg-surface-primary px-3 py-2"
+                >
+                  <span className="truncate text-sm text-text-primary" title={title ?? id}>
+                    {title ?? id}
+                  </span>
+                  <Link
+                    to={`/c/${id}`}
+                    className="shrink-0 rounded bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary/90"
+                  >
+                    {localize('com_ui_recipe_open_chat')}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
         {/* Petits infos: durée, difficulté, prix, partage, j'aime, portions */}
         <section className="mb-6 flex flex-wrap items-center gap-4 rounded-lg border border-border-medium bg-surface-primary-alt p-4">
           {totalTimeLabel && (
@@ -743,7 +932,18 @@ export default function RecipeDetailView() {
             <Euro className="h-4 w-4 text-text-secondary" />
             {localize('com_ui_recipe_price')}: <span className="text-text-secondary">—</span>
           </span>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleOpenInNewChat}
+              className="flex items-center gap-1.5"
+              title={localize('com_ui_recipe_open_in_new_chat')}
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">{localize('com_ui_recipe_open_in_new_chat')}</span>
+            </Button>
             <Button
               type="button"
               variant="outline"
@@ -833,11 +1033,24 @@ export default function RecipeDetailView() {
               {scaledIngredients.map((line, idx) => (
                 <div
                   key={idx}
-                  className="rounded-lg border border-border-medium bg-surface-primary-alt p-3 text-sm text-text-primary"
+                  className="flex flex-wrap items-start gap-1 rounded-lg border border-border-medium bg-surface-primary-alt p-3 text-sm text-text-primary"
                 >
-                  {line.displayText}
+                  <span className="min-w-0 flex-1">{line.displayText}</span>
                   {line.gramEquivalent && (
-                    <span className="text-text-secondary"> {line.gramEquivalent}</span>
+                    <span className="text-text-secondary">{line.gramEquivalent}</span>
+                  )}
+                  {line.roundedFrom != null && (
+                    <span
+                      className="shrink-0 text-amber-600 dark:text-amber-400"
+                      title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                        exact: formatExactQuantity(line.roundedFrom),
+                      })}
+                      aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                        exact: formatExactQuantity(line.roundedFrom),
+                      })}
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                    </span>
                   )}
                 </div>
               ))}
@@ -849,6 +1062,19 @@ export default function RecipeDetailView() {
                   {line.displayText}
                   {line.gramEquivalent && (
                     <span className="text-text-secondary"> {line.gramEquivalent}</span>
+                  )}
+                  {line.roundedFrom != null && (
+                    <span
+                      className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
+                      title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                        exact: formatExactQuantity(line.roundedFrom),
+                      })}
+                      aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                        exact: formatExactQuantity(line.roundedFrom),
+                      })}
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                    </span>
                   )}
                 </li>
               ))}

@@ -62,6 +62,7 @@ export function createRealizationMethods(mongoose: typeof import('mongoose')) {
         $addFields: {
           recipeTitle: '$recipeDoc.title',
           recipeImageUrl: '$recipeDoc.imageUrl',
+          recipeEmoji: '$recipeDoc.emoji',
           recipeParentId: '$recipeDoc.parentId',
           variationNote: '$recipeDoc.variationNote',
         },
@@ -96,6 +97,7 @@ export function createRealizationMethods(mongoose: typeof import('mongoose')) {
       ...doc,
       recipeTitle: recipe?.title,
       recipeImageUrl: recipe?.imageUrl,
+      recipeEmoji: recipe?.emoji,
       recipeParentId: recipe?.parentId ?? null,
       variationNote: recipe?.variationNote,
     } as IRealizationWithRecipe;

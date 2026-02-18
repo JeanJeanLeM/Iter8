@@ -210,6 +210,7 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     parentId?: string | Types.ObjectId | null;
     variationNote?: string;
     objective?: string;
+    emoji?: string;
     title: string;
     description?: string;
     portions?: number;
@@ -222,6 +223,8 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     cuisineType?: string[];
     diet?: string[];
     imageUrl?: string;
+    restTimeMinutes?: number;
+    maxStorageDays?: number;
   }): Promise<IRecipe> {
     const doc = await Recipe.create({
       ...data,
@@ -243,6 +246,7 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     data: Partial<{
       variationNote: string;
       objective: string;
+      emoji: string;
       title: string;
       description: string;
       portions: number;
@@ -257,6 +261,8 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
       imageUrl: string;
       images: Array<{ url: string; source: 'ai' | 'upload' }>;
       parentId: string | Types.ObjectId | null;
+      restTimeMinutes?: number;
+      maxStorageDays?: number;
     }>,
   ): Promise<IRecipe | null> {
     const updated = await Recipe.findOneAndUpdate(

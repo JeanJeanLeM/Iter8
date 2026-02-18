@@ -23,6 +23,9 @@ export * from './memory';
 /* Recipes */
 export * from './recipe';
 export * from './realization';
+export * from './shoppingListItem';
+export * from './plannedMeal';
+export * from './ingredient';
 /* Prompts */
 export * from './prompts';
 /* Access Control */

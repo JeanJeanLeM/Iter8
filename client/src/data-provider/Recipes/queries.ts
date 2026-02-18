@@ -8,7 +8,9 @@ import {
   getRecipe as getRecipeApi,
   getRecipeRoot as getRecipeRootApi,
   getRecipeFamily as getRecipeFamilyApi,
+  getRecipeAiImages as getRecipeAiImagesApi,
 } from './api';
+import type { RecipeAiImagesResponse } from './api';
 
 export const useRecipesQuery = (
   params?: RecipesListParams,
@@ -72,6 +74,29 @@ export const useRecipeFamilyQuery = (
     () => (rootId ? getRecipeFamilyApi(rootId) : Promise.reject(new Error('No rootId'))),
     {
       enabled: !!rootId,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      ...config,
+    },
+  );
+};
+
+/**
+ * Fetch all user AI-generated recipe images, paginated and sorted by relevance to a recipe.
+ * Use when the "Galerie IA" modal is open. recipeId = current recipe (for sorting).
+ */
+export const useRecipeAiImagesQuery = (
+  recipeId: string | null,
+  page: number,
+  enabled: boolean,
+  limit = 10,
+  config?: UseQueryOptions<RecipeAiImagesResponse>,
+): QueryObserverResult<RecipeAiImagesResponse> => {
+  return useQuery<RecipeAiImagesResponse>(
+    [QueryKeys.recipes, 'ai-images', recipeId ?? '', page, limit],
+    () => getRecipeAiImagesApi(recipeId, page, limit),
+    {
+      enabled: enabled,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       ...config,

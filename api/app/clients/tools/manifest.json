@@ -166,5 +166,11 @@
         "description": "Your Google Gemini API Key from <a href='https://aistudio.google.com/app/apikey' target='_blank'>Google AI Studio</a>. Leave blank if using Vertex AI with service account."
       }
     ]
+  },
+  {
+    "name": "Meal planner",
+    "pluginKey": "meal_planner",
+    "description": "Add, update, delete and comment on meals in your meal planner.",
+    "authConfig": []
   }
 ]

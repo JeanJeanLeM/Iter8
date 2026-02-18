@@ -12,6 +12,7 @@ import type { SettingDefinition } from './generate';
 import type { TMinimalFeedback } from './feedback';
 import type { ContentTypes } from './types/runs';
 import type { Agent } from './types/assistants';
+import type { TSelectedRecipeForVariation } from './types/queries';
 
 export * from './schemas';
 
@@ -112,6 +113,8 @@ export type TPayload = Partial<TMessage> &
     editedContent?: TEditedContent | null;
     /** Added conversation for multi-convo feature */
     addedConvo?: TConversation;
+    /** Recipe selected as modification target - injected into agent context */
+    selectedRecipeForVariation?: TSelectedRecipeForVariation;
   };
 
 export type TEditedContent =
@@ -142,7 +145,7 @@ export type TSubmission = {
   /** Added conversation for multi-convo feature */
   addedConvo?: TConversation;
   /** Recipe selected as modification target - injected into agent context */
-  selectedRecipeForVariation?: { recipeId: string; title: string; parentId?: string | null } | null;
+  selectedRecipeForVariation?: TSelectedRecipeForVariation | null;
 };
 
 export type EventSubmission = Omit<TSubmission, 'initialResponse'> & { initialResponse: TMessage };

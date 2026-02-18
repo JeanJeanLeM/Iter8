@@ -11,6 +11,7 @@ import { useAddedResponse, useResumeOnLoad, useAdaptiveSSE, useChatHelpers } fro
 import ConversationStarters from './Input/ConversationStarters';
 import { useGetMessagesByConvoId } from '~/data-provider';
 import MessagesView from './Messages/MessagesView';
+import WeeklyMealPlanWidget from './WeeklyMealPlanWidget';
 import Presentation from './Presentation';
 import ChatForm from './Input/ChatForm';
 import Landing from './Landing';
@@ -99,6 +100,7 @@ function ChatView({ index = 0 }: { index?: number }) {
                       isLandingPage && 'max-w-3xl transition-all duration-200 xl:max-w-4xl',
                     )}
                   >
+                    <WeeklyMealPlanWidget />
                     <ChatForm index={index} />
                     {isLandingPage ? <ConversationStarters /> : <Footer />}
                   </div>

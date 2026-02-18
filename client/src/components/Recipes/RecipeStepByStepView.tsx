@@ -3,9 +3,15 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useDocumentTitle, useLocalize } from '~/hooks';
 import { useRecipeQuery, useGetUserQuery } from '~/data-provider';
 import { Spinner, Button } from '@librechat/client';
-import { ChevronLeft, ChevronRight, Maximize2, Minimize2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Maximize2, Minimize2, AlertCircle } from 'lucide-react';
 import type { TRecipeIngredient } from 'librechat-data-provider';
-import { formatIngredient as formatIngredientUtil, type FormattedIngredient } from '~/utils/recipeIngredients';
+import {
+  formatIngredient as formatIngredientUtil,
+  formatExactQuantity,
+  getOptimalInitialPortions,
+  type FormattedIngredient,
+} from '~/utils/recipeIngredients';
+import CookingTimer from './CookingTimer';
 import { cn } from '~/utils';
 
 export default function RecipeStepByStepView() {
@@ -26,10 +32,10 @@ export default function RecipeStepByStepView() {
   const ratio = portionsRef > 0 ? portionsChosen / portionsRef : 1;
 
   useEffect(() => {
-    if (recipe) {
-      setPortionsChosen(recipe.portions ?? 1);
+    if (recipe?.portions != null && recipe?.ingredients != null) {
+      setPortionsChosen(getOptimalInitialPortions(recipe));
     }
-  }, [recipe?.portions]);
+  }, [recipe?._id, recipe?.portions, recipe?.ingredients?.length]);
 
   const sortedSteps = useMemo(() => {
     if (!recipe?.steps) return [];
@@ -199,6 +205,19 @@ export default function RecipeStepByStepView() {
                   {line.gramEquivalent && (
                     <span className="text-text-secondary"> {line.gramEquivalent}</span>
                   )}
+                  {line.roundedFrom != null && (
+                    <span
+                      className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
+                      title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                        exact: formatExactQuantity(line.roundedFrom),
+                      })}
+                      aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                        exact: formatExactQuantity(line.roundedFrom),
+                      })}
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -220,6 +239,12 @@ export default function RecipeStepByStepView() {
               {currentStep?.instruction}
             </p>
           </section>
+
+          <CookingTimer
+            key={`step-${currentStepIndex}-${currentStep?.order ?? 0}`}
+            defaultDurationMinutes={currentStep?.durationMinutes ?? 5}
+            stepKey={`${currentStepIndex}-${currentStep?.order ?? 0}`}
+          />
         </div>
       </div>
     </div>

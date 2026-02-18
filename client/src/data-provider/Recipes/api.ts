@@ -92,3 +92,25 @@ export function setRecipeVote(id: string, value: 1 | -1): Promise<RecipeVoteResp
 export function generateRecipeImage(id: string): Promise<TRecipe> {
   return request.post(`${apiBaseUrl()}/api/recipes/${encodeURIComponent(id)}/generate-image`);
 }
+
+/** Response of GET /api/recipes/ai-images: all user AI images, sorted by relevance to recipeId, paginated. */
+export interface RecipeAiImagesResponse {
+  images: Array<{ url: string; source: 'ai'; recipeId: string; recipeTitle: string }>;
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+/**
+ * List all AI-generated images across the user's recipes, sorted by relevance to a recipe.
+ * recipeId: current recipe (for sorting by ingredients, dishType, cuisineType); optional.
+ */
+export function getRecipeAiImages(
+  recipeId: string | null | undefined,
+  page = 1,
+  limit = 10,
+): Promise<RecipeAiImagesResponse> {
+  const params: Record<string, string | number> = { page, limit };
+  if (recipeId) params.recipeId = recipeId;
+  return request.get(`${apiBaseUrl()}/api/recipes/ai-images${buildQuery(params)}`);
+}

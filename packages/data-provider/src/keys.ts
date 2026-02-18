@@ -58,6 +58,12 @@ export enum QueryKeys {
   /* Journal */
   journal = 'journal',
   journalEntry = 'journalEntry',
+  /* Shopping list */
+  shoppingList = 'shoppingList',
+  /* Ingredients gallery */
+  ingredients = 'ingredients',
+  /* Meal planner */
+  mealPlannerCalendar = 'mealPlannerCalendar',
   principalSearch = 'principalSearch',
   accessRoles = 'accessRoles',
   resourcePermissions = 'resourcePermissions',

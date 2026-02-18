@@ -1,0 +1,10 @@
+# Railway: build + start pour LibreChat (monorepo)
+# Si ce fichier est utilisé avec Nixpacks (au lieu du Dockerfile), il faut builder
+# les packages (data-schemas, data-provider, api) et le client avant de lancer le backend.
+# Sinon: MODULE_NOT_FOUND @librechat/data-schemas/dist/index.cjs
+
+[build]
+buildCommand = "npm run frontend"
+
+[deploy]
+startCommand = "npm run backend"

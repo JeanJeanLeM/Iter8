@@ -1,13 +1,15 @@
 import { useMemo, useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@librechat/client';
 import { TriangleAlert } from 'lucide-react';
-import { actionDelimiter, actionDomainSeparator, Constants } from 'librechat-data-provider';
+import { actionDelimiter, actionDomainSeparator, Constants, QueryKeys } from 'librechat-data-provider';
 import type { TAttachment } from 'librechat-data-provider';
 import { useLocalize, useProgress } from '~/hooks';
 import { AttachmentGroup } from './Parts';
 import ToolCallInfo from './ToolCallInfo';
 import ProgressText from './ProgressText';
 import { logger, cn } from '~/utils';
+import { getMealPlannerSummary } from '~/utils/mealPlannerToolSummary';
 
 export default function ToolCall({
   initialProgress = 0.1,
@@ -30,6 +32,7 @@ export default function ToolCall({
   expires_at?: number;
 }) {
   const localize = useLocalize();
+  const queryClient = useQueryClient();
   const [showInfo, setShowInfo] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number | undefined>(0);
@@ -101,9 +104,19 @@ export default function ToolCall({
   const progress = useProgress(initialProgress);
   const cancelled = (!isSubmitting && progress < 1) || error === true;
 
+  useEffect(() => {
+    if (function_name === 'meal_planner' && output && !cancelled) {
+      queryClient.invalidateQueries([QueryKeys.mealPlannerCalendar]);
+      queryClient.invalidateQueries([QueryKeys.journal]);
+    }
+  }, [function_name, output, cancelled, queryClient]);
+
   const getFinishedText = () => {
     if (cancelled) {
       return localize('com_ui_cancelled');
+    }
+    if (function_name === 'meal_planner' && output) {
+      return getMealPlannerSummary(args, output, localize);
     }
     if (isMCPToolCall === true) {
       return localize('com_assistants_completed_function', { 0: function_name });
