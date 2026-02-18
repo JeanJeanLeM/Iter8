@@ -1,0 +1,66 @@
+{
+  "batchIndex": 9,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482bc6235024734b6b8d9",
+      "name": "jus",
+      "displayName": "Jus",
+      "prompt": "Simple flat illustration of Jus, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b9b0d83ce3cd1ee477",
+      "name": "jus de citron",
+      "displayName": "Jus de citron",
+      "prompt": "Simple flat illustration of Jus de citron, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ac6235024734b6b88f",
+      "name": "ketchup",
+      "displayName": "Ketchup",
+      "prompt": "Simple flat illustration of Ketchup, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b96235024734b6b8ca",
+      "name": "khorasan",
+      "displayName": "Khorasan",
+      "prompt": "Simple flat illustration of Khorasan, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a76235024734b6b87b",
+      "name": "kiwi",
+      "displayName": "Kiwi",
+      "prompt": "Simple flat illustration of Kiwi, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "69946dbad056ea3772c9d8e6",
+      "name": "lait",
+      "displayName": "Lait",
+      "prompt": "Simple flat illustration of Lait, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b8b0d83ce3cd1ee46e",
+      "name": "lait d'amande",
+      "displayName": "Lait d'amande",
+      "prompt": "Simple flat illustration of Lait d'amande, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b4b0d83ce3cd1ee452",
+      "name": "lait végétal",
+      "displayName": "Lait végétal",
+      "prompt": "Simple flat illustration of Lait végétal, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482aa6235024734b6b888",
+      "name": "laitue",
+      "displayName": "Laitue",
+      "prompt": "Simple flat illustration of Laitue, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b0b0d83ce3cd1ee439",
+      "name": "lardons ou pancetta",
+      "displayName": "Lardons ou pancetta",
+      "prompt": "Simple flat illustration of Lardons ou pancetta, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

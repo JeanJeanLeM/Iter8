@@ -1,0 +1,66 @@
+{
+  "batchIndex": 3,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482bb6235024734b6b8d1",
+      "name": "bison",
+      "displayName": "Bison",
+      "prompt": "Simple flat illustration of Bison, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a96235024734b6b885",
+      "name": "boeuf",
+      "displayName": "Boeuf",
+      "prompt": "Simple flat illustration of Boeuf, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b5b0d83ce3cd1ee45c",
+      "name": "boudoirs",
+      "displayName": "Boudoirs",
+      "prompt": "Simple flat illustration of Boudoirs, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7adb0d83ce3cd1ee424",
+      "name": "bouillon de légumes",
+      "displayName": "Bouillon de légumes",
+      "prompt": "Simple flat illustration of Bouillon de légumes, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70d6235024734b6bfc8",
+      "name": "boulgour",
+      "displayName": "Boulgour",
+      "prompt": "Simple flat illustration of Boulgour, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ab6235024734b6b88e",
+      "name": "brocoli",
+      "displayName": "Brocoli",
+      "prompt": "Simple flat illustration of Brocoli, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b06235024734b6b89e",
+      "name": "cacahuete",
+      "displayName": "Cacahuète",
+      "prompt": "Simple flat illustration of Cacahuète, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b7b0d83ce3cd1ee465",
+      "name": "cacao en poudre",
+      "displayName": "Cacao en poudre",
+      "prompt": "Simple flat illustration of Cacao en poudre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b6b0d83ce3cd1ee45f",
+      "name": "café fort",
+      "displayName": "Café fort",
+      "prompt": "Simple flat illustration of Café fort, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a6b0d83ce3cd1ee3f2",
+      "name": "cannelle",
+      "displayName": "Cannelle",
+      "prompt": "Simple flat illustration of Cannelle, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

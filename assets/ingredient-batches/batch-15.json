@@ -1,0 +1,66 @@
+{
+  "batchIndex": 15,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "6995b7a5b0d83ce3cd1ee3ef",
+      "name": "pommes",
+      "displayName": "Pommes",
+      "prompt": "Simple flat illustration of Pommes, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7aab0d83ce3cd1ee411",
+      "name": "pommes de terre",
+      "displayName": "Pommes de terre",
+      "prompt": "Simple flat illustration of Pommes de terre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ac6235024734b6b890",
+      "name": "porc",
+      "displayName": "Porc",
+      "prompt": "Simple flat illustration of Porc, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "69946dbbd056ea3772c9d8ec",
+      "name": "poulet",
+      "displayName": "Poulet",
+      "prompt": "Simple flat illustration of Poulet, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b7b0d83ce3cd1ee46b",
+      "name": "protéines végétales texturées",
+      "displayName": "Protéines végétales texturées",
+      "prompt": "Simple flat illustration of Protéines végétales texturées, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ba6235024734b6b8ce",
+      "name": "prune",
+      "displayName": "Prune",
+      "prompt": "Simple flat illustration of Prune, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a9b0d83ce3cd1ee40b",
+      "name": "pépites de chocolat",
+      "displayName": "Pépites de chocolat",
+      "prompt": "Simple flat illustration of Pépites de chocolat, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482be6235024734b6b8e1",
+      "name": "radicchio",
+      "displayName": "Radicchio",
+      "prompt": "Simple flat illustration of Radicchio, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482be6235024734b6b8e2",
+      "name": "radis",
+      "displayName": "Radis",
+      "prompt": "Simple flat illustration of Radis, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482af6235024734b6b899",
+      "name": "raisin",
+      "displayName": "Raisin",
+      "prompt": "Simple flat illustration of Raisin, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

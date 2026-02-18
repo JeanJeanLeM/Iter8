@@ -1,0 +1,66 @@
+{
+  "batchIndex": 8,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "6995b7146235024734b6bfd5",
+      "name": "fromage cottage",
+      "displayName": "Fromage cottage",
+      "prompt": "Simple flat illustration of Fromage cottage, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7aeb0d83ce3cd1ee427",
+      "name": "fromage râpé",
+      "displayName": "Fromage râpé",
+      "prompt": "Simple flat illustration of Fromage râpé, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b1b0d83ce3cd1ee43f",
+      "name": "gousses d'ail",
+      "displayName": "Gousses d'ail",
+      "prompt": "Simple flat illustration of Gousses d'ail, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a66235024734b6b878",
+      "name": "graine",
+      "displayName": "Graine",
+      "prompt": "Simple flat illustration of Graine, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a46235024734b6b86f",
+      "name": "haricots",
+      "displayName": "Haricots",
+      "prompt": "Simple flat illustration of Haricots, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bd6235024734b6b8de",
+      "name": "homard",
+      "displayName": "Homard",
+      "prompt": "Simple flat illustration of Homard, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7156235024734b6bfd6",
+      "name": "houmous",
+      "displayName": "Houmous",
+      "prompt": "Simple flat illustration of Houmous, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a76235024734b6b87e",
+      "name": "huile",
+      "displayName": "Huile",
+      "prompt": "Simple flat illustration of Huile, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7acb0d83ce3cd1ee41e",
+      "name": "huile d'olive",
+      "displayName": "Huile d'olive",
+      "prompt": "Simple flat illustration of Huile d'olive, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a86235024734b6b880",
+      "name": "jambon",
+      "displayName": "Jambon",
+      "prompt": "Simple flat illustration of Jambon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

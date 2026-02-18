@@ -1,0 +1,66 @@
+{
+  "batchIndex": 18,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "6995b7afb0d83ce3cd1ee433",
+      "name": "sucre en poudre",
+      "displayName": "Sucre en poudre",
+      "prompt": "Simple flat illustration of Sucre en poudre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a7b0d83ce3cd1ee3f9",
+      "name": "sucre roux",
+      "displayName": "Sucre roux",
+      "prompt": "Simple flat illustration of Sucre roux, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b4b0d83ce3cd1ee456",
+      "name": "sucre vanillé",
+      "displayName": "Sucre vanillé",
+      "prompt": "Simple flat illustration of Sucre vanillé, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482c06235024734b6b8e9",
+      "name": "thon",
+      "displayName": "Thon",
+      "prompt": "Simple flat illustration of Thon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a36235024734b6b86e",
+      "name": "tomate",
+      "displayName": "Tomate",
+      "prompt": "Simple flat illustration of Tomate, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7256235024734b6bfe6",
+      "name": "tomatille",
+      "displayName": "Tomatille",
+      "prompt": "Simple flat illustration of Tomatille, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7bab0d83ce3cd1ee47a",
+      "name": "tranches de jambon",
+      "displayName": "Tranches de jambon",
+      "prompt": "Simple flat illustration of Tranches de jambon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b2b0d83ce3cd1ee445",
+      "name": "viande hachée",
+      "displayName": "Viande hachée",
+      "prompt": "Simple flat illustration of Viande hachée, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a76235024734b6b87d",
+      "name": "yaourt",
+      "displayName": "Yaourt",
+      "prompt": "Simple flat illustration of Yaourt, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a8b0d83ce3cd1ee3ff",
+      "name": "œuf",
+      "displayName": "Œuf",
+      "prompt": "Simple flat illustration of Œuf, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

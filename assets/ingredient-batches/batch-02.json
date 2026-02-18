@@ -1,0 +1,66 @@
+{
+  "batchIndex": 2,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482af6235024734b6b89b",
+      "name": "avoine",
+      "displayName": "Avoine",
+      "prompt": "Simple flat illustration of Avoine, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70b6235024734b6bfc4",
+      "name": "babeurre",
+      "displayName": "Babeurre",
+      "prompt": "Simple flat illustration of Babeurre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ad6235024734b6b891",
+      "name": "banane",
+      "displayName": "Banane",
+      "prompt": "Simple flat illustration of Banane, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70b6235024734b6bfc5",
+      "name": "bar",
+      "displayName": "Bar (légine)",
+      "prompt": "Simple flat illustration of Bar (légine), 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70b6235024734b6bfc6",
+      "name": "betterave",
+      "displayName": "Betterave",
+      "prompt": "Simple flat illustration of Betterave, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "69946dbfd056ea3772c9d904",
+      "name": "beurre",
+      "displayName": "Beurre",
+      "prompt": "Simple flat illustration of Beurre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b8b0d83ce3cd1ee471",
+      "name": "beurre végétal",
+      "displayName": "Beurre végétal",
+      "prompt": "Simple flat illustration of Beurre végétal, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7aab0d83ce3cd1ee40e",
+      "name": "beurre à température ambiante",
+      "displayName": "Beurre à température ambiante",
+      "prompt": "Simple flat illustration of Beurre à température ambiante, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a9b0d83ce3cd1ee408",
+      "name": "bicarbonate de soude",
+      "displayName": "Bicarbonate de soude",
+      "prompt": "Simple flat illustration of Bicarbonate de soude, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70c6235024734b6bfc7",
+      "name": "biscuit",
+      "displayName": "Biscuit",
+      "prompt": "Simple flat illustration of Biscuit, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

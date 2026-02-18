@@ -1,0 +1,66 @@
+{
+  "batchIndex": 10,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482b46235024734b6b8b4",
+      "name": "lentille",
+      "displayName": "Lentille",
+      "prompt": "Simple flat illustration of Lentille, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7abb0d83ce3cd1ee418",
+      "name": "lentilles vertes",
+      "displayName": "Lentilles vertes",
+      "prompt": "Simple flat illustration of Lentilles vertes, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a9b0d83ce3cd1ee405",
+      "name": "levure chimique",
+      "displayName": "Levure chimique",
+      "prompt": "Simple flat illustration of Levure chimique, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7176235024734b6bfd7",
+      "name": "lin",
+      "displayName": "Lin",
+      "prompt": "Simple flat illustration of Lin, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7176235024734b6bfd8",
+      "name": "mahi-mahi",
+      "displayName": "Mahi-mahi",
+      "prompt": "Simple flat illustration of Mahi-mahi, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b86235024734b6b8c6",
+      "name": "mais",
+      "displayName": "Maïs",
+      "prompt": "Simple flat illustration of Maïs, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7186235024734b6bfd9",
+      "name": "mandarine",
+      "displayName": "Mandarine",
+      "prompt": "Simple flat illustration of Mandarine, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ba6235024734b6b8cd",
+      "name": "mango",
+      "displayName": "Mango",
+      "prompt": "Simple flat illustration of Mango, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b5b0d83ce3cd1ee459",
+      "name": "mascarpone",
+      "displayName": "Mascarpone",
+      "prompt": "Simple flat illustration of Mascarpone, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482aa6235024734b6b889",
+      "name": "melon",
+      "displayName": "Melon",
+      "prompt": "Simple flat illustration of Melon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

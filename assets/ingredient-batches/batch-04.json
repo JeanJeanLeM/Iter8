@@ -1,0 +1,66 @@
+{
+  "batchIndex": 4,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482a96235024734b6b886",
+      "name": "carotte",
+      "displayName": "Carotte",
+      "prompt": "Simple flat illustration of Carotte, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7abb0d83ce3cd1ee415",
+      "name": "carottes",
+      "displayName": "Carottes",
+      "prompt": "Simple flat illustration of Carottes, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b26235024734b6b8a8",
+      "name": "celeri",
+      "displayName": "Céleri",
+      "prompt": "Simple flat illustration of Céleri, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b16235024734b6b8a5",
+      "name": "cerise",
+      "displayName": "Cerise",
+      "prompt": "Simple flat illustration of Cerise, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ad6235024734b6b893",
+      "name": "champignon",
+      "displayName": "Champignon",
+      "prompt": "Simple flat illustration of Champignon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7acb0d83ce3cd1ee41b",
+      "name": "champignons de paris",
+      "displayName": "Champignons de paris",
+      "prompt": "Simple flat illustration of Champignons de paris, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b2b0d83ce3cd1ee449",
+      "name": "chapelure",
+      "displayName": "Chapelure",
+      "prompt": "Simple flat illustration of Chapelure, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b76235024734b6b8c0",
+      "name": "chia",
+      "displayName": "Chia",
+      "prompt": "Simple flat illustration of Chia, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b7b0d83ce3cd1ee468",
+      "name": "chicons",
+      "displayName": "Chicons",
+      "prompt": "Simple flat illustration of Chicons, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7afb0d83ce3cd1ee430",
+      "name": "chocolat noir",
+      "displayName": "Chocolat noir",
+      "prompt": "Simple flat illustration of Chocolat noir, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

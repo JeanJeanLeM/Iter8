@@ -1,0 +1,66 @@
+{
+  "batchIndex": 16,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482a96235024734b6b884",
+      "name": "restaurant",
+      "displayName": "Restaurant",
+      "prompt": "Simple flat illustration of Restaurant, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b46235024734b6b8b2",
+      "name": "riz",
+      "displayName": "Riz",
+      "prompt": "Simple flat illustration of Riz, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7216235024734b6bfe2",
+      "name": "riz sauvage",
+      "displayName": "Riz sauvage",
+      "prompt": "Simple flat illustration of Riz sauvage, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7216235024734b6bfe3",
+      "name": "roquette",
+      "displayName": "Roquette",
+      "prompt": "Simple flat illustration of Roquette, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bb6235024734b6b8d3",
+      "name": "rutabaga",
+      "displayName": "Rutabaga",
+      "prompt": "Simple flat illustration of Rutabaga, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a3b0d83ce3cd1ee3e3",
+      "name": "salade romaine",
+      "displayName": "Salade romaine",
+      "prompt": "Simple flat illustration of Salade romaine, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7226235024734b6bfe4",
+      "name": "sarrasin",
+      "displayName": "Sarrasin",
+      "prompt": "Simple flat illustration of Sarrasin, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a86235024734b6b87f",
+      "name": "sauce",
+      "displayName": "Sauce",
+      "prompt": "Simple flat illustration of Sauce, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a5b0d83ce3cd1ee3ec",
+      "name": "sauce césar",
+      "displayName": "Sauce césar",
+      "prompt": "Simple flat illustration of Sauce césar, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a46235024734b6b870",
+      "name": "saucisse",
+      "displayName": "Saucisse",
+      "prompt": "Simple flat illustration of Saucisse, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

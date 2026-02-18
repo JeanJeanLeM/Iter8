@@ -1,0 +1,66 @@
+{
+  "batchIndex": 12,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482b16235024734b6b8a3",
+      "name": "oats",
+      "displayName": "Oats",
+      "prompt": "Simple flat illustration of Oats, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a56235024734b6b873",
+      "name": "oeuf",
+      "displayName": "Oeuf",
+      "prompt": "Simple flat illustration of Oeuf, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "69946dc3d056ea3772c9d922",
+      "name": "oignon",
+      "displayName": "Oignon",
+      "prompt": "Simple flat illustration of Oignon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b71b6235024734b6bfdb",
+      "name": "oignon vert",
+      "displayName": "Oignon vert",
+      "prompt": "Simple flat illustration of Oignon vert, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b71b6235024734b6bfdc",
+      "name": "olive",
+      "displayName": "Olive",
+      "prompt": "Simple flat illustration of Olive, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ae6235024734b6b898",
+      "name": "orange",
+      "displayName": "Orange",
+      "prompt": "Simple flat illustration of Orange, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a66235024734b6b879",
+      "name": "pain",
+      "displayName": "Pain",
+      "prompt": "Simple flat illustration of Pain, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a56235024734b6b876",
+      "name": "pamplemousse",
+      "displayName": "Pamplemousse",
+      "prompt": "Simple flat illustration of Pamplemousse, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b71c6235024734b6bfdd",
+      "name": "panais",
+      "displayName": "Panais",
+      "prompt": "Simple flat illustration of Panais, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a4b0d83ce3cd1ee3e6",
+      "name": "parmesan",
+      "displayName": "Parmesan",
+      "prompt": "Simple flat illustration of Parmesan, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

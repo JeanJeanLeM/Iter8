@@ -1,0 +1,66 @@
+{
+  "batchIndex": 1,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482b76235024734b6b8be",
+      "name": "abricot",
+      "displayName": "Abricot",
+      "prompt": "Simple flat illustration of Abricot, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ba6235024734b6b8d0",
+      "name": "agneau",
+      "displayName": "Agneau",
+      "prompt": "Simple flat illustration of Agneau, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "69946dcbd056ea3772c9d958",
+      "name": "ail",
+      "displayName": "Ail",
+      "prompt": "Simple flat illustration of Ail, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7096235024734b6bfc2",
+      "name": "amande",
+      "displayName": "Amande",
+      "prompt": "Simple flat illustration of Amande, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b6b0d83ce3cd1ee462",
+      "name": "amaretto",
+      "displayName": "Amaretto",
+      "prompt": "Simple flat illustration of Amaretto, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b16235024734b6b8a4",
+      "name": "ananas",
+      "displayName": "Ananas",
+      "prompt": "Simple flat illustration of Ananas, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bd6235024734b6b8da",
+      "name": "anchois",
+      "displayName": "Anchois",
+      "prompt": "Simple flat illustration of Anchois, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70a6235024734b6bfc3",
+      "name": "asperge",
+      "displayName": "Asperge",
+      "prompt": "Simple flat illustration of Asperge, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b66235024734b6b8bd",
+      "name": "aubergine",
+      "displayName": "Aubergine",
+      "prompt": "Simple flat illustration of Aubergine, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b86235024734b6b8c5",
+      "name": "avocat",
+      "displayName": "Avocat",
+      "prompt": "Simple flat illustration of Avocat, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

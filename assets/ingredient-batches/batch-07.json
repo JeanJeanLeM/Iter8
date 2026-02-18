@@ -1,0 +1,66 @@
+{
+  "batchIndex": 7,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "6995b7126235024734b6bfd0",
+      "name": "espadon",
+      "displayName": "Espadon",
+      "prompt": "Simple flat illustration of Espadon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a8b0d83ce3cd1ee402",
+      "name": "extrait de vanille",
+      "displayName": "Extrait de vanille",
+      "prompt": "Simple flat illustration of Extrait de vanille, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "69946db9d056ea3772c9d8e0",
+      "name": "farine",
+      "displayName": "Farine",
+      "prompt": "Simple flat illustration of Farine, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7126235024734b6bfd1",
+      "name": "fenouil",
+      "displayName": "Fenouil",
+      "prompt": "Simple flat illustration of Fenouil, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7136235024734b6bfd2",
+      "name": "figue",
+      "displayName": "Figue",
+      "prompt": "Simple flat illustration of Figue, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7136235024734b6bfd3",
+      "name": "fletan",
+      "displayName": "Flétan",
+      "prompt": "Simple flat illustration of Flétan, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b96235024734b6b8c9",
+      "name": "fonio",
+      "displayName": "Fonio",
+      "prompt": "Simple flat illustration of Fonio, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b26235024734b6b8ab",
+      "name": "fraise",
+      "displayName": "Fraise",
+      "prompt": "Simple flat illustration of Fraise, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7146235024734b6bfd4",
+      "name": "framboise",
+      "displayName": "Framboise",
+      "prompt": "Simple flat illustration of Framboise, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a56235024734b6b875",
+      "name": "fromage",
+      "displayName": "Fromage",
+      "prompt": "Simple flat illustration of Fromage, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

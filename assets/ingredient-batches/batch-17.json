@@ -1,0 +1,66 @@
+{
+  "batchIndex": 17,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "6995b7a3b0d83ce3cd1ee3df",
+      "name": "sel",
+      "displayName": "Sel",
+      "prompt": "Simple flat illustration of Sel, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b06235024734b6b89f",
+      "name": "sesame",
+      "displayName": "Sesame",
+      "prompt": "Simple flat illustration of Sesame, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bc6235024734b6b8d8",
+      "name": "shallot",
+      "displayName": "Shallot",
+      "prompt": "Simple flat illustration of Shallot, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bf6235024734b6b8e5",
+      "name": "snapper",
+      "displayName": "Snapper",
+      "prompt": "Simple flat illustration of Snapper, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ad6235024734b6b894",
+      "name": "soja",
+      "displayName": "Soja",
+      "prompt": "Simple flat illustration of Soja, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7236235024734b6bfe5",
+      "name": "sorgho",
+      "displayName": "Sorgho",
+      "prompt": "Simple flat illustration of Sorgho, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b0b0d83ce3cd1ee436",
+      "name": "spaghetti",
+      "displayName": "Spaghetti",
+      "prompt": "Simple flat illustration of Spaghetti, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bf6235024734b6b8e7",
+      "name": "squid",
+      "displayName": "Squid",
+      "prompt": "Simple flat illustration of Squid, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "69946dcdd056ea3772c9d967",
+      "name": "sucre",
+      "displayName": "Sucre",
+      "prompt": "Simple flat illustration of Sucre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a7b0d83ce3cd1ee3fc",
+      "name": "sucre blanc",
+      "displayName": "Sucre blanc",
+      "prompt": "Simple flat illustration of Sucre blanc, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

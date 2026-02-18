@@ -35,7 +35,7 @@ async function passportLogin(req, email, password, done) {
       return done(null, false, { message: 'Email does not exist.' });
     }
 
-    const isMatch = await comparePassword(user, password);
+    const isMatch = await comparePassword(user, (password || '').trim());
     if (!isMatch) {
       logError('Passport Local Strategy - Password does not match', { isMatch });
       logger.error(`[Login] [Login failed] [Username: ${email}] [Request-IP: ${req.ip}]`);

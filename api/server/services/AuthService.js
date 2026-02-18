@@ -180,19 +180,21 @@ const registerUser = async (user, additionalData = {}) => {
     return { status: 404, message: errorMessage };
   }
 
-  const { email, password, name, username, provider } = user;
+    const { email, password, name, username, provider } = user;
+    const trimmedEmail = (email || '').trim().toLowerCase();
+    const trimmedPassword = (password || '').trim();
 
-  let newUserId;
+    let newUserId;
   try {
     const appConfig = await getAppConfig();
-    if (!isEmailDomainAllowed(email, appConfig?.registration?.allowedDomains)) {
+    if (!isEmailDomainAllowed(trimmedEmail, appConfig?.registration?.allowedDomains)) {
       const errorMessage =
         'The email address provided cannot be used. Please use a different email address.';
       logger.error(`[registerUser] [Registration not allowed] [Email: ${user.email}]`);
       return { status: 403, message: errorMessage };
     }
 
-    const existingUser = await findUser({ email }, 'email _id');
+    const existingUser = await findUser({ email: trimmedEmail }, 'email _id');
 
     if (existingUser) {
       logger.info(
@@ -212,12 +214,12 @@ const registerUser = async (user, additionalData = {}) => {
     const salt = bcrypt.genSaltSync(10);
     const newUserData = {
       provider: provider ?? 'local',
-      email,
+      email: trimmedEmail,
       username,
       name,
       avatar: null,
       role: isFirstRegisteredUser ? SystemRoles.ADMIN : SystemRoles.USER,
-      password: bcrypt.hashSync(password, salt),
+      password: bcrypt.hashSync(trimmedPassword, salt),
       ...additionalData,
     };
 
@@ -229,7 +231,7 @@ const registerUser = async (user, additionalData = {}) => {
     if (emailEnabled && !newUser.emailVerified) {
       await sendVerificationEmail({
         _id: newUserId,
-        email,
+        email: trimmedEmail,
         name,
       });
     } else {

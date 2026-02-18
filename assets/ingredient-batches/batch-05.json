@@ -1,0 +1,66 @@
+{
+  "batchIndex": 5,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482b26235024734b6b8aa",
+      "name": "chou",
+      "displayName": "Chou",
+      "prompt": "Simple flat illustration of Chou, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70e6235024734b6bfc9",
+      "name": "chou de bruxelles",
+      "displayName": "Chou de Bruxelles",
+      "prompt": "Simple flat illustration of Chou de Bruxelles, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b66235024734b6b8b9",
+      "name": "chou fleur",
+      "displayName": "Chou-fleur",
+      "prompt": "Simple flat illustration of Chou-fleur, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a46235024734b6b872",
+      "name": "chou kale",
+      "displayName": "Chou kale",
+      "prompt": "Simple flat illustration of Chou kale, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b66235024734b6b8ba",
+      "name": "collard",
+      "displayName": "Collard",
+      "prompt": "Simple flat illustration of Collard, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b70f6235024734b6bfca",
+      "name": "compote de pommes",
+      "displayName": "Compote de pommes",
+      "prompt": "Simple flat illustration of Compote de pommes, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7adb0d83ce3cd1ee421",
+      "name": "concentré de tomates",
+      "displayName": "Concentré de tomates",
+      "prompt": "Simple flat illustration of Concentré de tomates, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b26235024734b6b8a9",
+      "name": "concombre",
+      "displayName": "Concombre",
+      "prompt": "Simple flat illustration of Concombre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7106235024734b6bfcb",
+      "name": "coquille saint-jacques",
+      "displayName": "Coquille Saint-Jacques",
+      "prompt": "Simple flat illustration of Coquille Saint-Jacques, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7106235024734b6bfcc",
+      "name": "cornichon",
+      "displayName": "Cornichon",
+      "prompt": "Simple flat illustration of Cornichon, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

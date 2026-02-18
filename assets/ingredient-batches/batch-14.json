@@ -1,0 +1,66 @@
+{
+  "batchIndex": 14,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482bc6235024734b6b8d6",
+      "name": "poireau",
+      "displayName": "Poireau",
+      "prompt": "Simple flat illustration of Poireau, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b56235024734b6b8b6",
+      "name": "pois",
+      "displayName": "Pois",
+      "prompt": "Simple flat illustration of Pois, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b71e6235024734b6bfe0",
+      "name": "pois a oil noir",
+      "displayName": "Pois à œil noir",
+      "prompt": "Simple flat illustration of Pois à œil noir, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b71e6235024734b6bfe1",
+      "name": "pois chiche",
+      "displayName": "Pois chiche",
+      "prompt": "Simple flat illustration of Pois chiche, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a96235024734b6b883",
+      "name": "poisson",
+      "displayName": "Poisson",
+      "prompt": "Simple flat illustration of Poisson, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7aeb0d83ce3cd1ee42a",
+      "name": "poivre",
+      "displayName": "Poivre",
+      "prompt": "Simple flat illustration of Poivre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b1b0d83ce3cd1ee442",
+      "name": "poivre noir",
+      "displayName": "Poivre noir",
+      "prompt": "Simple flat illustration of Poivre noir, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482af6235024734b6b89c",
+      "name": "poivron",
+      "displayName": "Poivron",
+      "prompt": "Simple flat illustration of Poivron, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ae6235024734b6b897",
+      "name": "pomme",
+      "displayName": "Pomme",
+      "prompt": "Simple flat illustration of Pomme, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b16235024734b6b8a6",
+      "name": "pomme de terre",
+      "displayName": "Pomme de terre",
+      "prompt": "Simple flat illustration of Pomme de terre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

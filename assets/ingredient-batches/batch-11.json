@@ -1,0 +1,66 @@
+{
+  "batchIndex": 11,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482b46235024734b6b8b1",
+      "name": "millet",
+      "displayName": "Millet",
+      "prompt": "Simple flat illustration of Millet, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bd6235024734b6b8db",
+      "name": "morue",
+      "displayName": "Morue",
+      "prompt": "Simple flat illustration of Morue, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a66235024734b6b87a",
+      "name": "moutarde",
+      "displayName": "Moutarde",
+      "prompt": "Simple flat illustration of Moutarde, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482bb6235024734b6b8d4",
+      "name": "mure",
+      "displayName": "Mûre",
+      "prompt": "Simple flat illustration of Mûre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7aeb0d83ce3cd1ee42d",
+      "name": "muscade",
+      "displayName": "Muscade",
+      "prompt": "Simple flat illustration of Muscade, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b36235024734b6b8ad",
+      "name": "myrtille",
+      "displayName": "Myrtille",
+      "prompt": "Simple flat illustration of Myrtille, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482c06235024734b6b8ea",
+      "name": "navet",
+      "displayName": "Navet",
+      "prompt": "Simple flat illustration of Navet, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b71a6235024734b6bfda",
+      "name": "nectarine",
+      "displayName": "Nectarine",
+      "prompt": "Simple flat illustration of Nectarine, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7b9b0d83ce3cd1ee474",
+      "name": "noix de muscade",
+      "displayName": "Noix de muscade",
+      "prompt": "Simple flat illustration of Noix de muscade, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482a46235024734b6b871",
+      "name": "nuts",
+      "displayName": "Nuts",
+      "prompt": "Simple flat illustration of Nuts, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}

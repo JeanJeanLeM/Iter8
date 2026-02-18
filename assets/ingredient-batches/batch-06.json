@@ -1,0 +1,66 @@
+{
+  "batchIndex": 6,
+  "totalBatches": 19,
+  "ingredients": [
+    {
+      "_id": "699482b56235024734b6b8b8",
+      "name": "courge",
+      "displayName": "Courge",
+      "prompt": "Simple flat illustration of Courge, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7106235024734b6bfcd",
+      "name": "crabe des neiges",
+      "displayName": "Crabe des neiges",
+      "prompt": "Simple flat illustration of Crabe des neiges, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482af6235024734b6b89a",
+      "name": "cranberry",
+      "displayName": "Cranberry",
+      "prompt": "Simple flat illustration of Cranberry, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482b16235024734b6b8a2",
+      "name": "creme",
+      "displayName": "Crème",
+      "prompt": "Simple flat illustration of Crème, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a4b0d83ce3cd1ee3e9",
+      "name": "croûtons",
+      "displayName": "Croûtons",
+      "prompt": "Simple flat illustration of Croûtons, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7116235024734b6bfce",
+      "name": "crustace",
+      "displayName": "Crustacé",
+      "prompt": "Simple flat illustration of Crustacé, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ab6235024734b6b88d",
+      "name": "dinde",
+      "displayName": "Dinde",
+      "prompt": "Simple flat illustration of Dinde, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7a6b0d83ce3cd1ee3f5",
+      "name": "eau",
+      "displayName": "Eau",
+      "prompt": "Simple flat illustration of Eau, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "6995b7126235024734b6bfcf",
+      "name": "epeautre",
+      "displayName": "Épeautre",
+      "prompt": "Simple flat illustration of Épeautre, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    },
+    {
+      "_id": "699482ae6235024734b6b896",
+      "name": "epinard",
+      "displayName": "Épinard",
+      "prompt": "Simple flat illustration of Épinard, 3 to 4 colors only, no face eyes arms or legs, plain white background, subject centered, square frame, low resolution."
+    }
+  ]
+}
