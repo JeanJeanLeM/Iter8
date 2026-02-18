@@ -49,7 +49,7 @@ export default function JournalView() {
   const { data, isLoading, isFetching } = useJournalQuery(params);
   const realizations = data?.realizations ?? [];
 
-  useDocumentTitle(`${localize('com_ui_journal')} | Iter8`);
+  useDocumentTitle(`${localize('com_ui_journal')} | CookIter8`);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-primary">

@@ -4,7 +4,7 @@
 
 ## Contexte projet
 
-- **Projet** : LibreChat (fork/instance) — plateforme de chat AI self-hosted, multi-providers (OpenAI, Anthropic, Google, Azure, custom, etc.).
+- **Projet** : CookIter8 (fork LibreChat) — plateforme de chat AI self-hosted, multi-providers (OpenAI, Anthropic, Google, Azure, custom, etc.).
 - **Stack** : Node 20, npm workspaces (`api`, `client`, `packages/*`), MongoDB, Meilisearch, RAG API (vectordb).
 - **Code** : Backend Express en JS (`api/`), frontend React en TS/TSX (`client/`), packages partagés en TS (`packages/api`, `packages/client`, `packages/data-provider`, `packages/data-schemas`).
 

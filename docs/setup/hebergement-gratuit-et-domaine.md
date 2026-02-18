@@ -16,9 +16,9 @@ Objectif : l’app tourne 24/7 sans ton PC, ta mère ouvre un lien (idéalement 
 
 1. Va sur [railway.app](https://railway.app) et crée un compte (GitHub = 1 clic).
 2. **New Project** → **Deploy from GitHub repo**.
-3. Choisis **ton** dépôt (ton fork LibreChat, pas celui de danny-avila).
+3. Choisis **ton** dépôt (ton dépôt (CookIter8 / ton fork), pas celui de danny-avila).
 4. Railway détecte souvent un Dockerfile : il build et déploie.  
-   Si le projet a besoin de **plusieurs services** (API + MongoDB + Meilisearch, etc.), il faudra peut‑être utiliser un **template** ou ajouter les services (MongoDB, etc.) dans le même projet. Les templates “LibreChat” sur Railway ciblent le repo officiel ; pour ton fork, tu peux déployer le repo puis ajouter MongoDB (plugin Railway) et les variables d’environnement depuis ton `.env.example`.
+   Si le projet a besoin de **plusieurs services** (API + MongoDB + Meilisearch, etc.), il faudra peut‑être utiliser un **template** ou ajouter les services (MongoDB, etc.) dans le même projet. Les templates “LibreChat” sur Railway ciblent le repo officiel ; pour ton app (CookIter8), tu peux déployer le repo puis ajouter MongoDB (plugin Railway) et les variables d’environnement depuis ton `.env.example`.
 5. Une fois déployé, Railway te donne une URL : **https://xxx.railway.app** → c’est le lien pour ta mère.
 
 **Domaine personnalisé (optionnel)**  
@@ -69,7 +69,7 @@ Là, rien à payer (sauf le nom de domaine si tu en veux un personnalisé). En c
 
 1. **Pousser le code sur ton GitHub** (si ce n’est pas déjà fait) — voir [github-push.md](./github-push.md).
 2. **Aller sur [railway.app](https://railway.app)** (ou Zeabur), se connecter avec GitHub.
-3. **Créer un projet** et **déployer depuis ton dépôt** (ton fork LibreChat).
+3. **Créer un projet** et **déployer depuis ton dépôt** (ton dépôt).
 4. **Configurer** les variables d’environnement (comme dans `.env.example`) et les services nécessaires (MongoDB, etc.) si Railway ne les inclut pas dans un template.
 5. **Récupérer l’URL** (ex. `https://xxx.railway.app`) → c’est le lien à donner à ta mère.
 6. **Optionnel** : plus tard, acheter un domaine et l’ajouter en “custom domain” dans Railway (ou Zeabur) pour avoir un lien avec un nom personnalisé.

@@ -15,7 +15,7 @@ export default function IngredientGalleryView() {
   const [selectedIngredient, setSelectedIngredient] = useState<TIngredient | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
-  useDocumentTitle(`${localize('com_ui_ingredient_gallery')} | Iter8`);
+  useDocumentTitle(`${localize('com_ui_ingredient_gallery')} | CookIter8`);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-primary">

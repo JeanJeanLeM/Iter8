@@ -1,12 +1,12 @@
 # Démarrage rapide (débutant)
 
-Tu n’as jamais utilisé Docker ni MongoDB ? Ce guide explique le strict minimum pour faire tourner LibreChat sur ta machine.
+Tu n’as jamais utilisé Docker ni MongoDB ? Ce guide explique le strict minimum pour faire tourner CookIter8 sur ta machine.
 
 ---
 
 ## C’est quoi ce projet ?
 
-**LibreChat** = une application de chat avec l’IA. Comme ChatGPT, mais que tu héberges toi-même.
+**CookIter8** = une application de chat avec l’IA (fork LibreChat). Comme ChatGPT, mais que tu héberges toi-même.
 
 Le dépôt contient **plusieurs parties** qui doivent tourner en même temps :
 
@@ -36,7 +36,7 @@ Le frontend essaie d’envoyer les requêtes (config, auth, etc.) au **backend**
 
 ### Terminal 1 : le serveur (backend)
 
-À la racine du projet (`LibreChat`) :
+À la racine du projet :
 
 ```bash
 npm run backend:dev
@@ -58,7 +58,7 @@ Laisse ce terminal ouvert. Tu verras « Local: http://localhost:3090/ ». C’es
 
 Ouvre : **http://localhost:3090**
 
-Tu dois voir l’interface LibreChat. Les appels vers `/api/config`, `/api/auth/refresh`, etc. passent par le proxy Vite vers le backend sur 3080, donc tout fonctionne si le backend tourne bien.
+Tu dois voir l’interface CookIter8. Les appels vers `/api/config`, `/api/auth/refresh`, etc. passent par le proxy Vite vers le backend sur 3080, donc tout fonctionne si le backend tourne bien.
 
 ---
 

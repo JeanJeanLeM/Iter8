@@ -27,7 +27,7 @@ export default function Footer({ className }: { className?: string }) {
   const mainContentParts = (
     typeof config?.customFooter === 'string'
       ? config.customFooter
-      : '[Iter8 ' +
+      : '[CookIter8 ' +
         Constants.VERSION +
         '](https://librechat.ai) - ' +
         localize('com_ui_latest_footer')

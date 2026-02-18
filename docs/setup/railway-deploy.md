@@ -1,12 +1,12 @@
 # Déployer sur Railway – pas à pas
 
-Tu déploies ton fork LibreChat (avec recettes, journal, etc.) sur Railway. L’app aura une URL du type `https://ton-projet.up.railway.app` que ta mère pourra ouvrir.
+Tu déploies ton app CookIter8 (avec recettes, journal, etc.) sur Railway. L’app aura une URL du type `https://ton-projet.up.railway.app` que ta mère pourra ouvrir.
 
 ---
 
 ## Important : un seul service, build Dockerfile
 
-Railway peut détecter le monorepo et créer **plusieurs** services (data-schemas, api, frontend, etc.). Pour LibreChat il faut **un seul** service qui build avec le **Dockerfile** à la racine. Dès la création du projet, dans le service : **Settings** → **Build** → Builder = **Dockerfile**, Root Directory = racine du repo. Si tu vois 5–6 services, supprime les autres et garde un seul service configuré en Dockerfile.
+Railway peut détecter le monorepo et créer **plusieurs** services (data-schemas, api, frontend, etc.). Pour cette app il faut **un seul** service qui build avec le **Dockerfile** à la racine. Dès la création du projet, dans le service : **Settings** → **Build** → Builder = **Dockerfile**, Root Directory = racine du repo. Si tu vois 5–6 services, supprime les autres et garde un seul service configuré en Dockerfile.
 
 ---
 
@@ -22,7 +22,7 @@ Railway peut détecter le monorepo et créer **plusieurs** services (data-schema
 1. Va sur **[railway.app](https://railway.app)** et connecte-toi avec **GitHub**.
 2. Clique sur **New Project**.
 3. Choisis **Deploy from GitHub repo**.
-4. Autorise Railway à accéder à tes repos si demandé, puis sélectionne **ton** dépôt (ton fork LibreChat, pas `danny-avila/LibreChat`).
+4. Autorise Railway à accéder à tes repos si demandé, puis sélectionne **ton** dépôt (ton fork, pas `danny-avila/LibreChat`).
 5. Railway crée un projet et détecte en général le **Dockerfile** → il lance un build. Laisse faire.
 
 ---
@@ -62,6 +62,7 @@ Si tu génères le domaine après avoir mis les variables, pense à mettre à jo
 | `DOMAIN_SERVER`| La même URL, ex. `https://ton-projet.up.railway.app` |
 | `HOST`         | `0.0.0.0` |
 | `PORT`         | `3080` |
+| `ALLOW_REGISTRATION` | `true` (pour permettre la création de compte depuis l’interface ; sans cette variable, l’inscription renvoie **403 Forbidden**). |
 
 3. **Optionnel** (tu peux ajouter plus tard) :  
    - Clés API (OpenAI, Anthropic, etc.) si tu veux que l’app utilise des modèles.  
@@ -86,13 +87,14 @@ En pratique : ajouter **PORT** = **3080** dans les variables suffit souvent.
 
 1. Après avoir mis **MONGO_URI**, **DOMAIN_CLIENT**, **DOMAIN_SERVER**, **HOST**, **PORT**, sauvegarde les variables.
 2. Si le build a échoué ou n’a pas redéclenché : onglet **Deployments** → **Redeploy** (ou push un petit commit sur GitHub pour relancer le build).
-3. Quand le statut est vert (Success), ouvre l’URL générée à l’étape 3 : tu devrais voir la page de login LibreChat.
+3. Quand le statut est vert (Success), ouvre l’URL générée à l’étape 3 : tu devrais voir la page de login CookIter8.
 
 ---
 
 ## 7. Premier utilisateur
 
-- La première fois, tu peux créer un compte depuis l’interface (si l’inscription est activée) ou utiliser un script d’invitation / création d’utilisateur du projet (voir la doc LibreChat ou `config/invite-user.js`).
+- La première fois, tu peux créer un compte depuis l’interface (si l’inscription est activée) ou utiliser un script d’invitation / création d’utilisateur du projet (voir la doc du projet ou `config/invite-user.js`).
+- **Connexion après inscription** : si la connexion échoue après la création du compte (erreur 401 ou « identifiants incorrects »), vérifie ton mot de passe. Si la vérification d’email est activée, ajoute **`ALLOW_UNVERIFIED_EMAIL_LOGIN=true`** dans les variables pour autoriser la connexion avant vérification du mail (ou consulte tes mails pour le lien de vérification).
 - Donne ensuite le **lien Railway** (ex. `https://ton-projet.up.railway.app`) à ta mère.
 
 ---
@@ -107,25 +109,25 @@ Meilisearch sert à la **recherche** (messages, conversations). Sans lui, l’ap
 2. Choisis **Deploy from Docker Image** (ou **Empty Service** puis dans Settings → Source → **Docker Image**).
 3. **Image** : `getmeili/meilisearch:v1.12.3`
 4. **Variables** pour ce service :
-   - `MEILI_MASTER_KEY` = une clé secrète de ton choix (ex. une longue chaîne aléatoire). **Note-la** : tu la réutiliseras dans LibreChat.
+   - `MEILI_MASTER_KEY` = une clé secrète de ton choix (ex. une longue chaîne aléatoire). **Note-la** : tu la réutiliseras dans l’app.
    - `MEILI_NO_ANALYTICS` = `true`
 5. **Settings** → **Networking** → **Generate Domain** pour ce service. Tu obtiens une URL du type `https://meilisearch-xxx.up.railway.app`. **Copie l’URL** (sans le `https://` pour l’hôte si besoin : Meilisearch écoute sur le port 80 en public, donc l’URL complète suffit).
 
-### 2. Brancher LibreChat à Meilisearch
+### 2. Brancher l’app à Meilisearch
 
-1. Ouvre le service **LibreChat** (ton app).
+1. Ouvre le service de ton app (ex. CookIter8).
 2. **Variables** → ajoute :
    - `MEILI_HOST` = l’URL **publique** du service Meilisearch, ex. `https://meilisearch-xxx.up.railway.app` (avec `https://`).
    - `MEILI_MASTER_KEY` = **la même** clé que celle du service Meilisearch.
    - `MEILI_NO_ANALYTICS` = `true`
    - (Optionnel) `SEARCH` = `true` si ce n’est pas déjà activé.
-3. Sauvegarde. Railway redéploie LibreChat.
+3. Sauvegarde. Railway redéploie l’app.
 
 ### 3. Vérifier
 
 Après redéploiement, la recherche dans les conversations devrait fonctionner. Si l’app affiche une erreur Meilisearch, vérifie que `MEILI_HOST` est bien l’URL complète (avec `https://`) et que la clé est identique des deux côtés.
 
-**Résumé des variables Meilisearch (côté LibreChat) :**
+**Résumé des variables Meilisearch (côté app) :**
 
 | Variable | Valeur |
 |----------|--------|
@@ -141,10 +143,19 @@ Après redéploiement, la recherche dans les conversations devrait fonctionner. 
 |----|------|
 | **Railway** | New Project → Deploy from GitHub → ton repo. |
 | **MongoDB** | Garder Atlas, URI avec le **nouveau** mot de passe, 0.0.0.0/0 autorisé. |
-| **Variables** | `MONGO_URI`, `DOMAIN_CLIENT`, `DOMAIN_SERVER` (= l’URL Railway), `HOST=0.0.0.0`, `PORT=3080`. |
+| **Variables** | `MONGO_URI`, `DOMAIN_CLIENT`, `DOMAIN_SERVER` (= l’URL Railway), `HOST=0.0.0.0`, `PORT=3080`, `ALLOW_REGISTRATION=true` (pour la création de compte). |
 | **Domaine** | Générer un domaine dans Settings → Networking, et l’utiliser dans `DOMAIN_CLIENT` / `DOMAIN_SERVER`. |
 
 Si une étape ne colle pas à ce que tu vois (nouvelle interface Railway), dis-moi à quelle étape tu es et ce qui s’affiche, et on ajuste.
+
+---
+
+## Erreur 403 (Forbidden) sur la création de compte
+
+Si en créant un compte tu obtiens **POST …/api/auth/register 403 (Forbidden)** :
+
+- L’inscription est désactivée côté serveur. Dans Railway → ton service → **Variables**, ajoute **`ALLOW_REGISTRATION`** = **`true`**.
+- Sauvegarde (Railway redéploie). Réessaie ensuite la création de compte.
 
 ---
 

@@ -29,11 +29,14 @@ export default function useAppStartup({
     cleanupTimestampedStorage();
   }, []);
 
-  /** Set the app title */
+  /** Set the app title (normalize legacy LibreChat to CookIter8) */
   useEffect(() => {
-    const appTitle = startupConfig?.appTitle ?? '';
+    let appTitle = startupConfig?.appTitle ?? '';
     if (!appTitle) {
       return;
+    }
+    if (appTitle === 'LibreChat' || appTitle === 'Librechat') {
+      appTitle = 'CookIter8';
     }
     document.title = appTitle;
     localStorage.setItem(LocalStorageKeys.APP_TITLE, appTitle);

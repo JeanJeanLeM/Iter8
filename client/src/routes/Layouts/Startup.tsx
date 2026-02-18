@@ -38,7 +38,8 @@ export default function StartupLayout({ isAuthenticated }: { isAuthenticated?: b
   }, [isAuthenticated, navigate, data]);
 
   useEffect(() => {
-    document.title = startupConfig?.appTitle || 'Iter8';
+    const title = startupConfig?.appTitle || 'CookIter8';
+    document.title = title === 'LibreChat' || title === 'Librechat' ? 'CookIter8' : title;
   }, [startupConfig?.appTitle]);
 
   useEffect(() => {

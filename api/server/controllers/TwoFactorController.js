@@ -8,7 +8,7 @@ const {
 } = require('~/server/services/twoFactorService');
 const { getUserById, updateUser } = require('~/models');
 
-const safeAppTitle = (process.env.APP_TITLE || 'Iter8').replace(/\s+/g, '');
+const safeAppTitle = (process.env.APP_TITLE || 'CookIter8').replace(/\s+/g, '');
 
 /**
  * Enable 2FA for the user by generating a new TOTP secret and backup codes.

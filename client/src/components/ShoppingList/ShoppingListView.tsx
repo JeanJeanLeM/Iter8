@@ -33,7 +33,7 @@ export default function ShoppingListView() {
     [items],
   );
 
-  useDocumentTitle(`${localize('com_ui_shopping_list')} | Iter8`);
+  useDocumentTitle(`${localize('com_ui_shopping_list')} | CookIter8`);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();

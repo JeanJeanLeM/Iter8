@@ -11,7 +11,7 @@
 
 1. Va sur [github.com](https://github.com) et connecte-toi.
 2. Clique sur **New** (ou **+** → **New repository**).
-3. Choisis un nom (ex. `LibreChat`, `iter8-librechat`).
+3. Choisis un nom (ex. `CookIter8`, `iter8-librechat`).
 4. Laisse le dépôt **vide** (pas de README, pas de .gitignore).
 5. Crée le dépôt.
 
@@ -25,10 +25,10 @@ git remote add origin https://github.com/TON_USERNAME/TON_REPO.git
 git push -u origin main
 ```
 
-Exemple si ton compte est `cramp` et le dépôt `LibreChat` :
+Exemple si ton compte est `cramp` et le dépôt `CookIter8` :
 
 ```powershell
-git remote add origin https://github.com/cramp/LibreChat.git
+git remote add origin https://github.com/cramp/CookIter8.git
 git push -u origin main
 ```
 

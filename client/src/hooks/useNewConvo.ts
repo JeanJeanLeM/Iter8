@@ -246,7 +246,10 @@ const useNewConvo = (index = 0) => {
         const getParams = () => (searchParamsString ? `?${searchParamsString}` : '');
 
         if (conversation.conversationId === Constants.NEW_CONVO && !modelsData) {
-          const appTitle = localStorage.getItem(LocalStorageKeys.APP_TITLE) ?? '';
+          let appTitle = localStorage.getItem(LocalStorageKeys.APP_TITLE) ?? '';
+          if (appTitle === 'LibreChat' || appTitle === 'Librechat') {
+            appTitle = 'CookIter8';
+          }
           if (appTitle) {
             document.title = appTitle;
           }

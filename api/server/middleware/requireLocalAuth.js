@@ -9,7 +9,8 @@ const requireLocalAuth = (req, res, next) => {
     }
     if (!user) {
       logger.debug('[requireLocalAuth] Error: No user');
-      return res.status(404).send(info);
+      const message = info?.message ?? 'Invalid credentials';
+      return res.status(401).json({ message });
     }
     if (info && info.message) {
       logger.debug('[requireLocalAuth] Error: ' + info.message);

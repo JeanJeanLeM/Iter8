@@ -51,7 +51,7 @@ export default function RecipeBookView() {
   const { data, isLoading, isFetching, refetch } = useRecipesQuery(filters);
   const recipes = data?.recipes ?? [];
 
-  useDocumentTitle(`${localize('com_ui_recipe_book')} | Iter8`);
+  useDocumentTitle(`${localize('com_ui_recipe_book')} | CookIter8`);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-primary">

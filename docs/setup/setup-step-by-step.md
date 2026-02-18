@@ -99,7 +99,7 @@ Référence détaillée : [.github/CONTRIBUTING.md](../../.github/CONTRIBUTING.m
 **Non.** Docker n’est pas obligatoire pour faire tourner LibreChat.
 
 - **Sans Docker** : tu installes Node 20, MongoDB (et optionnellement Meilisearch) sur ta machine, tu lances le backend et le client en dev (Option 1 ci‑dessus). Idéal pour le **développement** et si tu préfères tout contrôler en local.
-- **Avec Docker** : toute la stack (app, MongoDB, Meilisearch, RAG, vectordb) tourne dans des conteneurs. Pratique pour un **déploiement** ou si tu ne veux pas installer MongoDB/Meilisearch à la main. Le `docker-compose.yml` utilise une image pré‑buildée de LibreChat ; tu ne rebuilds pas le code à chaque fois.
+- **Avec Docker** : toute la stack (app, MongoDB, Meilisearch, RAG, vectordb) tourne dans des conteneurs. Pratique pour un **déploiement** ou si tu ne veux pas installer MongoDB/Meilisearch à la main. Le `docker-compose.yml` utilise une image pré‑buildée du projet ; tu ne rebuilds pas le code à chaque fois.
 
 En résumé : développement local → Option 1. Déploiement ou env “tout-en-un” → Option 2 (Docker).
 
@@ -146,7 +146,7 @@ Sous Windows (PowerShell), si tu n’as pas `id`, tu peux mettre `UID=1000` et `
    ```bash
    docker compose up -d
    ```
-   Services démarrés : **api** (LibreChat), **mongodb**, **meilisearch**, **vectordb**, **rag_api**.
+   Services démarrés : **api** (app), **mongodb**, **meilisearch**, **vectordb**, **rag_api**.
 
 3. **Volumes (données persistantes)**  
    - `./data-node` : données MongoDB  
