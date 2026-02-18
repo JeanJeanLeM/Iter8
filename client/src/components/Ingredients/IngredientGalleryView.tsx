@@ -80,11 +80,6 @@ function IngredientCard({
     ingredient.displayName?.trim() ||
     (ingredient.name.trim().charAt(0).toUpperCase() +
       ingredient.name.trim().slice(1).toLowerCase());
-  const hasNutrition =
-    ingredient.energyKcal != null ||
-    ingredient.proteinG != null ||
-    ingredient.fatG != null ||
-    ingredient.carbohydrateG != null;
 
   return (
     <button
@@ -108,25 +103,7 @@ function IngredientCard({
       <span className="text-center text-sm font-medium text-text-primary">
         {displayName}
       </span>
-      {hasNutrition && (
-        <span className="mt-1 text-center text-xs text-text-tertiary">
-          {[
-            ingredient.energyKcal != null &&
-              `${Math.round(ingredient.energyKcal)} kcal`,
-            (ingredient.proteinG != null ||
-              ingredient.fatG != null ||
-              ingredient.carbohydrateG != null) &&
-              `P ${formatMacro(ingredient.proteinG)} · F ${formatMacro(ingredient.fatG)} · C ${formatMacro(ingredient.carbohydrateG)}`,
-          ]
-            .filter(Boolean)
-            .join(' · ')}
-        </span>
-      )}
     </button>
   );
 }
 
-function formatMacro(value: number | undefined): string {
-  if (value == null || !Number.isFinite(value)) return '–';
-  return value % 1 === 0 ? String(value) : value.toFixed(1);
-}

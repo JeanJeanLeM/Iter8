@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   OGDialog,
   OGDialogContent,
@@ -10,7 +10,7 @@ import {
 import { useLocalize } from '~/hooks';
 import { useEnrichIngredientWithUsdaMutation } from '~/data-provider';
 import type { TIngredient, TNutritionMicros } from 'librechat-data-provider';
-import { Apple, RefreshCw } from 'lucide-react';
+import { Apple, ChevronDown, ChevronRight, RefreshCw } from 'lucide-react';
 import { cn } from '~/utils';
 
 function formatNum(value: number | undefined): string {
@@ -33,6 +33,10 @@ export default function IngredientDetailDrawer({
 }: IngredientDetailDrawerProps) {
   const localize = useLocalize();
   const { showToast } = useToastContext();
+  const [showNutrition, setShowNutrition] = useState(false);
+  useEffect(() => {
+    setShowNutrition(false);
+  }, [ingredient?._id]);
   const enrichMutation = useEnrichIngredientWithUsdaMutation({
     onSuccess: (updated) => {
       showToast({ message: localize('com_ui_ingredient_enrich_usda') });
@@ -101,54 +105,69 @@ export default function IngredientDetailDrawer({
         </OGDialogTitle>
 
         <div className="flex-1 overflow-auto">
-          <h3 className="mb-2 text-sm font-medium text-text-secondary">
-            {localize('com_ui_ingredient_nutrition')}
-          </h3>
-          {!hasNutrition ? (
-            <p className="text-sm text-text-tertiary">
-              {localize('com_ui_ingredient_no_nutrition')}
-            </p>
-          ) : (
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <Row
-                  label={localize('com_ui_ingredient_energy')}
-                  value={ingredient.energyKcal != null ? `${formatNum(ingredient.energyKcal)} kcal` : undefined}
-                />
-                <Row
-                  label={localize('com_ui_ingredient_protein')}
-                  value={ingredient.proteinG != null ? `${formatNum(ingredient.proteinG)} g` : undefined}
-                />
-                <Row
-                  label={localize('com_ui_ingredient_fat')}
-                  value={ingredient.fatG != null ? `${formatNum(ingredient.fatG)} g` : undefined}
-                />
-                <Row
-                  label={localize('com_ui_ingredient_carbohydrate')}
-                  value={ingredient.carbohydrateG != null ? `${formatNum(ingredient.carbohydrateG)} g` : undefined}
-                />
-                <Row
-                  label={localize('com_ui_ingredient_fiber')}
-                  value={ingredient.fiberG != null ? `${formatNum(ingredient.fiberG)} g` : undefined}
-                />
-              </div>
-              {micros && Object.keys(micros).length > 0 && (
-                <div className="border-t border-border-medium pt-3">
-                  <p className="mb-2 text-xs font-medium text-text-tertiary">
-                    Micronutrients
-                  </p>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                    {microLabels.map(
-                      ({ key, labelKey }) =>
-                        micros[key] != null && (
-                          <Row
-                            key={key}
-                            label={labelKey}
-                            value={formatNum(micros[key] as number)}
-                          />
-                        ),
-                    )}
+          <button
+            type="button"
+            onClick={() => setShowNutrition((v) => !v)}
+            className={cn(
+              'flex w-full items-center justify-between rounded-lg border border-border-medium px-3 py-2 text-left text-sm font-medium text-text-secondary transition-colors hover:bg-surface-active-alt/50',
+            )}
+          >
+            <span>{localize('com_ui_ingredient_nutrition')}</span>
+            {showNutrition ? (
+              <ChevronDown className="h-4 w-4 shrink-0" />
+            ) : (
+              <ChevronRight className="h-4 w-4 shrink-0" />
+            )}
+          </button>
+          {showNutrition && (
+            <div className="mt-3">
+              {!hasNutrition ? (
+                <p className="text-sm text-text-tertiary">
+                  {localize('com_ui_ingredient_no_nutrition')}
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <Row
+                      label={localize('com_ui_ingredient_energy')}
+                      value={ingredient.energyKcal != null ? `${formatNum(ingredient.energyKcal)} kcal` : undefined}
+                    />
+                    <Row
+                      label={localize('com_ui_ingredient_protein')}
+                      value={ingredient.proteinG != null ? `${formatNum(ingredient.proteinG)} g` : undefined}
+                    />
+                    <Row
+                      label={localize('com_ui_ingredient_fat')}
+                      value={ingredient.fatG != null ? `${formatNum(ingredient.fatG)} g` : undefined}
+                    />
+                    <Row
+                      label={localize('com_ui_ingredient_carbohydrate')}
+                      value={ingredient.carbohydrateG != null ? `${formatNum(ingredient.carbohydrateG)} g` : undefined}
+                    />
+                    <Row
+                      label={localize('com_ui_ingredient_fiber')}
+                      value={ingredient.fiberG != null ? `${formatNum(ingredient.fiberG)} g` : undefined}
+                    />
                   </div>
+                  {micros && Object.keys(micros).length > 0 && (
+                    <div className="border-t border-border-medium pt-3">
+                      <p className="mb-2 text-xs font-medium text-text-tertiary">
+                        Micronutrients
+                      </p>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                        {microLabels.map(
+                          ({ key, labelKey }) =>
+                            micros[key] != null && (
+                              <Row
+                                key={key}
+                                label={labelKey}
+                                value={formatNum(micros[key] as number)}
+                              />
+                            ),
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
