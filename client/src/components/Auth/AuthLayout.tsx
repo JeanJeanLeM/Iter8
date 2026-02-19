@@ -57,10 +57,10 @@ function AuthLayout({
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white dark:bg-gray-900">
+    <div className="relative flex min-h-[100dvh] flex-col overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-900 overscroll-y-auto">
       <Banner />
       <BlinkAnimation active={isFetching}>
-        <div className="mt-6 flex w-full flex-col items-center gap-2">
+        <div className="mt-6 flex w-full flex-shrink-0 flex-col items-center gap-2">
           <div className="h-10 w-full bg-cover">
             <img
               src="assets/cookiter8/LogoCOOKITER8.png"
@@ -74,12 +74,12 @@ function AuthLayout({
         </div>
       </BlinkAnimation>
       <DisplayError />
-      <div className="absolute bottom-0 left-0 md:m-4">
+      <div className="absolute bottom-0 left-0 z-10 md:m-4">
         <ThemeSelector />
       </div>
 
-      <main className="flex flex-grow items-center justify-center">
-        <div className="w-authPageWidth overflow-hidden bg-white px-6 py-4 dark:bg-gray-900 sm:max-w-md sm:rounded-lg">
+      <main className="flex min-h-0 flex-grow items-start justify-center px-2 pb-[30vh] pt-2 sm:items-center sm:pb-4 sm:pt-4">
+        <div className="w-authPageWidth min-w-0 bg-white px-6 py-4 dark:bg-gray-900 sm:max-w-md sm:rounded-lg">
           {!hasStartupConfigError && !isFetching && header && (
             <h1
               className="mb-4 text-center text-3xl font-semibold text-black dark:text-white"

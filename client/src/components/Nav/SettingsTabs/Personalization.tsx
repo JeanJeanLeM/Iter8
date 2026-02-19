@@ -16,7 +16,8 @@ import {
   DIET_OPTIONS,
   ALLERGY_OPTIONS,
   ALLERGY_MAX_LENGTH,
-  COOKING_LEVEL_OPTIONS,
+  COOKING_LEVEL_MAX_LENGTH,
+  DIET_MAX_LENGTH,
   DIETARY_PREFERENCES_MAX_LENGTH,
 } from '~/constants/personalization';
 
@@ -36,6 +37,7 @@ export default function Personalization({
   const [selectedDiets, setSelectedDiets] = useState<string[]>([]);
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>([]);
   const [customAllergyInput, setCustomAllergyInput] = useState('');
+  const [customDietInput, setCustomDietInput] = useState('');
   const [cookingLevel, setCookingLevel] = useState<string>('');
   const [dietaryPreferences, setDietaryPreferences] = useState('');
   const [unitSystem, setUnitSystem] = useState<'si' | 'american' | ''>('');
@@ -151,6 +153,52 @@ export default function Personalization({
     (a) => !(ALLERGY_OPTIONS as readonly string[]).includes(a),
   );
 
+  const customDiets = selectedDiets.filter(
+    (d) => !(DIET_OPTIONS as readonly string[]).includes(d),
+  );
+
+  const addCustomDiet = useCallback(() => {
+    const value = customDietInput.trim();
+    if (!value) {
+      return;
+    }
+    if (selectedDiets.some((d) => d.toLowerCase() === value.toLowerCase())) {
+      showToast({
+        message: localize('com_ui_personalization_diet_already_added'),
+        status: 'error',
+      });
+      return;
+    }
+    if (value.length > DIET_MAX_LENGTH) {
+      showToast({
+        message: localize('com_ui_personalization_diet_too_long', {
+          max: String(DIET_MAX_LENGTH),
+        }),
+        status: 'error',
+      });
+      return;
+    }
+    const next = [...selectedDiets, value];
+    setSelectedDiets(next);
+    setCustomDietInput('');
+    updateMemoryPreferencesMutation.mutate({ diets: next });
+  }, [
+    customDietInput,
+    selectedDiets,
+    updateMemoryPreferencesMutation,
+    showToast,
+    localize,
+  ]);
+
+  const removeCustomDiet = useCallback(
+    (value: string) => {
+      const next = selectedDiets.filter((d) => d !== value);
+      setSelectedDiets(next);
+      updateMemoryPreferencesMutation.mutate({ diets: next });
+    },
+    [selectedDiets, updateMemoryPreferencesMutation],
+  );
+
   const addCustomAllergy = useCallback(() => {
     const value = customAllergyInput.trim();
     if (!value) {
@@ -193,13 +241,26 @@ export default function Personalization({
     [selectedAllergies, updateMemoryPreferencesMutation],
   );
 
-  const handleCookingLevelChange = useCallback(
-    (value: string) => {
-      setCookingLevel(value);
-      updateMemoryPreferencesMutation.mutate({ cookingLevel: value });
-    },
-    [updateMemoryPreferencesMutation],
-  );
+  const handleCookingLevelBlur = useCallback(() => {
+    const value = cookingLevel.trim();
+    if (value.length > COOKING_LEVEL_MAX_LENGTH) {
+      showToast({
+        message: localize('com_ui_personalization_cooking_level_too_long', {
+          max: String(COOKING_LEVEL_MAX_LENGTH),
+        }),
+        status: 'error',
+      });
+      setCookingLevel(user?.personalization?.cookingLevel ?? '');
+      return;
+    }
+    updateMemoryPreferencesMutation.mutate({ cookingLevel: value });
+  }, [
+    cookingLevel,
+    updateMemoryPreferencesMutation,
+    showToast,
+    localize,
+    user?.personalization?.cookingLevel,
+  ]);
 
   const handleUnitSystemChange = useCallback(
     (value: string) => {
@@ -238,14 +299,6 @@ export default function Personalization({
     localize,
     user?.personalization?.dietaryPreferences,
   ]);
-
-  const cookingLevelOptions = [
-    { value: '', label: localize('com_ui_cooking_level_none') },
-    ...COOKING_LEVEL_OPTIONS.map((value) => ({
-      value,
-      label: localize(`com_ui_cooking_level_${value}`),
-    })),
-  ];
 
   if (!hasAnyPersonalizationFeature) {
     return (
@@ -318,6 +371,49 @@ export default function Personalization({
               </div>
             ))}
           </div>
+          <div className="mt-4">
+            <Label className="text-xs text-text-secondary">
+              {localize('com_ui_personalization_diet_custom_section')}
+            </Label>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Input
+                value={customDietInput}
+                onChange={(e) => setCustomDietInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomDiet();
+                  }
+                }}
+                placeholder={localize('com_ui_personalization_diet_add_placeholder')}
+                className="max-w-[220px]"
+                maxLength={DIET_MAX_LENGTH + 1}
+                disabled={updateMemoryPreferencesMutation.isLoading}
+                aria-label={localize('com_ui_personalization_diet_add_placeholder')}
+              />
+              <Button
+                type="button"
+                onClick={addCustomDiet}
+                disabled={
+                  updateMemoryPreferencesMutation.isLoading || !customDietInput.trim()
+                }
+                className="h-10"
+              >
+                {localize('com_ui_personalization_diet_add_button')}
+              </Button>
+            </div>
+            {customDiets.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {customDiets.map((value) => (
+                  <Tag
+                    key={value}
+                    label={value}
+                    onRemove={() => removeCustomDiet(value)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <div>
@@ -388,17 +484,18 @@ export default function Personalization({
           </div>
         </div>
 
-        <div className="flex w-full items-center justify-between gap-4">
-          <Label className="text-sm font-medium shrink-0">
+        <div>
+          <Label className="text-sm font-medium">
             {localize('com_ui_personalization_cooking_level')}
           </Label>
-          <Dropdown
+          <Input
             value={cookingLevel}
-            options={cookingLevelOptions}
-            onChange={handleCookingLevelChange}
-            testId="cooking-level-selector"
-            sizeClasses="w-[180px]"
-            className="z-50"
+            onChange={(e) => setCookingLevel(e.target.value)}
+            onBlur={handleCookingLevelBlur}
+            placeholder={localize('com_ui_personalization_cooking_level_placeholder')}
+            className="mt-2 max-w-md"
+            maxLength={COOKING_LEVEL_MAX_LENGTH + 1}
+            disabled={updateMemoryPreferencesMutation.isLoading}
             aria-label={localize('com_ui_personalization_cooking_level')}
           />
         </div>

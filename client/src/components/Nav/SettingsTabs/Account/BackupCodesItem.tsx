@@ -68,15 +68,15 @@ const BackupCodesItem: React.FC = () => {
 
   return (
     <OGDialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <Label className="font-light">{localize('com_ui_backup_codes')}</Label>
+      <div className="flex flex-col gap-3">
+        <Label className="text-sm font-medium">{localize('com_ui_backup_codes')}</Label>
+        <div>
+          <OGDialogTrigger asChild>
+            <Button aria-label="Manage Backup Codes" variant="outline">
+              {localize('com_ui_manage')}
+            </Button>
+          </OGDialogTrigger>
         </div>
-        <OGDialogTrigger asChild>
-          <Button aria-label="Manage Backup Codes" variant="outline">
-            {localize('com_ui_manage')}
-          </Button>
-        </OGDialogTrigger>
       </div>
 
       <OGDialogContent className="w-11/12 max-w-lg">

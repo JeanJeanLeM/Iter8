@@ -166,14 +166,16 @@ function Avatar() {
         }
       }}
     >
-      <div className="flex items-center justify-between">
-        <span>{localize('com_nav_profile_picture')}</span>
-        <OGDialogTrigger asChild>
-          <Button variant="outline">
-            <FileImage className="mr-2 flex w-[22px] items-center" aria-hidden="true" />
-            <span>{localize('com_nav_change_picture')}</span>
-          </Button>
-        </OGDialogTrigger>
+      <div className="flex flex-col gap-3">
+        <span className="text-sm font-medium">{localize('com_nav_profile_picture')}</span>
+        <div>
+          <OGDialogTrigger asChild>
+            <Button variant="outline">
+              <FileImage className="mr-2 flex w-[22px] items-center" aria-hidden="true" />
+              <span>{localize('com_nav_change_picture')}</span>
+            </Button>
+          </OGDialogTrigger>
+        </div>
       </div>
 
       <OGDialogContent showCloseButton={false} className="w-11/12 max-w-md">

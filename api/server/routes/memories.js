@@ -163,7 +163,7 @@ router.post('/', memoryPayloadLimit, checkMemoryCreate, configMiddleware, async 
 const PERSONALIZATION_MAX_ITEMS = 20;
 const PERSONALIZATION_MAX_ITEM_LENGTH = 80;
 const PERSONALIZATION_DIETARY_PREFERENCES_MAX_LENGTH = 500;
-const COOKING_LEVEL_VALUES = new Set(['beginner', 'intermediate', 'advanced']);
+const COOKING_LEVEL_MAX_LENGTH = 100;
 
 function validateStringArray(value, fieldName) {
   if (!Array.isArray(value)) {
@@ -221,9 +221,9 @@ router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
       return res.status(400).json({ error: 'cookingLevel must be a string.' });
     }
     const level = cookingLevel.trim();
-    if (level && !COOKING_LEVEL_VALUES.has(level)) {
+    if (level.length > COOKING_LEVEL_MAX_LENGTH) {
       return res.status(400).json({
-        error: `cookingLevel must be one of: ${[...COOKING_LEVEL_VALUES].join(', ')}.`,
+        error: `cookingLevel must be at most ${COOKING_LEVEL_MAX_LENGTH} characters.`,
       });
     }
     patch.cookingLevel = level || '';

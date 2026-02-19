@@ -20,11 +20,9 @@ export const DisableTwoFactorToggle: React.FC<DisableTwoFactorToggleProps> = ({
   const localize = useLocalize();
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2">
-        <Label> {localize('com_nav_2fa')}</Label>
-      </div>
-      <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-3">
+      <Label className="text-sm font-medium">{localize('com_nav_2fa')}</Label>
+      <div>
         <Button
           ref={buttonRef}
           variant={enabled ? 'destructive' : 'outline'}

@@ -30,6 +30,7 @@
     "invite-user": "node config/invite-user.js",
     "create-recipe-agent": "node config/create-recipe-agent.js",
     "create-meal-planner-agent": "node config/create-meal-planner-agent.js",
+    "grant-public-cookiter8-agents": "node config/grant-public-cookiter8-agents.js",
     "seed-recipes": "node config/seed-recipes.js",
     "seed:usda-ingredients": "node api/scripts/seedUsdaIngredients.js",
     "build:usda-ingredients": "node api/scripts/buildProcessedUsdaIngredients.js",

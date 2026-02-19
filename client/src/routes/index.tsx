@@ -26,6 +26,7 @@ import RecipeStepByStepView from '~/components/Recipes/RecipeStepByStepView';
 import { JournalView } from '~/components/Journal';
 import { ShoppingListView } from '~/components/ShoppingList';
 import { IngredientGalleryView } from '~/components/Ingredients';
+import FAQView from '~/components/FAQ/FAQView';
 
 const AuthLayout = () => (
   <AuthContextProvider>
@@ -160,6 +161,10 @@ export const router = createBrowserRouter(
             {
               path: 'ingredients',
               element: <IngredientGalleryView />,
+            },
+            {
+              path: 'faq',
+              element: <FAQView />,
             },
           ],
         },

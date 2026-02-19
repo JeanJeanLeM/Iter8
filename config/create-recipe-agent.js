@@ -140,6 +140,24 @@ const DEFAULT_CONVERSATION_STARTERS = [
       grantedBy: user._id,
     });
 
+    // Rendre l'agent visible par tous les utilisateurs (chat et API) — CookIter8 = agents préconstruits pour tout le monde
+    await grantPermission({
+      principalType: PrincipalType.PUBLIC,
+      principalId: null,
+      resourceType: ResourceType.AGENT,
+      resourceId: agent._id,
+      accessRoleId: AccessRoleIds.AGENT_VIEWER,
+      grantedBy: user._id,
+    });
+    await grantPermission({
+      principalType: PrincipalType.PUBLIC,
+      principalId: null,
+      resourceType: ResourceType.REMOTE_AGENT,
+      resourceId: agent._id,
+      accessRoleId: AccessRoleIds.REMOTE_AGENT_VIEWER,
+      grantedBy: user._id,
+    });
+
     console.green(`Agent "${RECIPE_AGENT_NAME}" créé avec succès (id: ${agent.id}).`);
     console.blue('Outil activé : update_recipe');
     console.blue('Sélectionnez cet agent dans le chat pour créer des recettes.');
