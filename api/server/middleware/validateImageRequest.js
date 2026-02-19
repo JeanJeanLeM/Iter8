@@ -132,6 +132,16 @@ function createValidateImageRequest(secureImageLinks) {
       const basePath = getBasePath();
       const imagesPath = `${basePath}/images`;
 
+      // Allow static ingredient images (no auth required)
+      const ingredientsPath = `${imagesPath}/ingredients/`;
+      if (fullPath.startsWith(ingredientsPath)) {
+        const rest = fullPath.slice(ingredientsPath.length);
+        if (rest && !rest.includes('..') && /^[^/]+$/.test(rest.trim())) {
+          logger.debug('[validateImageRequest] Ingredient image request validated');
+          return next();
+        }
+      }
+
       const agentAvatarPattern = new RegExp(
         `^${imagesPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/[a-f0-9]{24}/agent-[^/]*$`,
       );
