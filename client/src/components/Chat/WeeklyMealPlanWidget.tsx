@@ -53,13 +53,16 @@ export default function WeeklyMealPlanWidget() {
     return plannedMeals.filter((m) => m.recipeDishType === dishTypeFilter);
   }, [plannedMeals, dishTypeFilter]);
 
+  // Plusieurs repas par créneau possible (ex. entrée + plat + dessert pour un même dîner)
   const mealsByDay = useMemo(() => {
-    const map: Record<string, Partial<Record<MealPlanSlot, TPlannedMeal>>> = {};
+    const map: Record<string, Partial<Record<MealPlanSlot, TPlannedMeal[]>>> = {};
     for (const m of filteredPlannedMeals) {
       const key = typeof m.date === 'string' ? m.date.slice(0, 10) : format(new Date(m.date), 'yyyy-MM-dd');
       if (!map[key]) map[key] = {};
-      if (ALL_SLOTS.includes(m.slot as MealPlanSlot)) {
-        map[key][m.slot as MealPlanSlot] = m;
+      const slot = m.slot as MealPlanSlot;
+      if (ALL_SLOTS.includes(slot)) {
+        if (!map[key][slot]) map[key][slot] = [];
+        map[key][slot].push(m);
       }
     }
     return map;
@@ -78,6 +81,11 @@ export default function WeeklyMealPlanWidget() {
   };
 
   const activeSlots = useMemo(() => ALL_SLOTS.filter((s) => slotFilters.has(s)), [slotFilters]);
+
+  const hasAnyMealForSlot = (dayKey: string, slot: MealPlanSlot) => {
+    const arr = mealsByDay[dayKey]?.[slot];
+    return Array.isArray(arr) && arr.length > 0;
+  };
 
   const handlePrevWeek = () => {
     setCurrentWeekStart((prev) => subWeeks(prev, 1));
@@ -229,7 +237,7 @@ export default function WeeklyMealPlanWidget() {
                   const key = format(day, 'yyyy-MM-dd');
                   const dayMeals = mealsByDay[key] ?? {};
                   const today = isToday(day);
-                  const hasAnyMeal = activeSlots.some((s) => dayMeals[s]);
+                  const hasAnyMeal = activeSlots.some((s) => hasAnyMealForSlot(key, s));
                   return (
                     <div
                       key={key}
@@ -251,34 +259,36 @@ export default function WeeklyMealPlanWidget() {
                       </div>
                       <div className="space-y-1.5 text-xs">
                         {activeSlots.map((slot) => {
-                          const meal = dayMeals[slot];
+                          const meals = dayMeals[slot] ?? [];
                           const emoji = SLOT_EMOJI[slot];
-                          if (meal) {
-                            return (
-                              <button
-                                key={slot}
-                                type="button"
-                                onClick={() => setSelectedMeal(meal)}
-                                className="flex w-full min-w-0 items-center gap-1.5 rounded px-1.5 py-1 text-left transition-colors hover:bg-surface-hover"
-                                title={meal.recipeTitle}
-                              >
-                                <span className="shrink-0 font-medium text-text-tertiary">{emoji}</span>
-                                <span className="min-w-0 flex-1 truncate text-text-primary" title={meal.recipeTitle}>
-                                  {meal.recipeTitle}
-                                </span>
-                              </button>
-                            );
-                          }
                           return (
-                            <button
-                              key={slot}
-                              type="button"
-                              onClick={() => handleAddMeal(key, slot)}
-                              className="flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-left text-text-tertiary transition-colors hover:bg-surface-hover hover:text-text-primary"
-                            >
-                              <span className="shrink-0 opacity-60">{emoji}</span>
-                              <span className="flex-1 italic">-</span>
-                            </button>
+                            <div key={slot} className="space-y-0.5">
+                              {meals.length > 0 ? (
+                                meals.map((meal) => (
+                                  <button
+                                    key={meal._id}
+                                    type="button"
+                                    onClick={() => setSelectedMeal(meal)}
+                                    className="flex w-full min-w-0 items-center gap-1.5 rounded px-1.5 py-1 text-left transition-colors hover:bg-surface-hover"
+                                    title={meal.recipeTitle}
+                                  >
+                                    <span className="shrink-0 font-medium text-text-tertiary">{emoji}</span>
+                                    <span className="min-w-0 flex-1 truncate text-text-primary" title={meal.recipeTitle}>
+                                      {meal.recipeTitle}
+                                    </span>
+                                  </button>
+                                ))
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddMeal(key, slot)}
+                                  className="flex w-full items-center gap-1.5 rounded px-1.5 py-1 text-left text-text-tertiary transition-colors hover:bg-surface-hover hover:text-text-primary"
+                                >
+                                  <span className="shrink-0 opacity-60">{emoji}</span>
+                                  <span className="flex-1 italic">-</span>
+                                </button>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
