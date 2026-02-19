@@ -1,11 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from '@librechat/client';
 import { useLocalize, useDocumentTitle } from '~/hooks';
-import { HelpCircle, MessageSquare, BookOpen, Calendar, List, Leaf, Settings } from 'lucide-react';
+import { useCompleteOnboardingMutation } from '~/data-provider';
+import { HelpCircle, MessageSquare, BookOpen, Calendar, List, Leaf, Settings, RotateCcw } from 'lucide-react';
 
 export default function FAQView() {
   const localize = useLocalize();
   useDocumentTitle(`${localize('com_nav_help_faq')} | CookIter8`);
+  const resetOnboardingMutation = useCompleteOnboardingMutation({
+    onSuccess: () => {},
+  });
+  const handleRestartOnboarding = () => {
+    resetOnboardingMutation.mutate({ onboardingCompleted: false });
+  };
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-surface-primary">
@@ -101,13 +109,24 @@ export default function FAQView() {
           </article>
         </section>
 
-        <div className="mt-10 border-t border-border-medium pt-6">
+        <div className="mt-10 flex flex-wrap items-center gap-4 border-t border-border-medium pt-6">
           <Link
             to="/c/new"
             className="text-sm font-medium text-primary hover:underline"
           >
             {localize('com_faq_back_to_chat')}
           </Link>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleRestartOnboarding}
+            disabled={resetOnboardingMutation.isLoading}
+            className="inline-flex items-center gap-2"
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden />
+            {localize('com_faq_restart_onboarding')}
+          </Button>
         </div>
       </div>
     </div>

@@ -218,6 +218,8 @@ export type TUser = {
   };
   createdAt: string;
   updatedAt: string;
+  /** When false, show onboarding modal. Undefined = treat as completed. */
+  onboardingCompleted?: boolean;
 };
 
 export type TGetConversationsResponse = {

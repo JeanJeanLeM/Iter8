@@ -31,6 +31,8 @@ export interface IUser extends Document {
   }>;
   expiresAt?: Date;
   termsAccepted?: boolean;
+  /** When false, show onboarding modal. Undefined = treat as completed (existing users). */
+  onboardingCompleted?: boolean;
   personalization?: {
     memories?: boolean;
     diets?: string[];
@@ -75,6 +77,7 @@ export interface UpdateUserRequest {
   plugins?: string[];
   twoFactorEnabled?: boolean;
   termsAccepted?: boolean;
+  onboardingCompleted?: boolean;
   personalization?: {
     memories?: boolean;
     diets?: string[];

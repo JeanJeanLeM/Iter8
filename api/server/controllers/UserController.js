@@ -98,6 +98,31 @@ const acceptTermsController = async (req, res) => {
   }
 };
 
+/**
+ * PATCH /api/user
+ * Update allowed user fields (e.g. onboardingCompleted). Body: { onboardingCompleted?: boolean }
+ */
+const patchUserController = async (req, res) => {
+  try {
+    const { onboardingCompleted } = req.body || {};
+    if (typeof onboardingCompleted !== 'boolean') {
+      return res.status(400).json({ message: 'Body must include onboardingCompleted (boolean).' });
+    }
+    const updated = await updateUser(req.user.id, { onboardingCompleted });
+    if (!updated) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const userData = updated.toObject ? updated.toObject() : { ...updated };
+    delete userData.password;
+    delete userData.totpSecret;
+    delete userData.backupCodes;
+    res.status(200).json(userData);
+  } catch (error) {
+    logger.error('Error patching user:', error);
+    res.status(500).json({ message: 'Error updating user' });
+  }
+};
+
 const deleteUserFiles = async (req) => {
   try {
     const userFiles = await getFiles({ user: req.user.id });
@@ -412,6 +437,7 @@ module.exports = {
   getUserController,
   getTermsStatusController,
   acceptTermsController,
+  patchUserController,
   deleteUserController,
   verifyEmailController,
   updateUserPluginsController,

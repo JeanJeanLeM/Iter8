@@ -1066,3 +1066,17 @@ export const useAcceptTermsMutation = (
     onMutate: options?.onMutate,
   });
 };
+
+export const useCompleteOnboardingMutation = (
+  options?: { onSuccess?: (data: t.TUser) => void; onError?: (error: Error) => void },
+): UseMutationResult<t.TUser, Error, { onboardingCompleted: boolean }, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { onboardingCompleted: boolean }) => dataService.patchUser(payload),
+    onSuccess: (data, variables, context) => {
+      queryClient.setQueryData<t.TUser>([QueryKeys.user], data);
+      options?.onSuccess?.(data);
+    },
+    onError: options?.onError,
+  });
+};

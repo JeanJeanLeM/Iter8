@@ -119,6 +119,10 @@ export function getUser(): Promise<t.TUser> {
   return request.get(endpoints.user());
 }
 
+export function patchUser(payload: { onboardingCompleted: boolean }): Promise<t.TUser> {
+  return request.patch(endpoints.user(), payload);
+}
+
 export function getUserBalance(): Promise<t.TBalanceResponse> {
   return request.get(endpoints.balance());
 }

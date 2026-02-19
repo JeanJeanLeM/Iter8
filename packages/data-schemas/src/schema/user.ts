@@ -132,6 +132,11 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    /** When false, show onboarding modal on first load. Default false for new users. */
+    onboardingCompleted: {
+      type: Boolean,
+      default: false,
+    },
     personalization: {
       type: {
         memories: {

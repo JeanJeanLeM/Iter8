@@ -16,10 +16,11 @@ import {
   SetConvoProvider,
   FileMapContext,
 } from '~/Providers';
-import { useUserTermsQuery, useGetStartupConfig } from '~/data-provider';
+import { useUserTermsQuery, useGetStartupConfig, useGetUserQuery } from '~/data-provider';
 import { Nav, MobileNav, NAV_WIDTH } from '~/components/Nav';
 import { OpenSidebar } from '~/components/Chat/Menus';
 import { TermsAndConditionsModal } from '~/components/ui';
+import { OnboardingModal } from '~/components/Onboarding';
 import { useHealthCheck } from '~/data-provider';
 import { Banner } from '~/components/Banners';
 
@@ -44,11 +45,14 @@ export default function Root() {
   const fileMap = useFileMap({ isAuthenticated });
 
   const { data: config } = useGetStartupConfig();
+  const { data: user } = useGetUserQuery();
   const { data: termsData } = useUserTermsQuery({
     enabled: isAuthenticated && config?.interface?.termsOfService?.modalAcceptance === true,
   });
 
   useSearchEnabled(isAuthenticated);
+
+  const showOnboarding = user !== undefined && user?.onboardingCompleted === false;
 
   useEffect(() => {
     if (termsData) {
@@ -119,6 +123,9 @@ export default function Root() {
               title={config.interface.termsOfService.modalTitle}
               modalContent={config.interface.termsOfService.modalContent}
             />
+          )}
+          {showOnboarding && (
+            <OnboardingModal open={showOnboarding} onComplete={() => {}} />
           )}
         </AssistantsMapContext.Provider>
       </FileMapContext.Provider>
