@@ -7,9 +7,19 @@ const {
   deleteShoppingListItem,
   deleteShoppingListItemsForPastRealizations,
 } = require('~/models');
+const getLogStores = require('~/cache/getLogStores');
 const { requireJwtAuth } = require('~/server/middleware');
 
 const router = express.Router();
+
+async function invalidateShoppingListCache(userId) {
+  const cache = getLogStores('SHOPPING_LIST');
+  await Promise.all([
+    cache.delete(`${userId}:all`),
+    cache.delete(`${userId}:true`),
+    cache.delete(`${userId}:false`),
+  ]);
+}
 
 router.use(requireJwtAuth);
 
@@ -28,8 +38,18 @@ router.get('/', async (req, res) => {
     if (boughtParam === 'true') bought = true;
     else if (boughtParam === 'false') bought = false;
 
+    const cacheKeySuffix = boughtParam === undefined || boughtParam === '' ? 'all' : boughtParam;
+    const cacheKey = `${userId}:${cacheKeySuffix}`;
+    const cache = getLogStores('SHOPPING_LIST');
+    const cached = await cache.get(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const { items } = await getShoppingList({ userId, bought });
-    res.json({ items });
+    const payload = { items };
+    await cache.set(cacheKey, payload);
+    res.json(payload);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -54,6 +74,7 @@ router.post('/', async (req, res) => {
           unit: item.unit,
         })),
       });
+      await invalidateShoppingListCache(userId);
       return res.status(201).json({ items: created });
     }
 
@@ -68,6 +89,7 @@ router.post('/', async (req, res) => {
       quantity: body.quantity,
       unit: body.unit,
     });
+    await invalidateShoppingListCache(userId);
     res.status(201).json(item);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -88,6 +110,7 @@ router.patch('/:id', async (req, res) => {
     if (!updated) {
       return res.status(404).json({ error: 'Shopping list item not found.' });
     }
+    await invalidateShoppingListCache(req.user.id);
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -104,6 +127,7 @@ router.delete('/:id', async (req, res) => {
     if (!deleted) {
       return res.status(404).json({ error: 'Shopping list item not found.' });
     }
+    await invalidateShoppingListCache(req.user.id);
     res.json({ deleted: true });
   } catch (error) {
     res.status(500).json({ error: error.message });

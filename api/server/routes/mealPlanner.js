@@ -7,6 +7,7 @@ const {
   updatePlannedMeal,
   deletePlannedMeal,
 } = require('~/models');
+const getLogStores = require('~/cache/getLogStores');
 const { requireJwtAuth } = require('~/server/middleware');
 
 const router = express.Router();
@@ -31,6 +32,13 @@ router.get('/calendar', async (req, res) => {
     const toDate = new Date(toParam + 'T23:59:59.999Z');
     if (Number.isNaN(fromDate.getTime()) || Number.isNaN(toDate.getTime())) {
       return res.status(400).json({ error: 'Invalid from or to date.' });
+    }
+
+    const cache = getLogStores('MEAL_PLANNER_CALENDAR');
+    const cacheKey = `${userId}:${fromParam}:${toParam}`;
+    const cached = await cache.get(cacheKey);
+    if (cached) {
+      return res.json(cached);
     }
 
     // #region agent log
@@ -76,7 +84,7 @@ router.get('/calendar', async (req, res) => {
       }
     }
 
-    res.json({
+    const payload = {
       realizations: realizationsResult.realizations,
       plannedMeals: plannedMeals.map((m) => {
         const recipeIdStr = m.recipeId ? m.recipeId.toString() : null;
@@ -87,7 +95,9 @@ router.get('/calendar', async (req, res) => {
           recipeDishType: recipeDishType || undefined,
         };
       }),
-    });
+    };
+    await cache.set(cacheKey, payload);
+    res.json(payload);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

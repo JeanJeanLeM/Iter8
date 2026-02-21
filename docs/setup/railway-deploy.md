@@ -231,3 +231,32 @@ Inconvénient : chaque redémarrage du conteneur refait un build. Pour éviter �
 ### C. Builder avec le repo (Nixpacks)
 
 Le fichier **`railway.toml`** à la racine impose Build = `npm run frontend`, Start = `npm run backend`. Utile si tu n'utilises pas le Dockerfile. Commit et push, puis redéploie.
+
+---
+
+## Erreur 401 (Unauthorized) – le chat agent / meal planner ne termine jamais
+
+En production (Railway), si la console navigateur affiche **401 error, refreshing token** et que les appels au Planificateur de repas (ou tout agent) ne se terminent jamais (POST `/api/agents/chat/agents` ou `/api/agents/chat/abort` en 401), l’authentification est rejetée côté serveur.
+
+### Vérifications
+
+1. **DOMAIN_CLIENT et DOMAIN_SERVER**
+   - Doivent être **exactement** l’URL publique du service, sans slash final, en **https**.
+   - Ex. : `https://iter8-test.up.railway.app` (et non `http://...` ni `https://.../`).
+   - Si l’URL Railway a changé (nouveau domaine généré), mets à jour ces deux variables et redéploie.
+
+2. **JWT_SECRET et JWT_REFRESH_SECRET**
+   - Doivent être définis sur Railway (voir section « Variables d’environnement »).
+   - Si tu les as modifiés après un déploiement, **tous les anciens tokens deviennent invalides** : il faut se **déconnecter puis se reconnecter** (ou vider les cookies du site et se reconnecter).
+
+3. **Reconnexion après déploiement**
+   - Après un redéploiement ou un changement de `JWT_*` ou de domaine, les tokens en mémoire/cookies peuvent être invalides. **Se déconnecter et se reconnecter** règle la plupart des 401 sur le chat agent.
+
+4. **Cookies (refresh token)**
+   - L’app utilise un cookie `refreshToken` (httpOnly, secure en production) pour renouveler le token. Si tu accèdes à l’app via une URL différente de celle configurée (ex. ancien lien, redirect, autre sous-domaine), le cookie peut ne pas être envoyé → le refresh échoue et tu restes en 401. Utilise **toujours** l’URL définie dans `DOMAIN_CLIENT` / `DOMAIN_SERVER`.
+
+### En résumé
+
+- Vérifier **DOMAIN_CLIENT** / **DOMAIN_SERVER** (https, pas de slash final).
+- Ne pas changer **JWT_SECRET** / **JWT_REFRESH_SECRET** sans que les utilisateurs se reconnectent.
+- En cas de 401 persistant : **se déconnecter, se reconnecter**, puis réessayer le meal planner.

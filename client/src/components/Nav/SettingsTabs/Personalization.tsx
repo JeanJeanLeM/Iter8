@@ -15,10 +15,12 @@ import { useLocalize } from '~/hooks';
 import {
   DIET_OPTIONS,
   ALLERGY_OPTIONS,
+  EQUIPMENT_OPTIONS,
   ALLERGY_MAX_LENGTH,
   COOKING_LEVEL_MAX_LENGTH,
   DIET_MAX_LENGTH,
   DIETARY_PREFERENCES_MAX_LENGTH,
+  EQUIPMENT_MAX_LENGTH,
 } from '~/constants/personalization';
 
 interface PersonalizationProps {
@@ -42,6 +44,8 @@ export default function Personalization({
   const [dietaryPreferences, setDietaryPreferences] = useState('');
   const [unitSystem, setUnitSystem] = useState<'si' | 'american' | ''>('');
   const [showIngredientGrams, setShowIngredientGrams] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
+  const [customEquipmentInput, setCustomEquipmentInput] = useState('');
 
   const updateMemoryPreferencesMutation = useUpdateMemoryPreferencesMutation({
     onSuccess: () => {
@@ -75,6 +79,9 @@ export default function Personalization({
       }
       if (variables.showIngredientGrams !== undefined) {
         setShowIngredientGrams(user?.personalization?.showIngredientGrams ?? false);
+      }
+      if (variables.equipment !== undefined) {
+        setSelectedEquipment(user?.personalization?.equipment ?? []);
       }
     },
   });
@@ -121,6 +128,12 @@ export default function Personalization({
       setShowIngredientGrams(user.personalization.showIngredientGrams ?? false);
     }
   }, [user?.personalization?.showIngredientGrams]);
+
+  useEffect(() => {
+    if (user?.personalization?.equipment !== undefined) {
+      setSelectedEquipment(user.personalization.equipment ?? []);
+    }
+  }, [user?.personalization?.equipment]);
 
   const handleMemoryToggle = (checked: boolean) => {
     setReferenceSavedMemories(checked);
@@ -239,6 +252,49 @@ export default function Personalization({
       updateMemoryPreferencesMutation.mutate({ allergies: next });
     },
     [selectedAllergies, updateMemoryPreferencesMutation],
+  );
+
+  const toggleEquipment = useCallback(
+    (value: string) => {
+      const next = selectedEquipment.includes(value)
+        ? selectedEquipment.filter((e) => e !== value)
+        : [...selectedEquipment, value];
+      setSelectedEquipment(next);
+      updateMemoryPreferencesMutation.mutate({ equipment: next });
+    },
+    [selectedEquipment, updateMemoryPreferencesMutation],
+  );
+
+  const addCustomEquipment = useCallback(() => {
+    const value = customEquipmentInput.trim();
+    if (!value) return;
+    if (selectedEquipment.some((e) => e.toLowerCase() === value.toLowerCase())) {
+      showToast({
+        message: localize('com_ui_personalization_allergy_already_added'),
+        status: 'error',
+      });
+      return;
+    }
+    if (value.length > EQUIPMENT_MAX_LENGTH) {
+      showToast({
+        message: localize('com_ui_personalization_allergy_too_long', { max: String(EQUIPMENT_MAX_LENGTH) }),
+        status: 'error',
+      });
+      return;
+    }
+    const next = [...selectedEquipment, value];
+    setSelectedEquipment(next);
+    setCustomEquipmentInput('');
+    updateMemoryPreferencesMutation.mutate({ equipment: next });
+  }, [customEquipmentInput, selectedEquipment, updateMemoryPreferencesMutation, showToast, localize]);
+
+  const removeCustomEquipment = useCallback(
+    (value: string) => {
+      const next = selectedEquipment.filter((e) => e !== value);
+      setSelectedEquipment(next);
+      updateMemoryPreferencesMutation.mutate({ equipment: next });
+    },
+    [selectedEquipment, updateMemoryPreferencesMutation],
   );
 
   const handleCookingLevelBlur = useCallback(() => {
@@ -486,6 +542,78 @@ export default function Personalization({
 
         <div>
           <Label className="text-sm font-medium">
+            {localize('com_ui_personalization_equipment')}
+          </Label>
+          <div className="mt-1 text-xs text-text-secondary">
+            {localize('com_ui_personalization_equipment_description')}
+          </div>
+          <div className="mt-2 flex flex-wrap gap-3">
+            {EQUIPMENT_OPTIONS.map((value) => (
+              <div key={value} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`equipment-${value}`}
+                  checked={selectedEquipment.includes(value)}
+                  onCheckedChange={() => toggleEquipment(value)}
+                  disabled={updateMemoryPreferencesMutation.isLoading}
+                />
+                <label
+                  htmlFor={`equipment-${value}`}
+                  className="cursor-pointer text-sm leading-none peer-disabled:cursor-not-allowed"
+                >
+                  {localize(`com_ui_equipment_${value}`)}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4">
+            <Label className="text-xs text-text-secondary">
+              {localize('com_ui_personalization_equipment_custom_section')}
+            </Label>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Input
+                value={customEquipmentInput}
+                onChange={(e) => setCustomEquipmentInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomEquipment();
+                  }
+                }}
+                placeholder={localize('com_ui_personalization_equipment_add_placeholder')}
+                className="max-w-[220px]"
+                maxLength={EQUIPMENT_MAX_LENGTH + 1}
+                disabled={updateMemoryPreferencesMutation.isLoading}
+                aria-label={localize('com_ui_personalization_equipment_add_placeholder')}
+              />
+              <Button
+                type="button"
+                onClick={addCustomEquipment}
+                disabled={
+                  updateMemoryPreferencesMutation.isLoading || !customEquipmentInput.trim()
+                }
+                className="h-10"
+              >
+                {localize('com_ui_personalization_equipment_add_button')}
+              </Button>
+            </div>
+            {selectedEquipment.filter((e) => !(EQUIPMENT_OPTIONS as readonly string[]).includes(e)).length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {selectedEquipment
+                  .filter((e) => !(EQUIPMENT_OPTIONS as readonly string[]).includes(e))
+                  .map((value) => (
+                    <Tag
+                      key={value}
+                      label={value}
+                      onRemove={() => removeCustomEquipment(value)}
+                    />
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">
             {localize('com_ui_personalization_cooking_level')}
           </Label>
           <Input
@@ -519,7 +647,7 @@ export default function Personalization({
             onChange={(value) => handleUnitSystemChange(value === 'none' ? '' : value)}
             testId="unit-system-selector"
             sizeClasses="w-[180px]"
-            className="z-50"
+            popoverClassName="z-[100]"
             aria-label={localize('com_ui_personalization_unit_system')}
           />
         </div>

@@ -196,7 +196,7 @@ function validateStringArray(value, fieldName) {
 const UNIT_SYSTEM_VALUES = new Set(['si', 'american']);
 
 router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
-  const { memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams } = req.body;
+  const { memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams, equipment } = req.body;
 
   const patch = {};
   if (typeof memories === 'boolean') {
@@ -252,11 +252,18 @@ router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
   if (showIngredientGrams !== undefined) {
     patch.showIngredientGrams = !!showIngredientGrams;
   }
+  if (equipment !== undefined) {
+    const err = validateStringArray(equipment, 'equipment');
+    if (err) {
+      return res.status(400).json({ error: err });
+    }
+    patch.equipment = equipment.map((s) => s.trim());
+  }
 
   if (Object.keys(patch).length === 0) {
     return res.status(400).json({
       error:
-        'At least one of memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, or showIngredientGrams must be provided.',
+        'At least one of memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams, or equipment must be provided.',
     });
   }
 
@@ -269,7 +276,7 @@ router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
 
     const p = updatedUser.personalization || {};
     const hasDietaryData =
-      (p.diets?.length || p.allergies?.length || p.cookingLevel || p.dietaryPreferences) && !!(patch.diets !== undefined || patch.allergies !== undefined || patch.cookingLevel !== undefined || patch.dietaryPreferences !== undefined);
+      (p.diets?.length || p.allergies?.length || p.equipment?.length || p.cookingLevel || p.dietaryPreferences) && !!(patch.diets !== undefined || patch.allergies !== undefined || patch.equipment !== undefined || patch.cookingLevel !== undefined || patch.dietaryPreferences !== undefined);
     if (hasDietaryData) {
       Promise.resolve()
         .then(() => generatePreferencesSummary(p))
@@ -295,6 +302,7 @@ router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
         preferencesSummary: p.preferencesSummary ?? '',
         unitSystem: p.unitSystem ?? '',
         showIngredientGrams: p.showIngredientGrams ?? false,
+        equipment: p.equipment ?? [],
       },
     });
   } catch (error) {

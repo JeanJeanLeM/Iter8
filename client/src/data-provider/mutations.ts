@@ -4,7 +4,14 @@ import {
   ConversationListResponse,
 } from 'librechat-data-provider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { dataService, MutationKeys, QueryKeys, defaultOrderQuery } from 'librechat-data-provider';
+import {
+  dataService,
+  MutationKeys,
+  QueryKeys,
+  defaultOrderQuery,
+  request,
+  apiBaseUrl,
+} from 'librechat-data-provider';
 import type { InfiniteData, UseMutationResult } from '@tanstack/react-query';
 import type * as t from 'librechat-data-provider';
 import {
@@ -1072,9 +1079,14 @@ export const useCompleteOnboardingMutation = (
 ): UseMutationResult<t.TUser, Error, { onboardingCompleted: boolean }, unknown> => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { onboardingCompleted: boolean }) => dataService.patchUser(payload),
+    mutationFn: (payload: { onboardingCompleted: boolean }) =>
+      request.patch<t.TUser>(`${apiBaseUrl()}/api/user`, payload),
     onSuccess: (data, variables, context) => {
-      queryClient.setQueryData<t.TUser>([QueryKeys.user], data);
+      queryClient.setQueryData<t.TUser>([QueryKeys.user], (prev) => {
+        const next = data ?? prev;
+        if (!next) return data as t.TUser;
+        return { ...next, onboardingCompleted: variables.onboardingCompleted };
+      });
       options?.onSuccess?.(data);
     },
     onError: options?.onError,

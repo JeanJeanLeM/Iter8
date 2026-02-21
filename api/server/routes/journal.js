@@ -8,9 +8,19 @@ const {
   createShoppingListItems,
   deleteShoppingListItemsByRealizationId,
 } = require('~/models');
+const getLogStores = require('~/cache/getLogStores');
 const { requireJwtAuth } = require('~/server/middleware');
 
 const router = express.Router();
+
+async function invalidateShoppingListCache(userId) {
+  const cache = getLogStores('SHOPPING_LIST');
+  await Promise.all([
+    cache.delete(`${userId}:all`),
+    cache.delete(`${userId}:true`),
+    cache.delete(`${userId}:false`),
+  ]);
+}
 
 router.use(requireJwtAuth);
 
@@ -92,6 +102,7 @@ router.post('/', async (req, res) => {
         items: recipe.ingredients.map((ing) => ({ name: ing.name })),
       });
     }
+    await invalidateShoppingListCache(userId);
     res.status(201).json(entry);
   } catch (error) {
     if (error.message === 'Recipe not found') {
@@ -115,6 +126,7 @@ router.delete('/:id', async (req, res) => {
     if (!deleted) {
       return res.status(404).json({ error: 'Journal entry not found.' });
     }
+    await invalidateShoppingListCache(userId);
     res.json({ deleted: true });
   } catch (error) {
     res.status(500).json({ error: error.message });

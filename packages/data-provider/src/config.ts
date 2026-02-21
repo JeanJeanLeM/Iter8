@@ -1451,6 +1451,18 @@ export enum CacheKeys {
    * Key for admin panel OAuth exchange codes (one-time-use, short TTL).
    */
   ADMIN_OAUTH_EXCHANGE = 'ADMIN_OAUTH_EXCHANGE',
+  /**
+   * Key for recipes list cache (first page / 20 recettes per user).
+   */
+  RECIPES_LIST = 'RECIPES_LIST',
+  /**
+   * Key for meal planner calendar cache (menus prévus mois ±3 sem per user/range).
+   */
+  MEAL_PLANNER_CALENDAR = 'MEAL_PLANNER_CALENDAR',
+  /**
+   * Key for shopping list cache (liste de course per user).
+   */
+  SHOPPING_LIST = 'SHOPPING_LIST',
 }
 
 /**

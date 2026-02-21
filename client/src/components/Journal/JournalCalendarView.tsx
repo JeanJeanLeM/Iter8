@@ -22,6 +22,7 @@ import useLocalStorage from '~/hooks/useLocalStorage';
 import { useMediaQuery } from '@librechat/client';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMealPlannerCalendarQuery } from '~/data-provider';
+import { getCalendarRangeMonthWithWeeks } from '~/utils/mealPlannerRange';
 import JournalEntryDetailDrawer from './JournalEntryDetailDrawer';
 import PlannedMealDetailDrawer from './PlannedMealDetailDrawer';
 import { cn } from '~/utils';
@@ -89,11 +90,10 @@ export default function JournalCalendarView({
   const [dishTypeFilter, setDishTypeFilter] = useState<DishTypeFilter>('');
   const slotFilters = useMemo(() => new Set(slotFiltersArray), [slotFiltersArray]);
 
-  const calendarRange = useMemo(() => {
-    const from = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
-    const to = format(endOfMonth(currentMonth), 'yyyy-MM-dd');
-    return { from, to };
-  }, [currentMonth]);
+  const calendarRange = useMemo(
+    () => getCalendarRangeMonthWithWeeks(currentMonth),
+    [currentMonth],
+  );
 
   const { data: calendarData } = useMealPlannerCalendarQuery(calendarRange);
   const plannedMeals = calendarData?.plannedMeals ?? [];

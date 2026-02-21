@@ -9,6 +9,7 @@ const {
   deleteRecipe,
   setRecipeVote,
 } = require('~/models');
+const getLogStores = require('~/cache/getLogStores');
 const { requireJwtAuth } = require('~/server/middleware');
 const { structureRecipeWithOpenAI } = require('~/server/services/Recipes/structureRecipeWithOpenAI');
 const { generateRecipeImageWithOpenAI } = require('~/server/services/Recipes/generateRecipeImageWithOpenAI');
@@ -16,6 +17,11 @@ const { config: endpointConfig } = require('~/server/services/Config/EndpointSer
 const { extractEnvVariable } = require('librechat-data-provider');
 
 const router = express.Router();
+
+async function invalidateRecipesListCache(userId) {
+  const cache = getLogStores('RECIPES_LIST');
+  await cache.delete(`${userId}:default`);
+}
 
 router.use(requireJwtAuth);
 
@@ -57,6 +63,7 @@ router.post('/structure', async (req, res) => {
       maxStorageDays: structured.maxStorageDays,
     });
 
+    await invalidateRecipesListCache(req.user.id);
     res.status(201).json(recipe);
   } catch (error) {
     const { logger } = require('@librechat/data-schemas');
@@ -100,6 +107,7 @@ router.post('/:parentId/variation', async (req, res) => {
       imageUrl: body.imageUrl,
     });
 
+    await invalidateRecipesListCache(req.user.id);
     res.status(201).json(recipe);
   } catch (error) {
     const { logger } = require('@librechat/data-schemas');
@@ -276,6 +284,25 @@ router.get('/', async (req, res) => {
     const parentId = req.query.parentId || undefined;
     const ids = parseArrayParam(req.query.ids);
 
+    const useCache =
+      ids.length === 0 &&
+      !parentId &&
+      ingredientsInclude.length === 0 &&
+      ingredientsExclude.length === 0 &&
+      !dishType &&
+      (!cuisineType || cuisineType.length === 0) &&
+      (!diet || diet.length === 0) &&
+      parentsOnly;
+
+    if (useCache) {
+      const cache = getLogStores('RECIPES_LIST');
+      const cacheKey = `${userId}:default`;
+      const cached = await cache.get(cacheKey);
+      if (cached) {
+        return res.json(cached);
+      }
+    }
+
     const { recipes } = await getRecipes({
       userId,
       ingredientsInclude,
@@ -287,7 +314,13 @@ router.get('/', async (req, res) => {
       parentId,
       ids: ids.length > 0 ? ids : undefined,
     });
-    res.json({ recipes });
+    const payload = { recipes };
+    if (useCache) {
+      const cache = getLogStores('RECIPES_LIST');
+      const cacheKey = `${userId}:default`;
+      await cache.set(cacheKey, payload);
+    }
+    res.json(payload);
   } catch (error) {
     const { logger } = require('@librechat/data-schemas');
     logger.error('[GET /api/recipes]', error?.message, error?.stack);
@@ -353,6 +386,7 @@ router.post('/', async (req, res) => {
       diet: body.diet ?? [],
       imageUrl: body.imageUrl,
     });
+    await invalidateRecipesListCache(req.user.id);
     res.status(201).json(recipe);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -505,6 +539,7 @@ router.put('/:id', async (req, res) => {
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found.' });
     }
+    await invalidateRecipesListCache(req.user.id);
     res.json(recipe);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -521,6 +556,7 @@ router.delete('/:id', async (req, res) => {
     if (!deleted) {
       return res.status(404).json({ error: 'Recipe not found.' });
     }
+    await invalidateRecipesListCache(req.user.id);
     res.json({ deleted: true });
   } catch (error) {
     res.status(500).json({ error: error.message });

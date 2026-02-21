@@ -511,12 +511,14 @@ class AgentClient extends BaseClient {
     const personalization = this.options.req.user?.personalization;
     const diets = personalization?.diets?.filter(Boolean) ?? [];
     const allergies = personalization?.allergies?.filter(Boolean) ?? [];
+    const equipment = personalization?.equipment?.filter(Boolean) ?? [];
     const cookingLevel = personalization?.cookingLevel?.trim();
     const dietaryPreferences = personalization?.dietaryPreferences?.trim();
     const preferencesSummary = personalization?.preferencesSummary?.trim();
     const hasDietaryContext =
       (diets.length > 0 ||
         allergies.length > 0 ||
+        equipment.length > 0 ||
         cookingLevel ||
         dietaryPreferences ||
         preferencesSummary) &&
@@ -529,12 +531,14 @@ class AgentClient extends BaseClient {
         !summaryBlock &&
         (diets.length > 0 ||
           allergies.length > 0 ||
+          equipment.length > 0 ||
           cookingLevel ||
           dietaryPreferences)
           ? [
               '# User dietary context (respect when suggesting recipes)',
               diets.length > 0 ? `Diets: ${diets.join(', ')}.` : '',
               allergies.length > 0 ? `Allergies: ${allergies.join(', ')}.` : '',
+              equipment.length > 0 ? `Available equipment: ${equipment.join(', ')}. Prefer recipes that only require this equipment.` : '',
               cookingLevel ? `Cooking level: ${cookingLevel}.` : '',
               dietaryPreferences ? `What the user likes: ${dietaryPreferences}` : '',
               'Do not suggest recipes containing these allergens or that conflict with these diets. Adapt complexity to the user\'s cooking level and preferences.',

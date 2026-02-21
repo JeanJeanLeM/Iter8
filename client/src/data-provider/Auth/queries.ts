@@ -14,6 +14,7 @@ export const useGetUserQuery = (
     refetchOnReconnect: false,
     refetchOnMount: false,
     retry: false,
+    staleTime: 5 * 60 * 1000, // 5 min — keep user/preferences in cache
     ...config,
     enabled: (config?.enabled ?? true) === true && queriesEnabled,
   });

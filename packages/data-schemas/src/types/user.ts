@@ -42,6 +42,7 @@ export interface IUser extends Document {
     preferencesSummary?: string;
     unitSystem?: 'si' | 'american';
     showIngredientGrams?: boolean;
+    equipment?: string[];
   };
   favorites?: Array<{
     agentId?: string;
@@ -87,6 +88,7 @@ export interface UpdateUserRequest {
     preferencesSummary?: string;
     unitSystem?: 'si' | 'american';
     showIngredientGrams?: boolean;
+    equipment?: string[];
   };
 }
 

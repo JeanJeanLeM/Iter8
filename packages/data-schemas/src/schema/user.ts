@@ -174,6 +174,11 @@ const userSchema = new Schema<IUser>(
           type: Boolean,
           default: undefined,
         },
+        /** Available kitchen equipment (robot pâtissier, four, mixeur, friteuse/air fryer, other) */
+        equipment: {
+          type: [String],
+          default: undefined,
+        },
       },
       default: {},
     },

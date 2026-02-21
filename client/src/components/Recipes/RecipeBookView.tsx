@@ -12,18 +12,19 @@ import { cn } from '~/utils';
 
 export type RecipeViewMode = 'gallery' | 'list';
 
-const SMALL_SCREEN_MAX_WIDTH = 768;
+/** Écrans en dessous de cette largeur : filtres fermés par défaut (mobile, tablette, petit PC) */
+const FILTERS_AUTO_OPEN_MIN_WIDTH = 1024;
 
 export default function RecipeBookView() {
   const localize = useLocalize();
   const [searchParams, setSearchParams] = useSearchParams();
   const [newRecipeOpen, setNewRecipeOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const isSmallScreen = useMediaQuery(`(max-width: ${SMALL_SCREEN_MAX_WIDTH}px)`);
+  const isLargeScreen = useMediaQuery(`(min-width: ${FILTERS_AUTO_OPEN_MIN_WIDTH}px)`);
 
   useEffect(() => {
-    if (!isSmallScreen) setFiltersOpen(true);
-  }, [isSmallScreen]);
+    if (isLargeScreen) setFiltersOpen(true);
+  }, [isLargeScreen]);
 
   const viewMode = (searchParams.get('view') as RecipeViewMode) || 'gallery';
   const setViewMode = (mode: RecipeViewMode) => {

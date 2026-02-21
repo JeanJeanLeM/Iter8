@@ -215,6 +215,7 @@ export type TUser = {
     dietaryPreferences?: string;
     unitSystem?: 'si' | 'american';
     showIngredientGrams?: boolean;
+    equipment?: string[];
   };
   createdAt: string;
   updatedAt: string;

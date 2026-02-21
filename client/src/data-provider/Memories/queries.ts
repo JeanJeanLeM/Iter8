@@ -55,6 +55,7 @@ export type UpdateMemoryPreferencesParams = {
   /** 'si' | 'american' | '' (empty string clears preference) */
   unitSystem?: 'si' | 'american' | '';
   showIngredientGrams?: boolean;
+  equipment?: string[];
 };
 export type UpdateMemoryPreferencesResponse = {
   updated: boolean;
@@ -66,6 +67,7 @@ export type UpdateMemoryPreferencesResponse = {
     dietaryPreferences?: string;
     unitSystem?: string;
     showIngredientGrams?: boolean;
+    equipment?: string[];
   };
 };
 

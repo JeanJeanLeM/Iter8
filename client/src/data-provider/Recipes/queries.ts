@@ -12,6 +12,10 @@ import {
 } from './api';
 import type { RecipeAiImagesResponse } from './api';
 
+/** Cache: 5 min fresh, 30 min kept in memory (plan: 20 recettes) */
+const RECIPES_LIST_STALE_MS = 5 * 60 * 1000;
+const RECIPES_LIST_GC_MS = 30 * 60 * 1000;
+
 export const useRecipesQuery = (
   params?: RecipesListParams,
   config?: UseQueryOptions<RecipesListResponse>,
@@ -22,6 +26,8 @@ export const useRecipesQuery = (
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      staleTime: RECIPES_LIST_STALE_MS,
+      gcTime: RECIPES_LIST_GC_MS,
       ...config,
     },
   );

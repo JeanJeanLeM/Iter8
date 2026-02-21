@@ -34,3 +34,17 @@ export const DIET_MAX_LENGTH = 80;
 
 /** Max length for dietary preferences description (must match API validation). */
 export const DIETARY_PREFERENCES_MAX_LENGTH = 500;
+
+/**
+ * Kitchen equipment option values for user personalization.
+ * Labels via i18n: com_ui_equipment_*.
+ */
+export const EQUIPMENT_OPTIONS: readonly string[] = [
+  'robot_patissier',
+  'four',
+  'mixeur_electrique',
+  'friteuse_air_fryer',
+] as const;
+
+/** Max length for custom equipment item (must match API PERSONALIZATION_MAX_ITEM_LENGTH). */
+export const EQUIPMENT_MAX_LENGTH = 80;

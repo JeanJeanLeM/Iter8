@@ -23,6 +23,9 @@ function buildPrompt(personalization) {
   if (personalization.dietaryPreferences) {
     parts.push(`Goûts: ${personalization.dietaryPreferences}.`);
   }
+  if (personalization.equipment?.length) {
+    parts.push(`Matériel disponible: ${personalization.equipment.join(', ')}.`);
+  }
   if (parts.length === 0) {
     return null;
   }

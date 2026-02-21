@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, CalendarDays, Refres
 import { useLocalize } from '~/hooks';
 import useLocalStorage from '~/hooks/useLocalStorage';
 import { useMealPlannerCalendarQuery } from '~/data-provider';
+import { getCalendarRangeMonthWithWeeks } from '~/utils/mealPlannerRange';
 import type { TPlannedMeal, MealPlanSlot } from 'librechat-data-provider';
 import { PlannedMealDetailDrawer, AddPlannedMealDialog } from '~/components/Journal';
 import { cn } from '~/utils';
@@ -24,7 +25,7 @@ type DishTypeFilter = '' | 'entree' | 'plat' | 'dessert';
 
 export default function WeeklyMealPlanWidget() {
   const localize = useLocalize();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [selectedMeal, setSelectedMeal] = useState<TPlannedMeal | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -39,11 +40,10 @@ export default function WeeklyMealPlanWidget() {
     return eachDayOfInterval({ start: currentWeekStart, end });
   }, [currentWeekStart]);
 
-  const calendarRange = useMemo(() => {
-    const from = format(currentWeekStart, 'yyyy-MM-dd');
-    const to = format(endOfWeek(currentWeekStart, { weekStartsOn: 1 }), 'yyyy-MM-dd');
-    return { from, to };
-  }, [currentWeekStart]);
+  const calendarRange = useMemo(
+    () => getCalendarRangeMonthWithWeeks(currentWeekStart),
+    [currentWeekStart],
+  );
 
   const { data: calendarData, isLoading, refetch, isFetching } = useMealPlannerCalendarQuery(calendarRange);
   const plannedMeals = calendarData?.plannedMeals ?? [];

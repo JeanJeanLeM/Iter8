@@ -10,6 +10,8 @@ interface DropdownProps {
   onChange: (value: string) => void;
   options: (string | Option | { divider: true })[];
   className?: string;
+  /** Applied only to the popover (e.g. z-[100] when inside a modal so list appears above dialog) */
+  popoverClassName?: string;
   sizeClasses?: string;
   testId?: string;
   icon?: React.ReactNode;
@@ -32,6 +34,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   onChange,
   options,
   className = '',
+  popoverClassName,
   sizeClasses,
   testId = 'dropdown-menu',
   icon,
@@ -104,7 +107,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         className={cn(
           'popover-ui z-40',
           sizeClasses,
-          className,
+          popoverClassName ?? className,
           'max-h-[80vh] overflow-y-auto',
           '[pointer-events:auto]', // Override body's pointer-events:none when in modal
         )}

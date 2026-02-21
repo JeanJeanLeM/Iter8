@@ -55,6 +55,13 @@ const namespaces = {
     CacheKeys.ADMIN_OAUTH_EXCHANGE,
     Time.THIRTY_SECONDS,
   ),
+  [CacheKeys.RECIPES_LIST]: standardCache(CacheKeys.RECIPES_LIST, Time.FIVE_MINUTES),
+  [CacheKeys.MEAL_PLANNER_CALENDAR]: standardCache(CacheKeys.MEAL_PLANNER_CALENDAR, Time.FIVE_MINUTES),
+  [CacheKeys.SHOPPING_LIST]: standardCache(CacheKeys.SHOPPING_LIST, Time.FIVE_MINUTES),
+  // String literals so cache works when data-provider dist hasn't been rebuilt (enum may be missing)
+  RECIPES_LIST: standardCache('RECIPES_LIST', Time.FIVE_MINUTES),
+  MEAL_PLANNER_CALENDAR: standardCache('MEAL_PLANNER_CALENDAR', Time.FIVE_MINUTES),
+  SHOPPING_LIST: standardCache('SHOPPING_LIST', Time.FIVE_MINUTES),
 };
 
 /**

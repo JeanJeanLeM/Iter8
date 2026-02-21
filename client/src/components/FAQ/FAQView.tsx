@@ -8,9 +8,7 @@ import { HelpCircle, MessageSquare, BookOpen, Calendar, List, Leaf, Settings, Ro
 export default function FAQView() {
   const localize = useLocalize();
   useDocumentTitle(`${localize('com_nav_help_faq')} | CookIter8`);
-  const resetOnboardingMutation = useCompleteOnboardingMutation({
-    onSuccess: () => {},
-  });
+  const resetOnboardingMutation = useCompleteOnboardingMutation();
   const handleRestartOnboarding = () => {
     resetOnboardingMutation.mutate({ onboardingCompleted: false });
   };

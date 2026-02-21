@@ -201,6 +201,7 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
       preferencesSummary?: string;
       unitSystem?: 'si' | 'american' | null;
       showIngredientGrams?: boolean;
+      equipment?: string[];
     },
   ): Promise<IUser | null> {
     const User = mongoose.models.User;
@@ -253,6 +254,9 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
     }
     if (patch.showIngredientGrams !== undefined) {
       $set['personalization.showIngredientGrams'] = !!patch.showIngredientGrams;
+    }
+    if (Array.isArray(patch.equipment)) {
+      $set['personalization.equipment'] = patch.equipment;
     }
     if (Object.keys($set).length === 0 && Object.keys($unset).length === 0) {
       return (await User.findById(userId).lean()) as IUser | null;
