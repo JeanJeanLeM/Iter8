@@ -29,10 +29,10 @@ import { IngredientGalleryView } from '~/components/Ingredients';
 import FAQView from '~/components/FAQ/FAQView';
 
 const AuthLayout = () => (
-  <AuthContextProvider>
+  <>
     <Outlet />
     <ApiErrorWatcher />
-  </AuthContextProvider>
+  </>
 );
 
 const baseEl = document.querySelector('base');
@@ -41,10 +41,18 @@ const baseHref = baseEl?.getAttribute('href') || '/';
 export const router = createBrowserRouter(
   [
     {
-      path: 'share/:shareId',
-      element: <ShareRoute />,
-      errorElement: <RouteErrorBoundary />,
-    },
+      element: (
+        <AuthContextProvider>
+          <Outlet />
+          <ApiErrorWatcher />
+        </AuthContextProvider>
+      ),
+      children: [
+        {
+          path: 'share/:shareId',
+          element: <ShareRoute />,
+          errorElement: <RouteErrorBoundary />,
+        },
     {
       path: 'oauth',
       errorElement: <RouteErrorBoundary />,
