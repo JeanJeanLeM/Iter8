@@ -61,15 +61,17 @@ export function createRecipeVariation(
 /**
  * Structure raw recipe text via OpenAI and save to the user's recipe book.
  * Optionally create as variation: pass parentId (and optionally variationNote).
+ * Pass conversationId when creating from chat so the recipe links to that discussion.
  */
 export function structureAndCreateRecipe(
   recipeText: string,
-  options?: { parentId?: string; variationNote?: string },
+  options?: { parentId?: string; variationNote?: string; conversationId?: string | null },
 ): Promise<TRecipe> {
   return request.post(`${apiBaseUrl()}/api/recipes/structure`, {
     recipeText,
     ...(options?.parentId ? { parentId: options.parentId } : {}),
     ...(options?.variationNote ? { variationNote: options.variationNote } : {}),
+    ...(options?.conversationId ? { conversationId: options.conversationId } : {}),
   });
 }
 

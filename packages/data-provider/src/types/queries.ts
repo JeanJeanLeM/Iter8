@@ -263,6 +263,8 @@ export type TRecipe = {
   diet?: string[];
   imageUrl?: string;
   images?: Array<{ url: string; source: 'ai' | 'upload' }>;
+  /** Conversation where this recipe was created (chat that mentions it). */
+  conversationId?: string | null;
   variationCount?: number;
   score?: number;
   userVote?: number;

@@ -225,6 +225,7 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     imageUrl?: string;
     restTimeMinutes?: number;
     maxStorageDays?: number;
+    conversationId?: string | null;
   }): Promise<IRecipe> {
     const doc = await Recipe.create({
       ...data,

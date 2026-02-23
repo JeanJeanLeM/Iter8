@@ -32,7 +32,7 @@ router.use(requireJwtAuth);
  */
 router.post('/structure', async (req, res) => {
   try {
-    const { recipeText, parentId: parentIdBody, variationNote } = req.body || {};
+    const { recipeText, parentId: parentIdBody, variationNote, conversationId: conversationIdBody } = req.body || {};
     if (!recipeText || typeof recipeText !== 'string') {
       return res.status(400).json({ error: 'recipeText is required.' });
     }
@@ -50,6 +50,7 @@ router.post('/structure', async (req, res) => {
       userId: req.user.id,
       parentId: parentIdBody ?? null,
       variationNote: variationNote ?? undefined,
+      conversationId: conversationIdBody && typeof conversationIdBody === 'string' ? conversationIdBody : null,
       title: structured.title,
       objective: structured.objective,
       description: structured.description,

@@ -13,10 +13,15 @@ export interface ConversationMention {
 }
 
 /**
- * Returns conversations that mention a given recipe, based on recipeMessageMap.
+ * Returns conversations that mention a given recipe, based on recipeMessageMap
+ * and optionally the recipe's conversationId (chat where it was created).
  * Uses cache first, then fetches from API for IDs not in cache.
  */
-export function useConversationsMentioningRecipe(recipeId: string | undefined): {
+export function useConversationsMentioningRecipe(
+  recipeId: string | undefined,
+  /** Conversation where the recipe was created (stored on recipe). Shown even if not in map. */
+  recipeConversationId?: string | null,
+): {
   conversationIds: string[];
   conversations: ConversationMention[];
   isLoading: boolean;
@@ -25,17 +30,20 @@ export function useConversationsMentioningRecipe(recipeId: string | undefined): 
   const queryClient = useQueryClient();
 
   const conversationIds = useMemo(() => {
-    if (!recipeId) return [];
     const ids = new Set<string>();
+    if (recipeConversationId && recipeConversationId !== 'new' && recipeConversationId.length > 1) {
+      ids.add(recipeConversationId);
+    }
+    if (!recipeId) return Array.from(ids);
     for (const [convId, msgMap] of Object.entries(map)) {
       if (convId === 'new' || !convId) continue;
-      const recipeIds = Object.values(msgMap ?? {});
-      if (recipeIds.includes(recipeId)) {
+      const recipeIds = Object.values(msgMap ?? {}).map(String);
+      if (recipeIds.includes(String(recipeId))) {
         ids.add(convId);
       }
     }
     return Array.from(ids);
-  }, [map, recipeId]);
+  }, [map, recipeId, recipeConversationId]);
 
   const queries = useQueries({
     queries: conversationIds.map((id) => ({

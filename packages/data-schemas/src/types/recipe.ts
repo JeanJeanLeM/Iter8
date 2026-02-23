@@ -42,6 +42,8 @@ export interface IRecipe extends Document {
   restTimeMinutes?: number;
   /** Max storage in days (e.g. 2 for 48h). */
   maxStorageDays?: number;
+  /** Conversation where this recipe was created (chat that mentions it). Used for "go to discussion" link. */
+  conversationId?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -68,6 +70,8 @@ export interface IRecipeLean {
   images?: Array<{ url: string; source: 'ai' | 'upload' }>;
   restTimeMinutes?: number;
   maxStorageDays?: number;
+  /** Conversation where this recipe was created (chat that mentions it). */
+  conversationId?: string | null;
   variationCount?: number;
   score?: number;
   userVote?: number;

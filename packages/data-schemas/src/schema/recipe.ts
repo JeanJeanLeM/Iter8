@@ -61,6 +61,8 @@ const recipeSchema: Schema<IRecipe> = new Schema(
     },
     restTimeMinutes: { type: Number },
     maxStorageDays: { type: Number },
+    /** Conversation where this recipe was created (chat that mentions it). */
+    conversationId: { type: String, default: null },
   },
   { timestamps: true },
 );

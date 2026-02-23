@@ -47,7 +47,14 @@ export default function WriteRecipeHoverButton({
       const setLoading = asVariation ? setIsLoadingVariation : setIsLoading;
       setLoading(true);
       try {
-        const recipe = await structureAndCreateRecipe(text, asVariation && effectiveParentId ? { parentId: effectiveParentId } : undefined);
+        const opts =
+          asVariation && effectiveParentId
+            ? { parentId: effectiveParentId, variationNote: undefined as string | undefined }
+            : {};
+        if (conversationId && conversationId !== 'new' && conversationId.length > 1) {
+          (opts as { conversationId?: string }).conversationId = conversationId;
+        }
+        const recipe = await structureAndCreateRecipe(text, Object.keys(opts).length ? opts : undefined);
         showToast({
           message: localize('com_ui_recipe_added') || 'Recette ajoutée au livre !',
           status: 'success',
@@ -64,7 +71,7 @@ export default function WriteRecipeHoverButton({
         setLoading(false);
       }
     },
-    [recipeText, localize, showToast, onRecipeAdded, effectiveParentId],
+    [recipeText, localize, showToast, onRecipeAdded, effectiveParentId, conversationId],
   );
 
   const handleClick = useCallback(() => doCreate(false), [doCreate]);

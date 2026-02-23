@@ -102,10 +102,11 @@ export default function Message(props: TMessageProps) {
       setAddedRecipe(recipe);
       const convId = conversation?.conversationId;
       const msgId = message?.messageId;
-      if (convId && recipe?._id) {
+      const validConvId = convId && convId !== 'new' && convId.length > 1;
+      if (validConvId && recipe?._id) {
         setParentMap((prev) => (prev[convId] ? prev : { ...prev, [convId]: recipe._id }));
       }
-      if (convId && msgId && recipe?._id) {
+      if (validConvId && msgId && recipe?._id) {
         setRecipeMessageMap((prev) => ({
           ...prev,
           [convId]: { ...(prev[convId] ?? {}), [msgId]: recipe._id },

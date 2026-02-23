@@ -4,6 +4,8 @@ import { useDocumentTitle, useLocalize, useNewConvo } from '~/hooks';
 import {
   useRecipeQuery,
   useRecipesQuery,
+  useRecipeRootQuery,
+  useRecipeFamilyQuery,
   useRecipeAiImagesQuery,
   useUpdateRecipeMutation,
   useGenerateRecipeImageMutation,
@@ -134,34 +136,38 @@ export default function RecipeDetailView() {
   const parentId = recipe?.parentId ? String(recipe.parentId) : null;
   const { data: parentData } = useRecipeQuery(parentId);
   const parentRecipe = parentData ?? null;
-  const variationsParentId = parentId ?? (recipe && (recipe.variationCount ?? 0) > 0 ? recipe._id : null);
-  const { data: variationsData } = useRecipesQuery(
-    variationsParentId ? { parentId: variationsParentId, parentsOnly: false } : undefined,
-    { enabled: !!variationsParentId },
-  );
-  // Ne garder que les recettes sœurs (même parentId que la recette courante)
-  const variations = useMemo(() => {
-    const list = variationsData?.recipes ?? [];
-    if (!variationsParentId) return list;
-    return list.filter((r) => String(r.parentId ?? '') === String(variationsParentId));
-  }, [variationsData?.recipes, variationsParentId]);
-
+  // Root of current recipe (V0): for carousel we show root + all descendants (multi-level)
+  const { data: rootRecipe } = useRecipeRootQuery(id ?? null);
+  const rootId = useMemo(() => {
+    if (!recipe) return null;
+    if (!recipe.parentId) return recipe._id;
+    return rootRecipe?._id ?? null;
+  }, [recipe?.parentId, recipe?._id, rootRecipe?._id]);
+  const { data: familyData } = useRecipeFamilyQuery(rootId);
+  // Carousel: root (V0) + all descendants (V0.1, V0.1.1, V0.1.1.1, …). Order: root first, then by depth, then createdAt.
   const carouselItems = useMemo(() => {
-    if (!recipe) return [];
-    if (parentRecipe && parentId) {
-      return [
-        { recipe: parentRecipe, isParent: true },
-        ...variations.map((v) => ({ recipe: v, isParent: false })),
-      ];
-    }
-    if ((recipe.variationCount ?? 0) > 0) {
-      return [
-        { recipe, isParent: true },
-        ...variations.map((v) => ({ recipe: v, isParent: false })),
-      ];
-    }
-    return [];
-  }, [recipe, parentRecipe, parentId, variations]);
+    const list = familyData?.recipes ?? [];
+    if (list.length === 0 || !rootId) return [];
+    const byId = new Map(list.map((r) => [r._id, r]));
+    const depth = (rid: string): number => {
+      const r = byId.get(rid);
+      if (!r || !r.parentId) return 0;
+      return 1 + depth(String(r.parentId));
+    };
+    const sorted = [...list].sort((a, b) => {
+      if (a._id === rootId) return -1;
+      if (b._id === rootId) return 1;
+      const d = depth(a._id) - depth(b._id);
+      if (d !== 0) return d;
+      return (
+        new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
+      );
+    });
+    return sorted.map((r) => ({
+      recipe: r,
+      isParent: r._id === rootId,
+    }));
+  }, [familyData?.recipes, rootId]);
 
   const [portionsChosen, setPortionsChosen] = useState(1);
   const [ingredientsViewMode, setIngredientsViewMode] = useState<'grid' | 'list'>('grid');
@@ -183,7 +189,7 @@ export default function RecipeDetailView() {
   const { newConversation } = useNewConvo();
   const setSelectedRecipeForVariation = useSetRecoilState(selectedRecipeForVariation);
   const { conversations, isLoading: conversationsLoading } =
-    useConversationsMentioningRecipe(recipe?._id);
+    useConversationsMentioningRecipe(recipe?._id, recipe?.conversationId);
 
   const { data: aiImagesData, isLoading: aiImagesLoading } = useRecipeAiImagesQuery(
     recipe?._id ?? null,
@@ -906,6 +912,7 @@ export default function RecipeDetailView() {
                   </span>
                   <Link
                     to={`/c/${id}`}
+                    state={{ focusChat: true }}
                     className="shrink-0 rounded bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary/90"
                   >
                     {localize('com_ui_recipe_open_chat')}
