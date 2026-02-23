@@ -134,6 +134,14 @@ const AuthContextProvider = ({
     loginUser.mutate(data);
   };
 
+  const setAuthFromRegistration = useCallback(
+    (data: { token: string; user: t.TUser }) => {
+      setError(undefined);
+      setUserContext({ token: data.token, isAuthenticated: true, user: data.user, redirect: '/c/new' });
+    },
+    [setUserContext],
+  );
+
   const silentRefresh = useCallback(() => {
     if (authConfig?.test === true) {
       console.log('Test mode. Skipping silent refresh.');
@@ -213,6 +221,7 @@ const AuthContextProvider = ({
       token,
       error,
       login,
+      setAuthFromRegistration,
       logout,
       setError,
       roles: {
@@ -222,7 +231,7 @@ const AuthContextProvider = ({
       isAuthenticated,
     }),
 
-    [user, error, isAuthenticated, token, userRole, adminRole],
+    [user, error, isAuthenticated, token, userRole, adminRole, setAuthFromRegistration],
   );
 
   return <AuthContext.Provider value={memoedValue}>{children}</AuthContext.Provider>;

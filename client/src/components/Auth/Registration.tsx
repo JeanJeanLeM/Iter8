@@ -8,12 +8,14 @@ import { loginPage } from 'librechat-data-provider';
 import type { TRegisterUser, TError } from 'librechat-data-provider';
 import type { TLoginLayoutContext } from '~/common';
 import { useLocalize, TranslationKeys } from '~/hooks';
+import { useAuthContext } from '~/hooks/AuthContext';
 import { ErrorMessage } from './ErrorMessage';
 
 const Registration: React.FC = () => {
   const navigate = useNavigate();
   const localize = useLocalize();
   const { theme } = useContext(ThemeContext);
+  const { setAuthFromRegistration } = useAuthContext();
   const { startupConfig, startupConfigError, isFetching } = useOutletContext<TLoginLayoutContext>();
 
   const {
@@ -41,8 +43,12 @@ const Registration: React.FC = () => {
     onMutate: () => {
       setIsSubmitting(true);
     },
-    onSuccess: () => {
+    onSuccess: (data: { message?: string; token?: string; user?: { id: string; [key: string]: unknown } }) => {
       setIsSubmitting(false);
+      if (data?.token && data?.user) {
+        setAuthFromRegistration({ token: data.token, user: data.user as Parameters<typeof setAuthFromRegistration>[0]['user'] });
+        return;
+      }
       setCountdown(3);
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => {

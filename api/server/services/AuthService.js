@@ -238,7 +238,7 @@ const registerUser = async (user, additionalData = {}) => {
       await updateUser(newUserId, { emailVerified: true });
     }
 
-    return { status: 200, message: genericVerificationMessage };
+    return { status: 200, message: genericVerificationMessage, userId: newUserId };
   } catch (err) {
     logger.error('[registerUser] Error in registering user:', err);
     if (newUserId) {
