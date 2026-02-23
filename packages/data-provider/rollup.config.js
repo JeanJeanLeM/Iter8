@@ -7,20 +7,21 @@ import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 
-const debugRunId = process.env.DEBUG_RUN_ID || 'pre-fix';
-const bytesToMb = (bytes) => Math.round((bytes / 1024 / 1024) * 100) / 100;
-const getMemSnapshot = () => {
-  const usage = process.memoryUsage();
-  const heapStats = v8.getHeapStatistics();
+const debugRunId = process.env.DEBUG_RUN_ID || 'railway-predeploy';
+const toMb = (bytes) => Math.round((bytes / 1024 / 1024) * 100) / 100;
+const mem = () => {
+  const m = process.memoryUsage();
+  const h = v8.getHeapStatistics();
   return {
-    rssMb: bytesToMb(usage.rss),
-    heapTotalMb: bytesToMb(usage.heapTotal),
-    heapUsedMb: bytesToMb(usage.heapUsed),
-    heapLimitMb: bytesToMb(heapStats.heap_size_limit),
+    rssMb: toMb(m.rss),
+    heapUsedMb: toMb(m.heapUsed),
+    heapTotalMb: toMb(m.heapTotal),
+    heapLimitMb: toMb(h.heap_size_limit),
   };
 };
 
 const sendDebugLog = (location, message, hypothesisId, data = {}) => {
+  console.log(`[agent-debug] ${message}`, JSON.stringify({ location, hypothesisId, data }));
   // #region agent log
   fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
     method: 'POST',
@@ -38,35 +39,22 @@ const sendDebugLog = (location, message, hypothesisId, data = {}) => {
   // #endregion
 };
 
-sendDebugLog('packages/data-provider/rollup.config.js:setup', 'data-provider rollup config loaded', 'H3', {
-  pid: process.pid,
-  nodeVersion: process.version,
+sendDebugLog('packages/data-provider/rollup.config.js:setup', 'data-provider setup', 'H3', {
   nodeOptions: process.env.NODE_OPTIONS || null,
-  execArgv: process.execArgv,
-  memory: getMemSnapshot(),
+  mem: mem(),
 });
 
 const agentDebugPlugin = () => ({
   name: 'agent-debug-data-provider',
   buildStart() {
-    sendDebugLog(
-      'packages/data-provider/rollup.config.js:buildStart',
-      'data-provider buildStart',
-      'H1',
-      {
-        memory: getMemSnapshot(),
-      },
-    );
+    sendDebugLog('packages/data-provider/rollup.config.js:buildStart', 'data-provider buildStart', 'H1', {
+      mem: mem(),
+    });
   },
   closeBundle() {
-    sendDebugLog(
-      'packages/data-provider/rollup.config.js:closeBundle',
-      'data-provider closeBundle',
-      'H1',
-      {
-        memory: getMemSnapshot(),
-      },
-    );
+    sendDebugLog('packages/data-provider/rollup.config.js:closeBundle', 'data-provider closeBundle', 'H1', {
+      mem: mem(),
+    });
   },
 });
 
