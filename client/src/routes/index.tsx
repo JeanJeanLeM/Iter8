@@ -53,126 +53,128 @@ export const router = createBrowserRouter(
           element: <ShareRoute />,
           errorElement: <RouteErrorBoundary />,
         },
-    {
-      path: 'oauth',
-      errorElement: <RouteErrorBoundary />,
-      children: [
         {
-          path: 'success',
-          element: <OAuthSuccess />,
-        },
-        {
-          path: 'error',
-          element: <OAuthError />,
-        },
-      ],
-    },
-    {
-      path: '/',
-      element: <StartupLayout />,
-      errorElement: <RouteErrorBoundary />,
-      children: [
-        {
-          index: true,
-          element: <Navigate to="/login" replace />,
-        },
-        {
-          path: 'register',
-          element: <Registration />,
-        },
-        {
-          path: 'forgot-password',
-          element: <RequestPasswordReset />,
-        },
-        {
-          path: 'reset-password',
-          element: <ResetPassword />,
-        },
-      ],
-    },
-    {
-      path: 'verify',
-      element: <VerifyEmail />,
-      errorElement: <RouteErrorBoundary />,
-    },
-    {
-      element: <AuthLayout />,
-      errorElement: <RouteErrorBoundary />,
-      children: [
-        {
-          path: '/',
-          element: <LoginLayout />,
+          path: 'oauth',
+          errorElement: <RouteErrorBoundary />,
           children: [
             {
-              path: 'login',
-              element: <Login />,
+              path: 'success',
+              element: <OAuthSuccess />,
             },
             {
-              path: 'login/2fa',
-              element: <TwoFactorScreen />,
+              path: 'error',
+              element: <OAuthError />,
             },
           ],
         },
-        dashboardRoutes,
         {
           path: '/',
-          element: <Root />,
+          element: <StartupLayout />,
+          errorElement: <RouteErrorBoundary />,
           children: [
             {
               index: true,
-              element: <Navigate to="/c/new" replace={true} />,
+              element: <Navigate to="/login" replace />,
             },
             {
-              path: 'c/:conversationId?',
-              element: <ChatRoute />,
+              path: 'register',
+              element: <Registration />,
             },
             {
-              path: 'search',
-              element: <Search />,
+              path: 'forgot-password',
+              element: <RequestPasswordReset />,
             },
             {
-              path: 'agents',
-              element: (
-                <MarketplaceProvider>
-                  <AgentMarketplace />
-                </MarketplaceProvider>
-              ),
+              path: 'reset-password',
+              element: <ResetPassword />,
             },
+          ],
+        },
+        {
+          path: 'verify',
+          element: <VerifyEmail />,
+          errorElement: <RouteErrorBoundary />,
+        },
+        {
+          element: <AuthLayout />,
+          errorElement: <RouteErrorBoundary />,
+          children: [
             {
-              path: 'agents/:category',
-              element: (
-                <MarketplaceProvider>
-                  <AgentMarketplace />
-                </MarketplaceProvider>
-              ),
+              path: '/',
+              element: <LoginLayout />,
+              children: [
+                {
+                  path: 'login',
+                  element: <Login />,
+                },
+                {
+                  path: 'login/2fa',
+                  element: <TwoFactorScreen />,
+                },
+              ],
             },
+            dashboardRoutes,
             {
-              path: 'r/:id/step',
-              element: <RecipeStepByStepView />,
-            },
-            {
-              path: 'r/:id',
-              element: <RecipeDetailView />,
-            },
-            {
-              path: 'r',
-              element: <RecipeBookView />,
-            },
-            {
-              path: 'journal',
-              element: <JournalView />,
-            },
-            {
-              path: 'shopping-list',
-              element: <ShoppingListView />,
-            },
-            {
-              path: 'ingredients',
-              element: <IngredientGalleryView />,
-            },
-            {
-              path: 'faq',
-              element: <FAQView />,
+              path: '/',
+              element: <Root />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to="/c/new" replace={true} />,
+                },
+                {
+                  path: 'c/:conversationId?',
+                  element: <ChatRoute />,
+                },
+                {
+                  path: 'search',
+                  element: <Search />,
+                },
+                {
+                  path: 'agents',
+                  element: (
+                    <MarketplaceProvider>
+                      <AgentMarketplace />
+                    </MarketplaceProvider>
+                  ),
+                },
+                {
+                  path: 'agents/:category',
+                  element: (
+                    <MarketplaceProvider>
+                      <AgentMarketplace />
+                    </MarketplaceProvider>
+                  ),
+                },
+                {
+                  path: 'r/:id/step',
+                  element: <RecipeStepByStepView />,
+                },
+                {
+                  path: 'r/:id',
+                  element: <RecipeDetailView />,
+                },
+                {
+                  path: 'r',
+                  element: <RecipeBookView />,
+                },
+                {
+                  path: 'journal',
+                  element: <JournalView />,
+                },
+                {
+                  path: 'shopping-list',
+                  element: <ShoppingListView />,
+                },
+                {
+                  path: 'ingredients',
+                  element: <IngredientGalleryView />,
+                },
+                {
+                  path: 'faq',
+                  element: <FAQView />,
+                },
+              ],
             },
           ],
         },
