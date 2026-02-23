@@ -37,7 +37,7 @@ const { PORT, HOST, ALLOW_SOCIAL_LOGIN, DISABLE_COMPRESSION, TRUST_PROXY } = pro
 
 // Allow PORT=0 to be used for automatic free port assignment
 const port = isNaN(Number(PORT)) ? 3080 : Number(PORT);
-const host = HOST || 'localhost';
+const host = (typeof HOST === 'string' ? HOST.trim() : HOST) || (process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost');
 const trusted_proxy = Number(TRUST_PROXY) || 1; /* trust first proxy by default */
 
 const app = express();
@@ -184,18 +184,18 @@ const startServer = async () => {
     res.send(updatedIndexHtml);
   });
 
-  app.listen(port, host, async (err) => {
+  const listenCallback = async (err) => {
     if (err) {
       logger.error('Failed to start server:', err);
       process.exit(1);
     }
 
-    if (host === '0.0.0.0') {
+    if (host === '0.0.0.0' || !host) {
       logger.info(
         `Server listening on all interfaces at port ${port}. Use http://localhost:${port} to access it`,
       );
     } else {
-      logger.info(`Server listening at http://${host == '0.0.0.0' ? 'localhost' : host}:${port}`);
+      logger.info(`Server listening at http://${host}:${port}`);
     }
 
     await initializeMCPs();
@@ -206,7 +206,13 @@ const startServer = async () => {
     const streamServices = createStreamServices();
     GenerationJobManager.configure(streamServices);
     GenerationJobManager.initialize();
-  });
+  };
+
+  if (host === '0.0.0.0') {
+    app.listen(port, listenCallback);
+  } else {
+    app.listen(port, host, listenCallback);
+  }
 };
 
 startServer();
