@@ -7,4 +7,5 @@
 buildCommand = "npm run frontend"
 
 [deploy]
-startCommand = "npm run backend"
+# Build frontend then start backend so client/dist exists (required for ENOENT index.html)
+startCommand = "npm start"

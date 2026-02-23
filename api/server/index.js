@@ -63,6 +63,13 @@ const startServer = async () => {
   await updateInterfacePermissions(appConfig);
 
   const indexPath = path.join(appConfig.paths.dist, 'index.html');
+  if (!fs.existsSync(indexPath)) {
+    const msg =
+      `Client build missing at ${indexPath}. ` +
+      'Run "npm run frontend" before starting the backend, or use Start Command "npm start" (builds then starts).';
+    logger.error(msg);
+    process.exit(1);
+  }
   let indexHTML = fs.readFileSync(indexPath, 'utf8');
 
   // In order to provide support to serving the application in a sub-directory

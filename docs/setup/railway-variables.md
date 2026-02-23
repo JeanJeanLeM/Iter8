@@ -18,10 +18,11 @@ Remplace les valeurs par les tiennes (surtout les secrets).
 
 ---
 
-## Recommandées (évitent 403, proxy, etc.)
+## Recommandées (évitent 403, proxy, OOM au build, etc.)
 
 | Variable | Valeur | Pourquoi |
 |----------|--------|----------|
+| **NODE_OPTIONS** | `--max-old-space-size=4096` | Évite le crash « JavaScript heap out of memory » pendant le build sur Railway. Si le build plante encore, ajoute cette variable (ou 6144). |
 | **TRUST_PROXY** | `1` | Railway met un proxy devant l’app ; sans ça l’app peut mal voir l’IP / l’URL. |
 | **ALLOW_REGISTRATION** | `true` | Permet la création de compte depuis l’interface. Sans ça → 403 en inscription. |
 | **PORT** | *(ne pas définir)* ou la valeur indiquée par Railway | Souvent Railway injecte **PORT** tout seul. Si ton Networking affiche « → Port 8080 », ne pas mettre PORT=3080 : laisser Railway définir PORT. Si l’app ne démarre pas, essayer **PORT** = la valeur affichée (ex. 8080). |
