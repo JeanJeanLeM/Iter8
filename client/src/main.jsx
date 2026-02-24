@@ -9,6 +9,18 @@ import 'katex/dist/katex.min.css';
 import 'katex/dist/contrib/copy-tex.js';
 
 const sendDebugLog = (hypothesisId, message, data = {}) => {
+  const payload = {
+    sessionId: '97f800',
+    runId: 'pre-fix',
+    hypothesisId,
+    location: 'client/src/main.jsx',
+    message,
+    data,
+    timestamp: Date.now(),
+  };
+  // #region agent log
+  console.info('[agent-debug]', payload);
+  // #endregion
   // #region agent log
   fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
     method: 'POST',
@@ -16,16 +28,17 @@ const sendDebugLog = (hypothesisId, message, data = {}) => {
       'Content-Type': 'application/json',
       'X-Debug-Session-Id': '97f800',
     },
-    body: JSON.stringify({
-      sessionId: '97f800',
-      runId: 'pre-fix',
-      hypothesisId,
+    body: JSON.stringify(payload),
+  }).catch((error) => {
+    // #region agent log
+    console.warn('[agent-debug] ingest failed', {
       location: 'client/src/main.jsx',
       message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
+      hypothesisId,
+      error: String(error?.message ?? error ?? 'unknown'),
+    });
+    // #endregion
+  });
   // #endregion
 };
 

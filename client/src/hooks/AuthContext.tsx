@@ -49,6 +49,18 @@ const AuthContextProvider = ({
   const navigate = useNavigate();
   const location = useLocation();
   const sendDebugLog = useCallback((hypothesisId: string, message: string, data: Record<string, unknown> = {}) => {
+    const payload = {
+      sessionId: '97f800',
+      runId: 'pre-fix',
+      hypothesisId,
+      location: 'client/src/hooks/AuthContext.tsx',
+      message,
+      data,
+      timestamp: Date.now(),
+    };
+    // #region agent log
+    console.info('[agent-debug]', payload);
+    // #endregion
     // #region agent log
     fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
       method: 'POST',
@@ -56,16 +68,17 @@ const AuthContextProvider = ({
         'Content-Type': 'application/json',
         'X-Debug-Session-Id': '97f800',
       },
-      body: JSON.stringify({
-        sessionId: '97f800',
-        runId: 'pre-fix',
-        hypothesisId,
+      body: JSON.stringify(payload),
+    }).catch((error) => {
+      // #region agent log
+      console.warn('[agent-debug] ingest failed', {
         location: 'client/src/hooks/AuthContext.tsx',
         message,
-        data,
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
+        hypothesisId,
+        error: String((error as Error)?.message ?? error ?? 'unknown'),
+      });
+      // #endregion
+    });
     // #endregion
   }, []);
 
