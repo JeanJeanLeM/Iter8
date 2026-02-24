@@ -116,3 +116,36 @@ export function getRecipeAiImages(
   if (recipeId) params.recipeId = recipeId;
   return request.get(`${apiBaseUrl()}/api/recipes/ai-images${buildQuery(params)}`);
 }
+
+/* ChatGPT share import */
+export interface ChatgptSharePreviewCandidate {
+  importIndex: number;
+  index: number;
+  title: string;
+  rawText: string;
+  suggestedParentIndex: number | null;
+}
+
+export interface ChatgptSharePreviewResponse {
+  title: string;
+  candidates: ChatgptSharePreviewCandidate[];
+  message?: string;
+}
+
+export function previewChatgptShareImport(shareUrl: string): Promise<ChatgptSharePreviewResponse> {
+  return request.post(`${apiBaseUrl()}/api/recipes/import/chatgpt-share/preview`, { shareUrl });
+}
+
+export interface ChatgptShareCommitItem {
+  importIndex: number;
+  rawText: string;
+  parentImportIndex: number | null;
+}
+
+export interface ChatgptShareCommitResponse {
+  recipes: TRecipe[];
+}
+
+export function commitChatgptShareImport(items: ChatgptShareCommitItem[]): Promise<ChatgptShareCommitResponse> {
+  return request.post(`${apiBaseUrl()}/api/recipes/import/chatgpt-share/commit`, { items });
+}

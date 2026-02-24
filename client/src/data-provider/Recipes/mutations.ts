@@ -10,6 +10,13 @@ import {
   deleteRecipe as deleteRecipeApi,
   setRecipeVote as setRecipeVoteApi,
   generateRecipeImage as generateRecipeImageApi,
+  previewChatgptShareImport as previewChatgptShareImportApi,
+  commitChatgptShareImport as commitChatgptShareImportApi,
+} from './api';
+import type {
+  ChatgptSharePreviewResponse,
+  ChatgptShareCommitItem,
+  ChatgptShareCommitResponse,
 } from './api';
 
 export const useCreateRecipeMutation = (
@@ -107,6 +114,27 @@ export const useGenerateRecipeImageMutation = (
       queryClient.invalidateQueries([QueryKeys.recipes]);
       queryClient.invalidateQueries([QueryKeys.recipe, recipeId]);
       options?.onSuccess?.(data, recipeId, context);
+    },
+  });
+};
+
+/** Preview ChatGPT share link: detect recipe candidates and default parent mapping. */
+export const useChatgptSharePreviewMutation = (
+  options?: UseMutationOptions<ChatgptSharePreviewResponse, Error, string>,
+) => {
+  return useMutation((shareUrl: string) => previewChatgptShareImportApi(shareUrl), options);
+};
+
+/** Commit ChatGPT share import: create selected recipes with parent links. */
+export const useCommitChatgptShareImportMutation = (
+  options?: UseMutationOptions<ChatgptShareCommitResponse, Error, ChatgptShareCommitItem[]>,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation((items: ChatgptShareCommitItem[]) => commitChatgptShareImportApi(items), {
+    ...options,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries([QueryKeys.recipes]);
+      options?.onSuccess?.(...args);
     },
   });
 };

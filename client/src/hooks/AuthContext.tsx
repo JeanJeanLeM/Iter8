@@ -159,7 +159,6 @@ const AuthContextProvider = ({
         if (token) {
           setUserContext({ token, isAuthenticated: true, user });
         } else {
-          console.log('Token is not present. User is not authenticated.');
           if (authConfig?.test === true) {
             return;
           }
@@ -168,8 +167,7 @@ const AuthContextProvider = ({
           }
         }
       },
-      onError: (error) => {
-        console.log('refreshToken mutation error:', error);
+      onError: () => {
         if (authConfig?.test === true) {
           return;
         }

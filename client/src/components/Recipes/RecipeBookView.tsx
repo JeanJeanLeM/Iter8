@@ -3,11 +3,12 @@ import { useSearchParams } from 'react-router-dom';
 import { useDocumentTitle, useLocalize } from '~/hooks';
 import { useRecipesQuery } from '~/data-provider';
 import { Spinner, Button, useMediaQuery } from '@librechat/client';
-import { Plus, RefreshCw, ChevronDown, ChevronUp, LayoutGrid, List } from 'lucide-react';
+import { Plus, RefreshCw, ChevronDown, ChevronUp, LayoutGrid, List, FileDown } from 'lucide-react';
 import RecipeFiltersBar from './RecipeFiltersBar';
 import RecipeGallery from './RecipeGallery';
 import RecipeList from './RecipeList';
 import NewRecipeDialog from './NewRecipeDialog';
+import ImportChatgptShareDialog from './ImportChatgptShareDialog';
 import { cn } from '~/utils';
 
 export type RecipeViewMode = 'gallery' | 'list';
@@ -19,6 +20,7 @@ export default function RecipeBookView() {
   const localize = useLocalize();
   const [searchParams, setSearchParams] = useSearchParams();
   const [newRecipeOpen, setNewRecipeOpen] = useState(false);
+  const [importChatgptOpen, setImportChatgptOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const isLargeScreen = useMediaQuery(`(min-width: ${FILTERS_AUTO_OPEN_MIN_WIDTH}px)`);
 
@@ -89,6 +91,17 @@ export default function RecipeBookView() {
               type="button"
               variant="outline"
               size="sm"
+              onClick={() => setImportChatgptOpen(true)}
+              className="flex items-center gap-1 sm:gap-1.5"
+              title={localize('com_ui_recipe_import_from_chatgpt')}
+            >
+              <FileDown className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">{localize('com_ui_recipe_import_from_chatgpt')}</span>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setNewRecipeOpen(true)}
               className="flex items-center gap-1 sm:gap-1.5"
             >
@@ -133,6 +146,11 @@ export default function RecipeBookView() {
           </div>
         )}
         <NewRecipeDialog open={newRecipeOpen} onOpenChange={setNewRecipeOpen} />
+        <ImportChatgptShareDialog
+          open={importChatgptOpen}
+          onOpenChange={setImportChatgptOpen}
+          onImportDone={() => refetch()}
+        />
       </div>
       <div className="flex-1 overflow-auto p-3 sm:p-4">
         {isLoading ? (

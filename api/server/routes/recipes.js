@@ -13,6 +13,9 @@ const getLogStores = require('~/cache/getLogStores');
 const { requireJwtAuth } = require('~/server/middleware');
 const { structureRecipeWithOpenAI } = require('~/server/services/Recipes/structureRecipeWithOpenAI');
 const { generateRecipeImageWithOpenAI } = require('~/server/services/Recipes/generateRecipeImageWithOpenAI');
+const { parseSharePage } = require('~/server/services/Recipes/importChatgptShare/parseSharePage');
+const { detectRecipes } = require('~/server/services/Recipes/importChatgptShare/detectRecipes');
+const { buildImportPlan } = require('~/server/services/Recipes/importChatgptShare/buildImportPlan');
 const { config: endpointConfig } = require('~/server/services/Config/EndpointService');
 const { extractEnvVariable } = require('librechat-data-provider');
 
@@ -24,6 +27,93 @@ async function invalidateRecipesListCache(userId) {
 }
 
 router.use(requireJwtAuth);
+
+/**
+ * POST /api/recipes/import/chatgpt-share/preview
+ * Fetches a ChatGPT share URL, detects recipe candidates, returns them with default timeline parent mapping.
+ * Body: { shareUrl: string }
+ */
+router.post('/import/chatgpt-share/preview', async (req, res) => {
+  try {
+    const { shareUrl } = req.body || {};
+    if (!shareUrl || typeof shareUrl !== 'string') {
+      return res.status(400).json({ error: 'shareUrl is required.' });
+    }
+    const { title, messages } = await parseSharePage(shareUrl);
+    const candidates = detectRecipes(messages);
+    if (candidates.length === 0) {
+      return res.status(200).json({
+        title,
+        candidates: [],
+        message: 'Aucune recette détectée (ingrédients en liste à puces requis).',
+      });
+    }
+    const plan = buildImportPlan(candidates);
+    res.status(200).json({ title, candidates: plan });
+  } catch (error) {
+    const { logger } = require('@librechat/data-schemas');
+    logger.error('[POST /api/recipes/import/chatgpt-share/preview]', error?.message, error?.stack);
+    const status = error.message?.includes('Share link') || error.message?.includes('URL') ? 400 : 500;
+    res.status(status).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/recipes/import/chatgpt-share/commit
+ * Creates recipes from selected ChatGPT share candidates. Uses structureRecipeWithOpenAI + createRecipe.
+ * Body: { items: Array<{ importIndex: number; rawText: string; parentImportIndex: number | null }> }
+ * Items must be in order; parentImportIndex refers to importIndex of parent (null = root).
+ */
+router.post('/import/chatgpt-share/commit', async (req, res) => {
+  try {
+    const { items } = req.body || {};
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'items array is required and must not be empty.' });
+    }
+    const apiKey =
+      endpointConfig?.openAIApiKey != null
+        ? extractEnvVariable(String(endpointConfig.openAIApiKey))
+        : process.env.OPENAI_API_KEY;
+    const createdIdsByImportIndex = new Map();
+    const created = [];
+    const sorted = [...items]
+      .filter((i) => i != null && typeof i.importIndex === 'number' && typeof i.rawText === 'string')
+      .sort((a, b) => a.importIndex - b.importIndex);
+    for (const item of sorted) {
+      const { importIndex, rawText, parentImportIndex } = item;
+      const parentId = parentImportIndex != null && createdIdsByImportIndex.has(parentImportIndex)
+        ? createdIdsByImportIndex.get(parentImportIndex)
+        : null;
+      const structured = await structureRecipeWithOpenAI(rawText, apiKey, {});
+      const recipe = await createRecipe({
+        userId: req.user.id,
+        parentId,
+        variationNote: undefined,
+        conversationId: null,
+        title: structured.title,
+        objective: structured.objective,
+        description: structured.description,
+        portions: structured.portions,
+        duration: structured.duration,
+        ingredients: structured.ingredients,
+        steps: structured.steps,
+        equipment: structured.equipment,
+        tags: structured.tags,
+        restTimeMinutes: structured.restTimeMinutes,
+        maxStorageDays: structured.maxStorageDays,
+      });
+      createdIdsByImportIndex.set(importIndex, recipe._id.toString());
+      created.push(recipe);
+    }
+    await invalidateRecipesListCache(req.user.id);
+    res.status(201).json({ recipes: created });
+  } catch (error) {
+    const { logger } = require('@librechat/data-schemas');
+    logger.error('[POST /api/recipes/import/chatgpt-share/commit]', error?.message, error?.stack);
+    const status = error.message?.includes('API key') ? 503 : 500;
+    res.status(status).json({ error: error.message });
+  }
+});
 
 /**
  * POST /api/recipes/structure
