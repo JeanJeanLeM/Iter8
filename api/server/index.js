@@ -42,11 +42,49 @@ const trusted_proxy = Number(TRUST_PROXY) || 1; /* trust first proxy by default 
 
 const app = express();
 
+const debugRunId = process.env.DEBUG_RUN_ID || 'railway-502';
+const sendDebugLog = (location, message, hypothesisId, data = {}) => {
+  console.log(`[agent-debug] ${message}`, JSON.stringify({ location, hypothesisId, data }));
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '204ac8' },
+    body: JSON.stringify({
+      sessionId: '204ac8',
+      runId: debugRunId,
+      hypothesisId,
+      location,
+      message,
+      data,
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+};
+
 const startServer = async () => {
+  sendDebugLog('api/server/index.js:startServer', 'startServer entered', 'H1', {
+    nodeEnv: process.env.NODE_ENV || null,
+    port,
+    host,
+    trustProxy: trusted_proxy,
+    hasMongoUri: Boolean(process.env.MONGO_URI),
+    domainClient: process.env.DOMAIN_CLIENT || null,
+    domainServer: process.env.DOMAIN_SERVER || null,
+  });
   if (typeof Bun !== 'undefined') {
     axios.defaults.headers.common['Accept-Encoding'] = 'gzip';
   }
-  await connectDb();
+  try {
+    await connectDb();
+    sendDebugLog('api/server/index.js:connectDb', 'connectDb success', 'H2');
+  } catch (error) {
+    sendDebugLog('api/server/index.js:connectDb', 'connectDb failed', 'H2', {
+      name: error?.name,
+      message: error?.message,
+    });
+    throw error;
+  }
 
   logger.info('Connected to MongoDB');
   indexSync().catch((err) => {
@@ -75,7 +113,19 @@ const startServer = async () => {
   // In order to provide support to serving the application in a sub-directory
   // We need to update the base href if the DOMAIN_CLIENT is specified and not the root path
   if (process.env.DOMAIN_CLIENT) {
-    const clientUrl = new URL(process.env.DOMAIN_CLIENT);
+    let clientUrl;
+    try {
+      clientUrl = new URL(process.env.DOMAIN_CLIENT);
+      sendDebugLog('api/server/index.js:domainClient', 'DOMAIN_CLIENT parsed', 'H3', {
+        domainClient: process.env.DOMAIN_CLIENT,
+      });
+    } catch (error) {
+      sendDebugLog('api/server/index.js:domainClient', 'DOMAIN_CLIENT invalid URL', 'H3', {
+        domainClient: process.env.DOMAIN_CLIENT,
+        message: error?.message,
+      });
+      throw error;
+    }
     const baseHref = clientUrl.pathname.endsWith('/')
       ? clientUrl.pathname
       : `${clientUrl.pathname}/`;
@@ -192,6 +242,11 @@ const startServer = async () => {
   });
 
   const listenCallback = async (err) => {
+    sendDebugLog('api/server/index.js:listenCallback', 'listen callback entered', 'H4', {
+      hasError: Boolean(err),
+      port,
+      host,
+    });
     if (err) {
       logger.error('Failed to start server:', err);
       process.exit(1);
@@ -205,9 +260,18 @@ const startServer = async () => {
       logger.info(`Server listening at http://${host}:${port}`);
     }
 
-    await initializeMCPs();
-    await initializeOAuthReconnectManager();
-    await checkMigrations();
+    try {
+      await initializeMCPs();
+      await initializeOAuthReconnectManager();
+      await checkMigrations();
+      sendDebugLog('api/server/index.js:postListenInit', 'post-listen init success', 'H5');
+    } catch (error) {
+      sendDebugLog('api/server/index.js:postListenInit', 'post-listen init failed', 'H5', {
+        name: error?.name,
+        message: error?.message,
+      });
+      throw error;
+    }
 
     // Configure stream services (auto-detects Redis from USE_REDIS env var)
     const streamServices = createStreamServices();
@@ -226,6 +290,10 @@ startServer();
 
 let messageCount = 0;
 process.on('uncaughtException', (err) => {
+  sendDebugLog('api/server/index.js:uncaughtException', 'uncaught exception', 'H6', {
+    message: err?.message,
+    name: err?.name,
+  });
   if (!err.message.includes('fetch failed')) {
     logger.error('There was an uncaught error:', err);
   }
@@ -270,6 +338,13 @@ process.on('uncaughtException', (err) => {
   }
 
   process.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  sendDebugLog('api/server/index.js:unhandledRejection', 'unhandled rejection', 'H6', {
+    message: reason?.message || String(reason),
+    name: reason?.name || null,
+  });
 });
 
 /** Export app for easier testing purposes */
