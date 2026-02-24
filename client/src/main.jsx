@@ -44,6 +44,12 @@ const sendDebugLog = (hypothesisId, message, data = {}) => {
 
 const container = document.getElementById('root');
 sendDebugLog('H0', 'bootstrap container lookup', { hasContainer: !!container });
+const navEntry = performance.getEntriesByType('navigation')?.[0];
+sendDebugLog('H6', 'navigation snapshot', {
+  href: window.location.href,
+  navType: navEntry?.type ?? null,
+  redirectCount: navEntry?.redirectCount ?? null,
+});
 
 window.addEventListener('error', (event) => {
   sendDebugLog('H4', 'window error event', {
@@ -58,6 +64,10 @@ window.addEventListener('unhandledrejection', (event) => {
   sendDebugLog('H1', 'window unhandled rejection', {
     reason: String(event?.reason?.message ?? event?.reason ?? 'unknown'),
   });
+});
+
+window.addEventListener('beforeunload', () => {
+  sendDebugLog('H6', 'beforeunload fired', { href: window.location.href });
 });
 
 if ('serviceWorker' in navigator) {
