@@ -293,19 +293,6 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     userId: string | Types.ObjectId,
     rootId: string | Types.ObjectId,
   ): Promise<RecipeListResult> {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipe.ts:getRecipeFamily entry',
-        message: 'getRecipeFamily entry',
-        data: { rootId: String(rootId), userId: String(userId) },
-        timestamp: Date.now(),
-        hypothesisId: 'A',
-      }),
-    }).catch(() => {});
-    // #endregion
     const rootObjId = new Types.ObjectId(rootId as string);
     const userIdObj = new Types.ObjectId(userId as string);
 
@@ -315,19 +302,6 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     })
       .lean()
       .exec();
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipe.ts:getRecipeFamily after root',
-        message: 'after root',
-        data: { hasRoot: !!root },
-        timestamp: Date.now(),
-        hypothesisId: 'B',
-      }),
-    }).catch(() => {});
-    // #endregion
     if (!root) return { recipes: [] };
 
     const [withDescendants] = await Recipe.aggregate([
@@ -350,19 +324,6 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     ]).exec();
 
     const descendants = (withDescendants?.descendants ?? []) as IRecipeLean[];
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipe.ts:getRecipeFamily after graphLookup',
-        message: 'after graphLookup',
-        data: { descendantsCount: descendants?.length },
-        timestamp: Date.now(),
-        hypothesisId: 'C',
-      }),
-    }).catch(() => {});
-    // #endregion
 
     const pipeline: Record<string, unknown>[] = [
       {
@@ -416,19 +377,6 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
       { $addFields: { userVote: { $arrayElemAt: ['$userVoteArr.value', 0] } } },
       { $project: { variations: 0, votes: 0, userVoteArr: 0 } },
     ];
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipe.ts:getRecipeFamily before second aggregate',
-        message: 'before second aggregate',
-        data: { pipelineLength: pipeline?.length },
-        timestamp: Date.now(),
-        hypothesisId: 'D',
-      }),
-    }).catch(() => {});
-    // #endregion
 
     const allRecipes = (await Recipe.aggregate(pipeline).exec()) as IRecipeLean[];
     const byCreation = [...allRecipes].sort(

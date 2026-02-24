@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { debounce } from 'lodash';
 import { useRecoilState } from 'recoil';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { setTokenHeader, SystemRoles } from 'librechat-data-provider';
 import type * as t from 'librechat-data-provider';
 import {
@@ -47,6 +47,7 @@ const AuthContextProvider = ({
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const setUserContext = useMemo(
     () =>
@@ -142,6 +143,11 @@ const AuthContextProvider = ({
     [setUserContext],
   );
 
+  const isPublicAuthPath = useCallback((pathname: string) => {
+    const p = pathname.replace(/\/$/, '') || '/';
+    return p === '/login' || p === '/register' || p === '/forgot-password' || p === '/reset-password' || p.startsWith('/login/');
+  }, []);
+
   const silentRefresh = useCallback(() => {
     if (authConfig?.test === true) {
       console.log('Test mode. Skipping silent refresh.');
@@ -157,7 +163,9 @@ const AuthContextProvider = ({
           if (authConfig?.test === true) {
             return;
           }
-          navigate('/login');
+          if (!isPublicAuthPath(location.pathname)) {
+            navigate('/login');
+          }
         }
       },
       onError: (error) => {
@@ -165,17 +173,21 @@ const AuthContextProvider = ({
         if (authConfig?.test === true) {
           return;
         }
-        navigate('/login');
+        if (!isPublicAuthPath(location.pathname)) {
+          navigate('/login');
+        }
       },
     });
-  }, []);
+  }, [isPublicAuthPath, location.pathname, navigate]);
 
   useEffect(() => {
     if (userQuery.data) {
       setUser(userQuery.data);
     } else if (userQuery.isError) {
       doSetError((userQuery.error as Error).message);
-      navigate('/login', { replace: true });
+      if (!isPublicAuthPath(location.pathname)) {
+        navigate('/login', { replace: true });
+      }
     }
     if (error != null && error && isAuthenticated) {
       doSetError(undefined);
@@ -194,6 +206,8 @@ const AuthContextProvider = ({
     navigate,
     silentRefresh,
     setUserContext,
+    isPublicAuthPath,
+    location.pathname,
   ]);
 
   useEffect(() => {

@@ -41,12 +41,6 @@ router.get('/calendar', async (req, res) => {
       return res.json(cached);
     }
 
-    // #region agent log
-    (function () {
-      fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'mealPlanner.js:calendar', message: 'calendar range (toDate end-of-day)', data: { fromParam, toParam, fromDateISO: fromDate.toISOString(), toDateISO: toDate.toISOString() }, timestamp: Date.now(), hypothesisId: 'A', runId: 'post-fix' }) }).catch(() => {});
-    })();
-    // #endregion
-
     const [realizationsResult, plannedMealsResult] = await Promise.all([
       getRealizations({
         userId,
@@ -56,13 +50,6 @@ router.get('/calendar', async (req, res) => {
       }),
       getPlannedMeals({ userId, fromDate, toDate }),
     ]);
-
-    // #region agent log
-    (function () {
-      const meals = plannedMealsResult.plannedMeals;
-      fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'mealPlanner.js:after getPlannedMeals', message: 'plannedMeals result', data: { count: meals.length, dates: meals.map((m) => (m.date instanceof Date ? m.date.toISOString() : m.date)), recipeTitles: meals.map((m) => m.recipeTitle) }, timestamp: Date.now(), hypothesisId: 'B' }) }).catch(() => {});
-    })();
-    // #endregion
 
     const plannedMeals = plannedMealsResult.plannedMeals;
     const recipeIds = [...new Set(plannedMeals.map((m) => m.recipeId).filter(Boolean))];

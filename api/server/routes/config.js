@@ -1,11 +1,5 @@
-const fs = require('fs');
-const path = require('path');
 const express = require('express');
 const { logger } = require('@librechat/data-schemas');
-const DEBUG_LOG = path.resolve(__dirname, '../../../.cursor/debug.log');
-function debugLog(p) {
-  try { fs.appendFileSync(DEBUG_LOG, JSON.stringify({ ...p, timestamp: Date.now() }) + '\n'); } catch (_) {}
-}
 const { isEnabled, getBalanceConfig } = require('@librechat/api');
 const { Constants, CacheKeys, defaultSocialLogins } = require('librechat-data-provider');
 const { getLdapConfig } = require('~/server/services/Config/ldap');
@@ -33,11 +27,6 @@ const sharePointFilePickerEnabled = isEnabled(process.env.ENABLE_SHAREPOINT_FILE
 const openidReuseTokens = isEnabled(process.env.OPENID_REUSE_TOKENS);
 
 router.get('/', async function (req, res) {
-  // #region agent log
-  try {
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'config.js:GET/entry',message:'GET /api/config entered',data:{},timestamp:Date.now(),hypothesisId:'H1'})}).catch(()=>{});
-  } catch (_) {}
-  // #endregion
   try {
   const cache = getLogStores(CacheKeys.CONFIG_STORE);
 
@@ -53,13 +42,11 @@ router.get('/', async function (req, res) {
   };
 
   const instanceProject = await getProjectByName(Constants.GLOBAL_PROJECT_NAME, '_id');
-  debugLog({ location: 'config.js:after getProjectByName', message: 'config after getProjectByName', data: { hasInstance: !!instanceProject }, hypothesisId: 'H1' });
 
   const ldap = getLdapConfig();
 
   try {
     const appConfig = await getAppConfig({ role: req.user?.role });
-    debugLog({ location: 'config.js:after getAppConfig', message: 'config after getAppConfig', data: {}, hypothesisId: 'H1' });
 
     const isOpenIdEnabled =
       !!process.env.OPENID_CLIENT_ID &&
@@ -176,28 +163,12 @@ router.get('/', async function (req, res) {
     }
 
     await cache.set(CacheKeys.STARTUP_CONFIG, payload);
-    debugLog({ location: 'config.js:before send', message: 'config before res.send', data: {}, hypothesisId: 'H1' });
-    try {
-      return res.status(200).send(payload);
-    } catch (sendErr) {
-      debugLog({ location: 'config.js:send catch', message: 'config res.send error', data: { message: sendErr?.message, name: sendErr?.name }, hypothesisId: 'H1' });
-      throw sendErr;
-    }
+    return res.status(200).send(payload);
   } catch (err) {
-    // #region agent log
-    const pl = {location:'config.js:GET/catch',message:'GET /api/config error',data:{message:err?.message,name:err?.name,stack:err?.stack?.slice(0,600)},hypothesisId:'H1'};
-    debugLog(pl);
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...pl,timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     logger.error('Error in startup config', err);
     return res.status(500).send({ error: err.message });
   }
   } catch (outerErr) {
-    // #region agent log
-    const pl = {location:'config.js:GET/outerCatch',message:'GET /api/config outer error',data:{message:outerErr?.message,name:outerErr?.name,stack:outerErr?.stack?.slice(0,600)},hypothesisId:'H1'};
-    debugLog(pl);
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...pl,timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     logger.error('Error in startup config (outer)', outerErr);
     return res.status(500).send({ error: outerErr?.message ?? 'Config error' });
   }

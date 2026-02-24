@@ -122,21 +122,6 @@ router.post('/:parentId/variation', async (req, res) => {
  * Get root + all descendants of a recipe (full lineage). Query: rootId
  */
 router.get('/family', async (req, res) => {
-  // #region agent log
-  const _rootId = req.query.rootId;
-  const _userId = req.user?.id;
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'recipes.js:GET /family entry',
-      message: 'GET /family entry',
-      data: { rootId: _rootId, hasUser: !!req.user, userIdType: typeof _userId },
-      timestamp: Date.now(),
-      hypothesisId: 'A',
-    }),
-  }).catch(() => {});
-  // #endregion
   try {
     const rootId = req.query.rootId;
     if (!rootId || typeof rootId !== 'string') {
@@ -145,23 +130,6 @@ router.get('/family', async (req, res) => {
     const { recipes } = await getRecipeFamily(req.user.id, rootId);
     res.json({ recipes });
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipes.js:GET /family catch',
-        message: 'GET /family error',
-        data: {
-          errorMessage: error?.message,
-          errorName: error?.name,
-          errorStack: error?.stack?.slice?.(0, 500),
-        },
-        timestamp: Date.now(),
-        hypothesisId: 'E',
-      }),
-    }).catch(() => {});
-    // #endregion
     const { logger } = require('@librechat/data-schemas');
     logger.error('[GET /api/recipes/family]', error?.message, error?.stack);
     res.status(500).json({ error: error.message });
@@ -401,34 +369,8 @@ router.post('/', async (req, res) => {
  */
 router.post('/:id/generate-image', async (req, res) => {
   const id = req.params.id;
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'recipes.js:generate-image:entry',
-      message: 'generate-image route entered',
-      data: { recipeId: id },
-      timestamp: Date.now(),
-      hypothesisId: 'route-entry',
-    }),
-  }).catch(() => {});
-  // #endregion
   try {
     const recipe = await getRecipe(req.user.id, id);
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipes.js:after-getRecipe',
-        message: 'getRecipe result',
-        data: { hasRecipe: !!recipe, hasTitle: !!recipe?.title },
-        timestamp: Date.now(),
-        hypothesisId: 'A,E',
-      }),
-    }).catch(() => {});
-    // #endregion
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found.' });
     }
@@ -448,81 +390,16 @@ router.post('/:id/generate-image', async (req, res) => {
           ? extractEnvVariable(String(endpointConfig.openAIApiKey))
           : process.env.OPENAI_API_KEY;
     } catch (extractErr) {
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'recipes.js:apiKey-extract',
-          message: 'extractEnvVariable or apiKey failed',
-          data: { error: extractErr?.message },
-          timestamp: Date.now(),
-          hypothesisId: 'E',
-        }),
-      }).catch(() => {});
-      // #endregion
       throw extractErr;
     }
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipes.js:before-generate',
-        message: 'before generateRecipeImageWithOpenAI',
-        data: { hasApiKey: !!apiKey, apiKeyIsUserProvided: apiKey === 'user_provided' },
-        timestamp: Date.now(),
-        hypothesisId: 'A',
-      }),
-    }).catch(() => {});
-    // #endregion
     const newImageUrl = await generateRecipeImageWithOpenAI(recipe, apiKey);
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipes.js:after-generate',
-        message: 'generateRecipeImageWithOpenAI returned',
-        data: { imageUrlLength: newImageUrl?.length },
-        timestamp: Date.now(),
-        hypothesisId: 'B,C',
-      }),
-    }).catch(() => {});
-    // #endregion
     const newImages = [...existingImages, { url: newImageUrl, source: 'ai' }];
     const updated = await updateRecipe(req.user.id, id, {
       images: newImages,
       imageUrl: newImages[0].url,
     });
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipes.js:after-update',
-        message: 'updateRecipe success',
-        data: {},
-        timestamp: Date.now(),
-        hypothesisId: 'D',
-      }),
-    }).catch(() => {});
-    // #endregion
     res.json(updated);
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'recipes.js:generate-image:catch',
-        message: 'generate-image error',
-        data: { errorMessage: error?.message, errorName: error?.name },
-        timestamp: Date.now(),
-        hypothesisId: 'A,B,C,D,E',
-      }),
-    }).catch(() => {});
-    // #endregion
     const { logger } = require('@librechat/data-schemas');
     logger.error('[POST /api/recipes/:id/generate-image]', error?.message, error?.stack);
     const status = error.message?.includes('API key') ? 503 : 500;

@@ -74,11 +74,6 @@ const resetPasswordController = async (req, res) => {
 };
 
 const refreshController = async (req, res) => {
-  // #region agent log
-  try {
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AuthController.js:refreshController entry',message:'POST /api/auth/refresh entered',data:{},timestamp:Date.now(),hypothesisId:'H2'})}).catch(()=>{});
-  } catch (_) {}
-  // #endregion
   try {
   const parsedCookies = req.headers.cookie ? cookies.parse(req.headers.cookie) : {};
   const token_provider = parsedCookies.token_provider;
@@ -196,20 +191,10 @@ const refreshController = async (req, res) => {
       res.status(401).send('Refresh token expired or not found for this user');
     }
   } catch (err) {
-    // #region agent log
-    const pl = {location:'AuthController.js:refreshController catch',message:'POST /api/auth/refresh error',data:{message:err?.message,name:err?.name,stack:err?.stack?.slice(0,600)},hypothesisId:'H2'};
-    try { require('fs').appendFileSync(require('path').resolve(__dirname, '../../../.cursor/debug.log'), JSON.stringify({...pl,timestamp:Date.now()}) + '\n'); } catch (_) {}
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...pl,timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     logger.error(`[refreshController] Invalid refresh token:`, err);
     res.status(403).send('Invalid refresh token');
   }
   } catch (outerErr) {
-    // #region agent log
-    const pl = {location:'AuthController.js:refreshController outerCatch',message:'POST /api/auth/refresh outer error',data:{message:outerErr?.message,name:outerErr?.name,stack:outerErr?.stack?.slice(0,600)},hypothesisId:'H2'};
-    try { require('fs').appendFileSync(require('path').resolve(__dirname, '../../../.cursor/debug.log'), JSON.stringify({...pl,timestamp:Date.now()}) + '\n'); } catch (_) {}
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...pl,timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     logger.error('[refreshController] Unhandled error', outerErr);
     res.status(500).send('Internal server error');
   }

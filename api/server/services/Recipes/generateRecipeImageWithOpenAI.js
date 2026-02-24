@@ -38,20 +38,6 @@ async function generateRecipeImageWithOpenAI(recipe, apiKey) {
 
   const openai = new OpenAI({ apiKey: resolvedKey });
   const prompt = buildPrompt(recipe);
-
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'generateRecipeImageWithOpenAI.js:before-generate',
-      message: 'before openai.images.generate',
-      data: { model: MODEL, size: SIZE, quality: QUALITY, promptLength: prompt?.length },
-      timestamp: Date.now(),
-      hypothesisId: 'B',
-    }),
-  }).catch(() => {});
-  // #endregion
   let resp;
   try {
     resp = await openai.images.generate({
@@ -62,39 +48,8 @@ async function generateRecipeImageWithOpenAI(recipe, apiKey) {
       quality: QUALITY,
     });
   } catch (apiErr) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'generateRecipeImageWithOpenAI.js:generate-catch',
-        message: 'openai.images.generate threw',
-        data: { errorMessage: apiErr?.message, errorStatus: apiErr?.status },
-        timestamp: Date.now(),
-        hypothesisId: 'B',
-      }),
-    }).catch(() => {});
-    // #endregion
     throw apiErr;
   }
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      location: 'generateRecipeImageWithOpenAI.js:after-generate',
-      message: 'openai.images.generate returned',
-      data: {
-        hasData: !!resp?.data,
-        dataLength: resp?.data?.length,
-        hasFirst: !!resp?.data?.[0],
-        hasB64: !!resp?.data?.[0]?.b64_json,
-      },
-      timestamp: Date.now(),
-      hypothesisId: 'B,C',
-    }),
-  }).catch(() => {});
-  // #endregion
   if (!resp?.data?.[0]?.b64_json) {
     throw new Error('No image data returned from OpenAI API.');
   }

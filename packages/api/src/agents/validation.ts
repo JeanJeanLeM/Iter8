@@ -156,9 +156,6 @@ export async function validateAgentModel(
   const configKey =
     endpoint?.toLowerCase() === 'openai' ? EModelEndpoint.openAI : endpoint;
   const availableModels = modelsConfig[configKey];
-  // #region agent log
-  if (typeof fetch !== 'undefined') { fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'packages/api/src/agents/validation.ts:validateAgentModel',message:'validateAgentModel lookup',data:{endpoint,configKey,configKeys:Object.keys(modelsConfig||{}),hasAvailableModels:!!availableModels,availableCount:Array.isArray(availableModels)?availableModels.length:0},timestamp:Date.now(),hypothesisId:'B'})}).catch(()=>{}); }
-  // #endregion
   if (!availableModels) {
     return {
       isValid: false,

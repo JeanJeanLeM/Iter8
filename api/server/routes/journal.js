@@ -30,18 +30,12 @@ router.use(requireJwtAuth);
  * Query: recipeId, fromDate, toDate (ISO date strings), sort (realizedAtDesc | realizedAtAsc)
  */
 router.get('/', async (req, res) => {
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'journal.js:GET/',message:'GET /api/journal entered',data:{hasGetRealizations:typeof getRealizations,userIdPresent:!!req.user?.id},timestamp:Date.now(),hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
   try {
     const userId = req.user.id;
     const recipeId = req.query.recipeId || undefined;
     const fromDate = req.query.fromDate ? new Date(req.query.fromDate) : undefined;
     const toDate = req.query.toDate ? new Date(req.query.toDate) : undefined;
     const sort = req.query.sort === 'realizedAtAsc' ? 'realizedAtAsc' : 'realizedAtDesc';
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'journal.js:before getRealizations',message:'calling getRealizations',data:{userId,recipeId,sort},timestamp:Date.now(),hypothesisId:'H2'})}).catch(()=>{});
-    // #endregion
     const { realizations } = await getRealizations({
       userId,
       recipeId,
@@ -51,9 +45,6 @@ router.get('/', async (req, res) => {
     });
     res.json({ realizations });
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'journal.js:catch',message:'GET /api/journal error',data:{message:error?.message,stack:error?.stack,name:error?.name},timestamp:Date.now(),hypothesisId:'H3'})}).catch(()=>{});
-    // #endregion
     res.status(500).json({ error: error.message });
   }
 });
