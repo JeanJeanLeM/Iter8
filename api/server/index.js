@@ -75,13 +75,17 @@ const startServer = async () => {
   // In order to provide support to serving the application in a sub-directory
   // We need to update the base href if the DOMAIN_CLIENT is specified and not the root path
   if (process.env.DOMAIN_CLIENT) {
-    const clientUrl = new URL(process.env.DOMAIN_CLIENT);
-    const baseHref = clientUrl.pathname.endsWith('/')
-      ? clientUrl.pathname
-      : `${clientUrl.pathname}/`;
-    if (baseHref !== '/') {
-      logger.info(`Setting base href to ${baseHref}`);
-      indexHTML = indexHTML.replace(/base href="\/"/, `base href="${baseHref}"`);
+    try {
+      const clientUrl = new URL(process.env.DOMAIN_CLIENT);
+      const baseHref = clientUrl.pathname.endsWith('/')
+        ? clientUrl.pathname
+        : `${clientUrl.pathname}/`;
+      if (baseHref !== '/') {
+        logger.info(`Setting base href to ${baseHref}`);
+        indexHTML = indexHTML.replace(/base href="\/"/, `base href="${baseHref}"`);
+      }
+    } catch (error) {
+      logger.warn('DOMAIN_CLIENT is not a valid URL, skipping base href update.');
     }
   }
 
