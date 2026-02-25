@@ -7,5 +7,6 @@
 buildCommand = "npm run frontend"
 
 [deploy]
-# Runtime should only start backend; frontend is built during image/build phase.
-startCommand = "npm run backend"
+# Workaround for environments where build artifacts are not persisted between build and runtime.
+# This ensures frontend/assets exist before backend starts.
+startCommand = "npm run start:full"
