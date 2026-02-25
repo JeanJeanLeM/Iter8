@@ -7,6 +7,5 @@
 buildCommand = "npm run frontend"
 
 [deploy]
-# Workaround for environments where build artifacts are not persisted between build and runtime.
-# This ensures frontend/assets exist before backend starts.
-startCommand = "npm run start:full"
+# Runtime should only start backend; build artifacts are produced during build phase.
+startCommand = "npm run backend"
