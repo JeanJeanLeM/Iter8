@@ -224,7 +224,13 @@ async function parseSharePage(shareUrl) {
       validateStatus: (status) => status === 200,
     });
     html = res.data;
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'A', location: 'parseSharePage.js:fetch', message: 'after fetch', data: { status: res.status, htmlLength: (html && typeof html === 'string') ? html.length : 0 }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
   } catch (err) {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'A', location: 'parseSharePage.js:fetch-catch', message: 'fetch error', data: { isAxios: !!axios.isAxiosError(err), code: (err && err.code) || '', status: (err && err.response && err.response.status) || '', errMessage: (err && err.message) ? String(err.message).slice(0, 200) : '' }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
     if (axios.isAxiosError(err)) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         throw new Error('Share link request timed out.');
@@ -246,6 +252,9 @@ async function parseSharePage(shareUrl) {
       if (payloadString) break;
     }
   }
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'B', location: 'parseSharePage.js:payload', message: 'after extract payload', data: { hasPayloadString: !!payloadString, payloadStringLen: payloadString ? payloadString.length : 0, scriptMatchCount: (scriptMatch && scriptMatch.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   if (!payloadString) {
     throw new Error('Could not read conversation data from share link.');
   }
@@ -255,6 +264,9 @@ async function parseSharePage(shareUrl) {
   } catch {
     throw new Error('Invalid conversation data from share link.');
   }
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'C', location: 'parseSharePage.js:parse', message: 'after JSON.parse', data: { isArray: Array.isArray(arr), arrLength: Array.isArray(arr) ? arr.length : 0 }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   if (!Array.isArray(arr)) {
     throw new Error('Unexpected conversation format.');
   }
@@ -266,6 +278,9 @@ async function parseSharePage(shareUrl) {
   if (messages.length === 0 && payloadString.length > 100) {
     messages = extractMessagesFromPayloadFallback(payloadString);
   }
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'D', location: 'parseSharePage.js:exit', message: 'parseSharePage return', data: { messagesLength: messages.length, titleLen: (title && title.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   return {
     title: title || 'Shared conversation',
     messages,

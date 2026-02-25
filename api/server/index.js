@@ -181,24 +181,6 @@ const startServer = async () => {
   app.use(ErrorController);
 
   app.use((req, res) => {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '204ac8' },
-      body: JSON.stringify({
-        sessionId: '204ac8',
-        runId: 'pre-fix',
-        hypothesisId: 'H1',
-        location: 'api/server/index.js:fallback',
-        message: 'served SPA fallback',
-        data: {
-          path: req.originalUrl,
-          host: req.headers?.host ?? null,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
     res.set({
       'Cache-Control': process.env.INDEX_CACHE_CONTROL || 'no-cache, no-store, must-revalidate',
       Pragma: process.env.INDEX_PRAGMA || 'no-cache',

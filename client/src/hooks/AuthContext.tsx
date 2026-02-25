@@ -48,23 +48,6 @@ const AuthContextProvider = ({
 
   const navigate = useNavigate();
   const location = useLocation();
-  const sendDebugLog = useCallback((message: string, hypothesisId: string, data: Record<string, unknown> = {}) => {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '204ac8' },
-      body: JSON.stringify({
-        sessionId: '204ac8',
-        runId: 'pre-fix',
-        hypothesisId,
-        location: 'client/src/hooks/AuthContext.tsx',
-        message,
-        data,
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-  }, []);
 
   const setUserContext = useMemo(
     () =>
@@ -166,12 +149,6 @@ const AuthContextProvider = ({
   }, []);
 
   const silentRefresh = useCallback(() => {
-    sendDebugLog('silentRefresh start', 'H3', {
-      pathname: location.pathname,
-      isAuthenticated,
-      hasToken: Boolean(token),
-      testMode: authConfig?.test === true,
-    });
     if (authConfig?.test === true) {
       console.log('Test mode. Skipping silent refresh.');
       return;
@@ -179,11 +156,6 @@ const AuthContextProvider = ({
     refreshToken.mutate(undefined, {
       onSuccess: (data: t.TRefreshTokenResponse | undefined) => {
         const { user, token = '' } = data ?? {};
-        sendDebugLog('silentRefresh onSuccess', 'H3', {
-          pathname: location.pathname,
-          hasTokenInResponse: Boolean(token),
-          hasUserInResponse: Boolean(user),
-        });
         if (token) {
           setUserContext({ token, isAuthenticated: true, user });
         } else {
@@ -196,11 +168,6 @@ const AuthContextProvider = ({
         }
       },
       onError: () => {
-        sendDebugLog('silentRefresh onError', 'H3', {
-          pathname: location.pathname,
-          isPublicAuthPath: isPublicAuthPath(location.pathname),
-          testMode: authConfig?.test === true,
-        });
         if (authConfig?.test === true) {
           return;
         }
@@ -215,18 +182,10 @@ const AuthContextProvider = ({
     isPublicAuthPath,
     location.pathname,
     navigate,
-    sendDebugLog,
     token,
   ]);
 
   useEffect(() => {
-    sendDebugLog('auth effect tick', 'H3', {
-      pathname: location.pathname,
-      isAuthenticated,
-      hasToken: Boolean(token),
-      userQueryHasData: Boolean(userQuery.data),
-      userQueryIsError: userQuery.isError,
-    });
     if (userQuery.data) {
       setUser(userQuery.data);
     } else if (userQuery.isError) {
@@ -239,12 +198,6 @@ const AuthContextProvider = ({
       doSetError(undefined);
     }
     if (token == null || !token || !isAuthenticated) {
-      sendDebugLog('auth effect triggering silentRefresh', 'H3', {
-        pathname: location.pathname,
-        isAuthenticated,
-        hasToken: Boolean(token),
-        isPublicAuthPath: isPublicAuthPath(location.pathname),
-      });
       silentRefresh();
     }
   }, [
@@ -260,7 +213,6 @@ const AuthContextProvider = ({
     setUserContext,
     isPublicAuthPath,
     location.pathname,
-    sendDebugLog,
   ]);
 
   useEffect(() => {

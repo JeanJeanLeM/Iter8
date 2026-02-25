@@ -34,6 +34,9 @@ router.use(requireJwtAuth);
  * Body: { shareUrl: string }
  */
 router.post('/import/chatgpt-share/preview', async (req, res) => {
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'E', location: 'recipes.js:preview', message: 'preview handler entry', data: { hasShareUrl: !!(req.body && req.body.shareUrl), shareUrlLen: (req.body && req.body.shareUrl) ? String(req.body.shareUrl).length : 0 }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   try {
     const { shareUrl } = req.body || {};
     if (!shareUrl || typeof shareUrl !== 'string') {
@@ -51,6 +54,9 @@ router.post('/import/chatgpt-share/preview', async (req, res) => {
     const plan = buildImportPlan(candidates);
     res.status(200).json({ title, candidates: plan });
   } catch (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'E', location: 'recipes.js:preview-catch', message: 'preview handler catch', data: { errorMessage: (error && error.message) || '', errorName: (error && error.name) || '' }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
     const { logger } = require('@librechat/data-schemas');
     logger.error('[POST /api/recipes/import/chatgpt-share/preview]', error?.message, error?.stack);
     const status = error.message?.includes('Share link') || error.message?.includes('URL') ? 400 : 500;

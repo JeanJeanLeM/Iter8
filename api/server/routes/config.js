@@ -26,44 +26,17 @@ const publicSharedLinksEnabled =
 const sharePointFilePickerEnabled = isEnabled(process.env.ENABLE_SHAREPOINT_FILEPICKER);
 const openidReuseTokens = isEnabled(process.env.OPENID_REUSE_TOKENS);
 
-const sendDebugLog = (message, hypothesisId, data = {}) => {
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '204ac8' },
-    body: JSON.stringify({
-      sessionId: '204ac8',
-      runId: 'pre-fix',
-      hypothesisId,
-      location: 'api/server/routes/config.js',
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-};
-
 router.get('/', async function (req, res) {
   res.set({
     'Cache-Control': 'no-store, no-cache, must-revalidate',
     Pragma: 'no-cache',
     Expires: '0',
   });
-  sendDebugLog('GET /api/config entry', 'H2', {
-    hasUser: Boolean(req.user?.id),
-    path: req.originalUrl,
-  });
   try {
   const cache = getLogStores(CacheKeys.CONFIG_STORE);
 
   const cachedStartupConfig = await cache.get(CacheKeys.STARTUP_CONFIG);
   if (cachedStartupConfig) {
-    sendDebugLog('GET /api/config cache hit', 'H2', {
-      registrationEnabled: cachedStartupConfig.registrationEnabled,
-      emailLoginEnabled: cachedStartupConfig.emailLoginEnabled,
-      socialLoginEnabled: cachedStartupConfig.socialLoginEnabled,
-    });
     res.send(cachedStartupConfig);
     return;
   }
@@ -195,27 +168,12 @@ router.get('/', async function (req, res) {
     }
 
     await cache.set(CacheKeys.STARTUP_CONFIG, payload);
-    sendDebugLog('GET /api/config success', 'H2', {
-      registrationEnabled: payload.registrationEnabled,
-      emailLoginEnabled: payload.emailLoginEnabled,
-      socialLoginEnabled: payload.socialLoginEnabled,
-      openidLoginEnabled: payload.openidLoginEnabled,
-      samlLoginEnabled: payload.samlLoginEnabled,
-    });
     return res.status(200).send(payload);
   } catch (err) {
-    sendDebugLog('GET /api/config inner error', 'H2', {
-      message: err?.message,
-      name: err?.name,
-    });
     logger.error('Error in startup config', err);
     return res.status(500).send({ error: err.message });
   }
   } catch (outerErr) {
-    sendDebugLog('GET /api/config outer error', 'H2', {
-      message: outerErr?.message,
-      name: outerErr?.name,
-    });
     logger.error('Error in startup config (outer)', outerErr);
     return res.status(500).send({ error: outerErr?.message ?? 'Config error' });
   }

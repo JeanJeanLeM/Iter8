@@ -222,6 +222,39 @@ const MealPlannerNavLink = memo(
 );
 MealPlannerNavLink.displayName = 'MealPlannerNavLink';
 
+const RecipeAssistantNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const { data: agentsResponse } = useListAgentsQuery({ limit: 100 });
+    const recipeAssistantAgent = useMemo(() => {
+      return agentsResponse?.data?.find((agent) => agent.name === 'Assistant Recettes');
+    }, [agentsResponse]);
+
+    if (!recipeAssistantAgent) {
+      return null;
+    }
+
+    return (
+      <Link
+        to={`/c/new?agent_id=${recipeAssistantAgent.id}`}
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt"
+      >
+        <CalendarDays className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_recipe_assistant')}</span>
+      </Link>
+    );
+  },
+);
+RecipeAssistantNavLink.displayName = 'RecipeAssistantNavLink';
+
 const Nav = memo(
   ({
     navVisible,
@@ -410,6 +443,11 @@ const Nav = memo(
               localize={localize}
             />
             <MealPlannerNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+            <RecipeAssistantNavLink
               isSmallScreen={isSmallScreen}
               itemToggleNav={itemToggleNav}
               localize={localize}
