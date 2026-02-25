@@ -181,18 +181,56 @@ const startServer = async () => {
   app.use(ErrorController);
 
   app.use((req, res) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '204ac8' },
+      body: JSON.stringify({
+        sessionId: '204ac8',
+        runId: 'test-page',
+        hypothesisId: 'H1',
+        location: 'api/server/index.js:fallback',
+        message: 'served temporary test page',
+        data: {
+          path: req.originalUrl,
+          host: req.headers?.host ?? null,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
     res.set({
       'Cache-Control': process.env.INDEX_CACHE_CONTROL || 'no-cache, no-store, must-revalidate',
       Pragma: process.env.INDEX_PRAGMA || 'no-cache',
       Expires: process.env.INDEX_EXPIRES || '0',
     });
-
-    const lang = req.cookies.lang || req.headers['accept-language']?.split(',')[0] || 'en-US';
-    const saneLang = lang.replace(/"/g, '&quot;');
-    let updatedIndexHtml = indexHTML.replace(/lang="en-US"/g, `lang="${saneLang}"`);
-
     res.type('html');
-    res.send(updatedIndexHtml);
+    res.send(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TEST</title>
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        background: #ff0000;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-size: 96px;
+        font-weight: 800;
+        letter-spacing: 4px;
+      }
+    </style>
+  </head>
+  <body>TEST</body>
+</html>`);
   });
 
   const listenCallback = async (err) => {
