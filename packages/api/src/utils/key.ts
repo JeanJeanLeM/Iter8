@@ -67,7 +67,10 @@ export async function loadServiceKey(keyPath: string): Promise<GoogleServiceKey 
       const { content: fileContent } = await readFileAsString(absolutePath);
       serviceKey = JSON.parse(fileContent);
     } catch (error) {
-      logger.error(`Failed to load service key from file: ${keyPath}`, error);
+      // Missing file (ENOENT) is expected when not using file-based Google/Vertex auth; avoid log noise
+      if (error && (error as NodeJS.ErrnoException).code !== 'ENOENT') {
+        logger.error(`Failed to load service key from file: ${keyPath}`, error);
+      }
       return null;
     }
   }

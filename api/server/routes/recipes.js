@@ -59,8 +59,17 @@ router.post('/import/chatgpt-share/preview', async (req, res) => {
     // #endregion
     const { logger } = require('@librechat/data-schemas');
     logger.error('[POST /api/recipes/import/chatgpt-share/preview]', error?.message, error?.stack);
-    const status = error.message?.includes('Share link') || error.message?.includes('URL') ? 400 : 500;
-    res.status(status).json({ error: error.message });
+    const msg = error?.message || '';
+    // Treat as client error (400): validation, share-link issues, or 401 from wrong URL (e.g. pasted app URL)
+    const isShareLinkError =
+      /share link|URL|chatgpt|invalid url|only https|could not load|expired|not found|required\.|unexpected format|no conversation|mapping/i.test(msg) ||
+      (/\b401\b/.test(msg) && /GET\s+https?:\/\//i.test(msg));
+    const status = isShareLinkError ? 400 : 500;
+    const bodyMessage =
+      status === 400 && /\b401\b/.test(msg) && /cookiterate|api\/user/i.test(msg)
+        ? 'Please use a ChatGPT share link (https://chatgpt.com/share/...). Paste the share link from ChatGPT, not a link from this site.'
+        : msg;
+    res.status(status).json({ error: bodyMessage });
   }
 });
 
