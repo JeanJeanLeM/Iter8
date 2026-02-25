@@ -47,7 +47,7 @@
     "delete-banner": "node config/delete-banner.js",
     "backend": "cross-env NODE_ENV=production node api/server/index.js",
     "start": "npm run backend",
-    "start:full": "npm run frontend && npm run backend",
+    "start:full": "node config/start-full.js",
     "backend:inspect": "cross-env NODE_ENV=production node --inspect api/server/index.js",
     "backend:dev": "cross-env NODE_ENV=development npx nodemon api/server/index.js",
     "backend:experimental": "cross-env NODE_ENV=production node api/server/experimental.js",
