@@ -45,6 +45,11 @@ const sendDebugLog = (message, hypothesisId, data = {}) => {
 };
 
 router.get('/', async function (req, res) {
+  res.set({
+    'Cache-Control': 'no-store, no-cache, must-revalidate',
+    Pragma: 'no-cache',
+    Expires: '0',
+  });
   sendDebugLog('GET /api/config entry', 'H2', {
     hasUser: Boolean(req.user?.id),
     path: req.originalUrl,
