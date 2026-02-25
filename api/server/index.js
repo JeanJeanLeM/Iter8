@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 require('module-alias')({ base: path.resolve(__dirname, '..') });
 const cors = require('cors');
 const axios = require('axios');
@@ -42,6 +43,39 @@ const trusted_proxy = Number(TRUST_PROXY) || 1; /* trust first proxy by default 
 
 const app = express();
 
+function ensureClientBuild(indexPath) {
+  if (fs.existsSync(indexPath)) {
+    return true;
+  }
+
+  const repoRoot = path.resolve(__dirname, '../..');
+  logger.warn(
+    `[startup] Client build missing at ${indexPath}. Attempting fallback build with "npm run build:client"...`,
+  );
+  const buildResult = spawnSync('npm', ['run', 'build:client'], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+    shell: process.platform === 'win32',
+    env: process.env,
+  });
+
+  if (buildResult.error) {
+    logger.error('[startup] Fallback client build spawn error:', buildResult.error.message);
+  } else {
+    logger.info(`[startup] Fallback client build exited with code ${buildResult.status ?? 'unknown'}`);
+  }
+
+  if (fs.existsSync(indexPath)) {
+    logger.info(`[startup] Client build recovered at ${indexPath}.`);
+    return true;
+  }
+
+  logger.error(
+    `[startup] Client build still missing at ${indexPath} after fallback attempt. Continuing in API-only mode.`,
+  );
+  return false;
+}
+
 const startServer = async () => {
   if (typeof Bun !== 'undefined') {
     axios.defaults.headers.common['Accept-Encoding'] = 'gzip';
@@ -63,18 +97,14 @@ const startServer = async () => {
   await updateInterfacePermissions(appConfig);
 
   const indexPath = path.join(appConfig.paths.dist, 'index.html');
-  if (!fs.existsSync(indexPath)) {
-    const msg =
-      `Client build missing at ${indexPath}. ` +
-      'Run "npm run frontend" before starting the backend, or use Start Command "npm start" (builds then starts).';
-    logger.error(msg);
-    process.exit(1);
-  }
-  let indexHTML = fs.readFileSync(indexPath, 'utf8');
+  const hasClientBuild = ensureClientBuild(indexPath);
+  let indexHTML = hasClientBuild
+    ? fs.readFileSync(indexPath, 'utf8')
+    : `<!doctype html><html lang="en-US"><head><meta charset="utf-8"><title>CookIterate API is running</title></head><body><h1>CookIterate API is running</h1><p>Client build is missing on this deployment. API endpoints are available; rebuild frontend artifacts for full UI.</p></body></html>`;
 
   // In order to provide support to serving the application in a sub-directory
   // We need to update the base href if the DOMAIN_CLIENT is specified and not the root path
-  if (process.env.DOMAIN_CLIENT) {
+  if (hasClientBuild && process.env.DOMAIN_CLIENT) {
     try {
       const clientUrl = new URL(process.env.DOMAIN_CLIENT);
       const baseHref = clientUrl.pathname.endsWith('/')
