@@ -216,6 +216,8 @@ export type TUser = {
     unitSystem?: 'si' | 'american';
     showIngredientGrams?: boolean;
     equipment?: string[];
+    recipeImageStyle?: string;
+    recipeImageBackground?: string;
   };
   createdAt: string;
   updatedAt: string;

@@ -210,8 +210,20 @@ function extractMessagesFromMapping(arr, mapping) {
  * @returns {Promise<{ title: string; messages: Array<{ role: string; content: string }> }>}
  */
 async function parseSharePage(shareUrl) {
+  let parsedForLog = null;
+  try {
+    parsedForLog = new URL(typeof shareUrl === 'string' ? shareUrl.trim() : '');
+  } catch {
+    parsedForLog = null;
+  }
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'F', location: 'parseSharePage.js:entry', message: 'parseSharePage entry metadata', data: { shareUrlLen: typeof shareUrl === 'string' ? shareUrl.trim().length : 0, protocol: parsedForLog?.protocol || '', hostname: parsedForLog?.hostname || '', pathStartsWithShare: !!parsedForLog?.pathname?.startsWith('/share/') }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   const validation = validateShareUrl(shareUrl);
   if (!validation.valid) {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'F', location: 'parseSharePage.js:validation-fail', message: 'share URL validation failed', data: { validationError: validation.error || '', protocol: parsedForLog?.protocol || '', hostname: parsedForLog?.hostname || '', pathStartsWithShare: !!parsedForLog?.pathname?.startsWith('/share/') }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
     throw new Error(validation.error);
   }
   const url = shareUrl.trim();

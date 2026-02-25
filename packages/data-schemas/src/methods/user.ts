@@ -202,6 +202,8 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
       unitSystem?: 'si' | 'american' | null;
       showIngredientGrams?: boolean;
       equipment?: string[];
+      recipeImageStyle?: string | null;
+      recipeImageBackground?: string | null;
     },
   ): Promise<IUser | null> {
     const User = mongoose.models.User;
@@ -257,6 +259,22 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
     }
     if (Array.isArray(patch.equipment)) {
       $set['personalization.equipment'] = patch.equipment;
+    }
+    if (patch.recipeImageStyle !== undefined) {
+      const val = typeof patch.recipeImageStyle === 'string' ? patch.recipeImageStyle.trim() : '';
+      if (val) {
+        $set['personalization.recipeImageStyle'] = val;
+      } else {
+        $unset['personalization.recipeImageStyle'] = 1;
+      }
+    }
+    if (patch.recipeImageBackground !== undefined) {
+      const val = typeof patch.recipeImageBackground === 'string' ? patch.recipeImageBackground.trim() : '';
+      if (val) {
+        $set['personalization.recipeImageBackground'] = val;
+      } else {
+        $unset['personalization.recipeImageBackground'] = 1;
+      }
     }
     if (Object.keys($set).length === 0 && Object.keys($unset).length === 0) {
       return (await User.findById(userId).lean()) as IUser | null;

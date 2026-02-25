@@ -1026,6 +1026,9 @@ export const updateMemoryPreferences = (preferences: {
   dietaryPreferences?: string;
   unitSystem?: 'si' | 'american';
   showIngredientGrams?: boolean;
+  equipment?: string[];
+  recipeImageStyle?: string;
+  recipeImageBackground?: string;
 }): Promise<{
   updated: boolean;
   preferences: {
@@ -1036,6 +1039,9 @@ export const updateMemoryPreferences = (preferences: {
     dietaryPreferences?: string;
     unitSystem?: string;
     showIngredientGrams?: boolean;
+    equipment?: string[];
+    recipeImageStyle?: string;
+    recipeImageBackground?: string;
   };
 }> => {
   return request.patch(endpoints.memoryPreferences(), preferences);

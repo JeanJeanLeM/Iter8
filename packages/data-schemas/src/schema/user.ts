@@ -179,6 +179,16 @@ const userSchema = new Schema<IUser>(
           type: [String],
           default: undefined,
         },
+        /** Recipe AI image style key (e.g. hyper_realiste, anime_japonais) */
+        recipeImageStyle: {
+          type: String,
+          default: undefined,
+        },
+        /** Recipe AI image background key (e.g. wood_board, kitchen_stainless) */
+        recipeImageBackground: {
+          type: String,
+          default: undefined,
+        },
       },
       default: {},
     },

@@ -56,6 +56,8 @@ export type UpdateMemoryPreferencesParams = {
   unitSystem?: 'si' | 'american' | '';
   showIngredientGrams?: boolean;
   equipment?: string[];
+  recipeImageStyle?: string;
+  recipeImageBackground?: string;
 };
 export type UpdateMemoryPreferencesResponse = {
   updated: boolean;
@@ -68,6 +70,8 @@ export type UpdateMemoryPreferencesResponse = {
     unitSystem?: string;
     showIngredientGrams?: boolean;
     equipment?: string[];
+    recipeImageStyle?: string;
+    recipeImageBackground?: string;
   };
 };
 

@@ -165,6 +165,15 @@ const PERSONALIZATION_MAX_ITEM_LENGTH = 80;
 const PERSONALIZATION_DIETARY_PREFERENCES_MAX_LENGTH = 500;
 const COOKING_LEVEL_MAX_LENGTH = 100;
 
+const RECIPE_IMAGE_STYLE_KEYS = new Set([
+  'hyper_realiste', 'anime_japonais', 'peinture_huile', 'cartoon_moderne',
+  'isometrique', 'pixar_3d', 'dessin_crayon',
+]);
+const RECIPE_IMAGE_BACKGROUND_KEYS = new Set([
+  'street_urbain', 'plage', 'cuisine_inox', 'planche_bois', 'table_restaurant',
+  'montagne', 'nappe_carreaux',
+]);
+
 function validateStringArray(value, fieldName) {
   if (!Array.isArray(value)) {
     return `${fieldName} must be an array of strings.`;
@@ -196,7 +205,7 @@ function validateStringArray(value, fieldName) {
 const UNIT_SYSTEM_VALUES = new Set(['si', 'american']);
 
 router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
-  const { memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams, equipment } = req.body;
+  const { memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams, equipment, recipeImageStyle, recipeImageBackground } = req.body;
 
   const patch = {};
   if (typeof memories === 'boolean') {
@@ -259,11 +268,31 @@ router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
     }
     patch.equipment = equipment.map((s) => s.trim());
   }
+  if (recipeImageStyle !== undefined) {
+    if (typeof recipeImageStyle !== 'string') {
+      return res.status(400).json({ error: 'recipeImageStyle must be a string.' });
+    }
+    const val = recipeImageStyle.trim();
+    if (val && !RECIPE_IMAGE_STYLE_KEYS.has(val)) {
+      return res.status(400).json({ error: 'recipeImageStyle must be one of the allowed style keys.' });
+    }
+    patch.recipeImageStyle = val || null;
+  }
+  if (recipeImageBackground !== undefined) {
+    if (typeof recipeImageBackground !== 'string') {
+      return res.status(400).json({ error: 'recipeImageBackground must be a string.' });
+    }
+    const val = recipeImageBackground.trim();
+    if (val && !RECIPE_IMAGE_BACKGROUND_KEYS.has(val)) {
+      return res.status(400).json({ error: 'recipeImageBackground must be one of the allowed background keys.' });
+    }
+    patch.recipeImageBackground = val || null;
+  }
 
   if (Object.keys(patch).length === 0) {
     return res.status(400).json({
       error:
-        'At least one of memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams, or equipment must be provided.',
+        'At least one of memories, diets, allergies, cookingLevel, dietaryPreferences, unitSystem, showIngredientGrams, equipment, recipeImageStyle, or recipeImageBackground must be provided.',
     });
   }
 
@@ -303,6 +332,8 @@ router.patch('/preferences', checkMemoryOptOut, async (req, res) => {
         unitSystem: p.unitSystem ?? '',
         showIngredientGrams: p.showIngredientGrams ?? false,
         equipment: p.equipment ?? [],
+        recipeImageStyle: p.recipeImageStyle ?? '',
+        recipeImageBackground: p.recipeImageBackground ?? '',
       },
     });
   } catch (error) {

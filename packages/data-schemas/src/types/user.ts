@@ -43,6 +43,8 @@ export interface IUser extends Document {
     unitSystem?: 'si' | 'american';
     showIngredientGrams?: boolean;
     equipment?: string[];
+    recipeImageStyle?: string;
+    recipeImageBackground?: string;
   };
   favorites?: Array<{
     agentId?: string;
@@ -89,6 +91,8 @@ export interface UpdateUserRequest {
     unitSystem?: 'si' | 'american';
     showIngredientGrams?: boolean;
     equipment?: string[];
+    recipeImageStyle?: string;
+    recipeImageBackground?: string;
   };
 }
 

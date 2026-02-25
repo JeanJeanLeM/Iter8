@@ -57,14 +57,32 @@ router.post('/import/chatgpt-share/preview', async (req, res) => {
     // #region agent log
     fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'E', location: 'recipes.js:preview-catch', message: 'preview handler catch', data: { errorMessage: (error && error.message) || '', errorName: (error && error.name) || '' }, timestamp: Date.now() }) }).catch(() => {});
     // #endregion
-    const { logger } = require('@librechat/data-schemas');
-    logger.error('[POST /api/recipes/import/chatgpt-share/preview]', error?.message, error?.stack);
     const msg = error?.message || '';
+    const rawShareUrl = typeof req?.body?.shareUrl === 'string' ? req.body.shareUrl.trim() : '';
+    let shareHost = '';
+    let shareProtocol = '';
+    let pathStartsWithShare = false;
+    if (rawShareUrl) {
+      try {
+        const parsed = new URL(rawShareUrl);
+        shareHost = parsed.hostname || '';
+        shareProtocol = parsed.protocol || '';
+        pathStartsWithShare = parsed.pathname.startsWith('/share/');
+      } catch {
+        // Keep safe defaults for logging only
+      }
+    }
     // Treat as client error (400): validation, share-link issues, or 401 from wrong URL (e.g. pasted app URL)
     const isShareLinkError =
       /share link|URL|chatgpt|invalid url|only https|could not load|expired|not found|required\.|unexpected format|no conversation|mapping/i.test(msg) ||
       (/\b401\b/.test(msg) && /GET\s+https?:\/\//i.test(msg));
     const status = isShareLinkError ? 400 : 500;
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'G', location: 'recipes.js:preview-catch-meta', message: 'preview catch classification', data: { status, isShareLinkError, has401: /\b401\b/.test(msg), shareHost, shareProtocol, pathStartsWithShare }, timestamp: Date.now() }) }).catch(() => {});
+    // #endregion
+    const { logger } = require('@librechat/data-schemas');
+    logger.error('[POST /api/recipes/import/chatgpt-share/preview]', msg || '(empty error message)', error?.stack);
+    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][debug] status=${status} isShareLinkError=${isShareLinkError} shareHost=${shareHost || 'n/a'} shareProtocol=${shareProtocol || 'n/a'} pathStartsWithShare=${pathStartsWithShare} msg=${msg || '(empty)'}`);
     const bodyMessage =
       status === 400 && /\b401\b/.test(msg) && /cookiterate|api\/user/i.test(msg)
         ? 'Please use a ChatGPT share link (https://chatgpt.com/share/...). Paste the share link from ChatGPT, not a link from this site.'

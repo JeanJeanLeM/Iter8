@@ -21,6 +21,10 @@ import {
   DIET_MAX_LENGTH,
   DIETARY_PREFERENCES_MAX_LENGTH,
   EQUIPMENT_MAX_LENGTH,
+  RECIPE_IMAGE_STYLE_OPTIONS,
+  RECIPE_IMAGE_BACKGROUND_OPTIONS,
+  RECIPE_IMAGE_STYLE_DEFAULT,
+  RECIPE_IMAGE_BACKGROUND_DEFAULT,
 } from '~/constants/personalization';
 
 interface PersonalizationProps {
@@ -46,6 +50,8 @@ export default function Personalization({
   const [showIngredientGrams, setShowIngredientGrams] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [customEquipmentInput, setCustomEquipmentInput] = useState('');
+  const [recipeImageStyle, setRecipeImageStyle] = useState<string>(RECIPE_IMAGE_STYLE_DEFAULT);
+  const [recipeImageBackground, setRecipeImageBackground] = useState<string>(RECIPE_IMAGE_BACKGROUND_DEFAULT);
 
   const updateMemoryPreferencesMutation = useUpdateMemoryPreferencesMutation({
     onSuccess: () => {
@@ -82,6 +88,12 @@ export default function Personalization({
       }
       if (variables.equipment !== undefined) {
         setSelectedEquipment(user?.personalization?.equipment ?? []);
+      }
+      if (variables.recipeImageStyle !== undefined) {
+        setRecipeImageStyle(user?.personalization?.recipeImageStyle ?? RECIPE_IMAGE_STYLE_DEFAULT);
+      }
+      if (variables.recipeImageBackground !== undefined) {
+        setRecipeImageBackground(user?.personalization?.recipeImageBackground ?? RECIPE_IMAGE_BACKGROUND_DEFAULT);
       }
     },
   });
@@ -134,6 +146,18 @@ export default function Personalization({
       setSelectedEquipment(user.personalization.equipment ?? []);
     }
   }, [user?.personalization?.equipment]);
+
+  useEffect(() => {
+    if (user?.personalization?.recipeImageStyle !== undefined) {
+      setRecipeImageStyle(user.personalization.recipeImageStyle || RECIPE_IMAGE_STYLE_DEFAULT);
+    }
+  }, [user?.personalization?.recipeImageStyle]);
+
+  useEffect(() => {
+    if (user?.personalization?.recipeImageBackground !== undefined) {
+      setRecipeImageBackground(user.personalization.recipeImageBackground || RECIPE_IMAGE_BACKGROUND_DEFAULT);
+    }
+  }, [user?.personalization?.recipeImageBackground]);
 
   const handleMemoryToggle = (checked: boolean) => {
     setReferenceSavedMemories(checked);
@@ -323,6 +347,22 @@ export default function Personalization({
       const v = value === 'si' || value === 'american' ? value : '';
       setUnitSystem(v);
       updateMemoryPreferencesMutation.mutate({ unitSystem: v });
+    },
+    [updateMemoryPreferencesMutation],
+  );
+
+  const handleRecipeImageStyleChange = useCallback(
+    (value: string) => {
+      setRecipeImageStyle(value);
+      updateMemoryPreferencesMutation.mutate({ recipeImageStyle: value });
+    },
+    [updateMemoryPreferencesMutation],
+  );
+
+  const handleRecipeImageBackgroundChange = useCallback(
+    (value: string) => {
+      setRecipeImageBackground(value);
+      updateMemoryPreferencesMutation.mutate({ recipeImageBackground: value });
     },
     [updateMemoryPreferencesMutation],
   );
@@ -686,6 +726,57 @@ export default function Personalization({
             disabled={updateMemoryPreferencesMutation.isLoading}
             aria-label={localize('com_ui_personalization_dietary_preferences')}
           />
+        </div>
+
+        <div className="border-t border-border-medium pt-4 mt-4">
+          <div className="text-base font-semibold mb-1">
+            {localize('com_ui_recipe_image_style_section')}
+          </div>
+          <div className="mt-1 text-xs text-text-secondary mb-4">
+            {localize('com_ui_recipe_image_style_section_description')}
+          </div>
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Label className="text-sm font-medium whitespace-nowrap">
+                {localize('com_ui_recipe_image_style_label')}
+              </Label>
+              <Dropdown
+                value={recipeImageStyle || ''}
+                options={[
+                  { value: '', label: localize('com_ui_recipe_image_style_default') },
+                  ...RECIPE_IMAGE_STYLE_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: localize(o.labelKey),
+                  })),
+                ]}
+                onChange={handleRecipeImageStyleChange}
+                testId="recipe-image-style-selector"
+                sizeClasses="w-[200px]"
+                popoverClassName="z-[100]"
+                aria-label={localize('com_ui_recipe_image_style_label')}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label className="text-sm font-medium whitespace-nowrap">
+                {localize('com_ui_recipe_image_background_label')}
+              </Label>
+              <Dropdown
+                value={recipeImageBackground || ''}
+                options={[
+                  { value: '', label: localize('com_ui_recipe_image_background_default') },
+                  ...RECIPE_IMAGE_BACKGROUND_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: localize(o.labelKey),
+                  })),
+                ]}
+                onChange={handleRecipeImageBackgroundChange}
+                testId="recipe-image-background-selector"
+                sizeClasses="w-[200px]"
+                popoverClassName="z-[100]"
+                aria-label={localize('com_ui_recipe_image_background_label')}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
