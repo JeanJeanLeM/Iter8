@@ -23,8 +23,6 @@ import {
   EQUIPMENT_MAX_LENGTH,
   RECIPE_IMAGE_STYLE_OPTIONS,
   RECIPE_IMAGE_BACKGROUND_OPTIONS,
-  RECIPE_IMAGE_STYLE_DEFAULT,
-  RECIPE_IMAGE_BACKGROUND_DEFAULT,
 } from '~/constants/personalization';
 
 interface PersonalizationProps {
@@ -50,8 +48,8 @@ export default function Personalization({
   const [showIngredientGrams, setShowIngredientGrams] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [customEquipmentInput, setCustomEquipmentInput] = useState('');
-  const [recipeImageStyle, setRecipeImageStyle] = useState<string>(RECIPE_IMAGE_STYLE_DEFAULT);
-  const [recipeImageBackground, setRecipeImageBackground] = useState<string>(RECIPE_IMAGE_BACKGROUND_DEFAULT);
+  const [recipeImageStyle, setRecipeImageStyle] = useState<string>('');
+  const [recipeImageBackground, setRecipeImageBackground] = useState<string>('');
 
   const updateMemoryPreferencesMutation = useUpdateMemoryPreferencesMutation({
     onSuccess: () => {
@@ -90,10 +88,10 @@ export default function Personalization({
         setSelectedEquipment(user?.personalization?.equipment ?? []);
       }
       if (variables.recipeImageStyle !== undefined) {
-        setRecipeImageStyle(user?.personalization?.recipeImageStyle ?? RECIPE_IMAGE_STYLE_DEFAULT);
+        setRecipeImageStyle(user?.personalization?.recipeImageStyle ?? '');
       }
       if (variables.recipeImageBackground !== undefined) {
-        setRecipeImageBackground(user?.personalization?.recipeImageBackground ?? RECIPE_IMAGE_BACKGROUND_DEFAULT);
+        setRecipeImageBackground(user?.personalization?.recipeImageBackground ?? '');
       }
     },
   });
@@ -148,16 +146,12 @@ export default function Personalization({
   }, [user?.personalization?.equipment]);
 
   useEffect(() => {
-    if (user?.personalization?.recipeImageStyle !== undefined) {
-      setRecipeImageStyle(user.personalization.recipeImageStyle || RECIPE_IMAGE_STYLE_DEFAULT);
-    }
-  }, [user?.personalization?.recipeImageStyle]);
-
   useEffect(() => {
-    if (user?.personalization?.recipeImageBackground !== undefined) {
-      setRecipeImageBackground(user.personalization.recipeImageBackground || RECIPE_IMAGE_BACKGROUND_DEFAULT);
+    if (user?.personalization) {
+      setRecipeImageStyle(user.personalization.recipeImageStyle ?? '');
+      setRecipeImageBackground(user.personalization.recipeImageBackground ?? '');
     }
-  }, [user?.personalization?.recipeImageBackground]);
+  }, [user?.personalization?.recipeImageStyle, user?.personalization?.recipeImageBackground]);
 
   const handleMemoryToggle = (checked: boolean) => {
     setReferenceSavedMemories(checked);

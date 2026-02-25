@@ -257,8 +257,10 @@ async function parseSharePage(shareUrl) {
   }
   const scriptMatch = html.match(/<script[^>]*nonce="[^"]*"[^>]*>([\s\S]*?)<\/script>/gi);
   let payloadString = null;
+  let matchedScriptCount = 0;
   for (const tag of scriptMatch || []) {
     if (tag.includes('serverResponse') && tag.includes('mapping')) {
+      matchedScriptCount += 1;
       const inner = tag.replace(/^<script[^>]*>/, '').replace(/<\/script>$/, '');
       payloadString = extractEnqueuePayload(inner);
       if (payloadString) break;
@@ -267,13 +269,20 @@ async function parseSharePage(shareUrl) {
   // #region agent log
   fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'B', location: 'parseSharePage.js:payload', message: 'after extract payload', data: { hasPayloadString: !!payloadString, payloadStringLen: payloadString ? payloadString.length : 0, scriptMatchCount: (scriptMatch && scriptMatch.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
   // #endregion
+  const trimmedPayload = payloadString ? payloadString.trim() : '';
+  // #region agent log
+  logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] scriptTotal=${(scriptMatch && scriptMatch.length) || 0} matchedScripts=${matchedScriptCount} payloadLen=${payloadString ? payloadString.length : 0} startsWithBracket=${trimmedPayload.startsWith('[')} startsWithBrace=${trimmedPayload.startsWith('{')} startsWithQuote=${trimmedPayload.startsWith('"')} endsWithBracket=${trimmedPayload.endsWith(']')} endsWithBrace=${trimmedPayload.endsWith('}')}`);
+  // #endregion
   if (!payloadString) {
     throw new Error('Could not read conversation data from share link.');
   }
   let arr;
   try {
     arr = JSON.parse(payloadString);
-  } catch {
+  } catch (parseError) {
+    // #region agent log
+    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] json-parse-failed payloadLen=${payloadString.length} firstChar=${trimmedPayload.slice(0, 1) || 'n/a'} secondChar=${trimmedPayload.slice(1, 2) || 'n/a'} hasEscapedQuote=${payloadString.includes('\\"')} hasDoubleSlash=${payloadString.includes('\\\\')} hasNewline=${payloadString.includes('\n')} parseMessage=${(parseError && parseError.message) || 'unknown'}`);
+    // #endregion
     throw new Error('Invalid conversation data from share link.');
   }
   // #region agent log

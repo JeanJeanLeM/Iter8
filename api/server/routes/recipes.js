@@ -515,7 +515,7 @@ router.post('/:id/generate-image', async (req, res) => {
     } catch (extractErr) {
       throw extractErr;
     }
-    const newImageUrl = await generateRecipeImageWithOpenAI(recipe, apiKey);
+    const newImageUrl = await generateRecipeImageWithOpenAI(recipe, apiKey, req.user?.personalization);
     const newImages = [...existingImages, { url: newImageUrl, source: 'ai' }];
     const updated = await updateRecipe(req.user.id, id, {
       images: newImages,
