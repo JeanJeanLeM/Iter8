@@ -21,6 +21,24 @@ const { getGraphApiToken } = require('~/server/services/GraphTokenService');
 const { getOAuthReconnectionManager } = require('~/config');
 const { getOpenIdConfig } = require('~/strategies');
 
+const sendDebugLog = (message, hypothesisId, data = {}) => {
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '204ac8' },
+    body: JSON.stringify({
+      sessionId: '204ac8',
+      runId: 'pre-fix',
+      hypothesisId,
+      location: 'api/server/controllers/AuthController.js:refreshController',
+      message,
+      data,
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
+};
+
 const registrationController = async (req, res) => {
   try {
     const response = await registerUser(req.body);
@@ -77,12 +95,19 @@ const refreshController = async (req, res) => {
   try {
   const parsedCookies = req.headers.cookie ? cookies.parse(req.headers.cookie) : {};
   const token_provider = parsedCookies.token_provider;
+  sendDebugLog('refresh entry', 'H4', {
+    hasCookieHeader: Boolean(req.headers.cookie),
+    tokenProvider: token_provider ?? null,
+    hasRefreshCookie: Boolean(parsedCookies.refreshToken),
+    path: req.originalUrl,
+  });
 
   if (token_provider === 'openid' && isEnabled(process.env.OPENID_REUSE_TOKENS)) {
     /** For OpenID users, read refresh token from session to avoid large cookie issues */
     const refreshToken = req.session?.openidTokens?.refreshToken || parsedCookies.refreshToken;
 
     if (!refreshToken) {
+      sendDebugLog('refresh openid missing token', 'H4', {});
       return res.status(200).send('Refresh token not provided');
     }
 
@@ -131,8 +156,16 @@ const refreshController = async (req, res) => {
         expires_at: claims.exp,
       };
 
+      sendDebugLog('refresh openid success', 'H4', {
+        hasToken: Boolean(token),
+        userId: user?._id?.toString?.() ?? null,
+      });
       return res.status(200).send({ token, user });
     } catch (error) {
+      sendDebugLog('refresh openid catch', 'H4', {
+        message: error?.message,
+        name: error?.name,
+      });
       logger.error('[refreshController] OpenID token refresh error', error);
       return res.status(403).send('Invalid OpenID refresh token');
     }
@@ -141,6 +174,7 @@ const refreshController = async (req, res) => {
   /** For non-OpenID users, read refresh token from cookies */
   const refreshToken = parsedCookies.refreshToken;
   if (!refreshToken) {
+    sendDebugLog('refresh missing token', 'H4', {});
     return res.status(200).send('Refresh token not provided');
   }
 
@@ -181,6 +215,10 @@ const refreshController = async (req, res) => {
         logger.warn(`[refreshController] Cannot attempt OAuth MCP servers reconnection:`, err);
       }
 
+      sendDebugLog('refresh success', 'H4', {
+        hasToken: Boolean(token),
+        userId,
+      });
       res.status(200).send({ token, user });
     } else if (req?.query?.retry) {
       // Retrying from a refresh token request that failed (401)
@@ -191,10 +229,18 @@ const refreshController = async (req, res) => {
       res.status(401).send('Refresh token expired or not found for this user');
     }
   } catch (err) {
+    sendDebugLog('refresh catch invalid token', 'H4', {
+      message: err?.message,
+      name: err?.name,
+    });
     logger.error(`[refreshController] Invalid refresh token:`, err);
     res.status(403).send('Invalid refresh token');
   }
   } catch (outerErr) {
+    sendDebugLog('refresh outer catch', 'H4', {
+      message: outerErr?.message,
+      name: outerErr?.name,
+    });
     logger.error('[refreshController] Unhandled error', outerErr);
     res.status(500).send('Internal server error');
   }
