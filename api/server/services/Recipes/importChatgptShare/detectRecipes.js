@@ -9,10 +9,18 @@ const INGREDIENTS_HEADERS = [
   /^ingr[eé]dients?\s*:?\s*$/im,
   /[\n\r]\s*ingr[eé]dients?\s*:?\s*[\n\r]/im,
 ];
+const INGREDIENTS_KEYWORDS = [
+  /\bingr[eé]dients?\b/i,
+  /\bingredients?\b/i,
+  /\bindgredients?\b/i,
+  /\bingrediants?\b/i,
+  /\bingridiants?\b/i,
+];
 const BULLET_OR_NUMBER = /^\s*[-*•·]\s+|\d+[.)]\s+/m;
 const MIN_BULLET_LINES = 3;
 const MIN_INGREDIENT_LINES = 3;
 const TITLE_FALLBACK_MAX_LEN = 80;
+const MIN_RECIPE_MESSAGE_LEN = 120;
 
 /**
  * Count lines that look like list items (bullet or number) in a block of text.
@@ -45,10 +53,16 @@ function findIngredientsSection(text) {
     }
   }
   if (sectionStart === -1) {
-    if (/ingr[eé]dients?/i.test(text)) {
-      sectionStart = Math.max(0, lower.indexOf('ingrédient') !== -1
-        ? text.toLowerCase().indexOf('ingrédient')
-        : text.toLowerCase().indexOf('ingredients'));
+    if (hasIngredientsKeyword(text)) {
+      const keywordCandidates = [
+        lower.indexOf('ingrédient'),
+        lower.indexOf('ingredients'),
+        lower.indexOf('ingredient'),
+        lower.indexOf('indgredient'),
+        lower.indexOf('ingrediant'),
+        lower.indexOf('ingridiant'),
+      ].filter((v) => v >= 0);
+      sectionStart = keywordCandidates.length > 0 ? Math.min(...keywordCandidates) : 0;
     } else {
       return { hasSection: false, bulletCount: 0, sectionStart: -1 };
     }
@@ -57,6 +71,17 @@ function findIngredientsSection(text) {
   const bulletCount = countBulletLines(afterHeader);
   const hasSection = bulletCount >= MIN_INGREDIENT_LINES;
   return { hasSection, bulletCount, sectionStart };
+}
+
+/**
+ * Check if text contains an ingredients keyword variant in FR/EN.
+ * Includes common misspellings seen in user-provided content.
+ * @param {string} text
+ * @returns {boolean}
+ */
+function hasIngredientsKeyword(text) {
+  if (!text || typeof text !== 'string') return false;
+  return INGREDIENTS_KEYWORDS.some((re) => re.test(text));
 }
 
 /**
@@ -99,15 +124,30 @@ function deduplicateCandidates(candidates) {
  * @returns {Array<{ index: number; title: string; rawText: string }>}
  */
 function detectRecipes(messages) {
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'H1', location: 'detectRecipes.js:entry', message: 'detectRecipes entry', data: { messageCount: Array.isArray(messages) ? messages.length : 0 }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   const candidates = [];
-  const assistantTexts = messages.filter((m) => m.role === 'assistant' && typeof m.content === 'string').map((m) => m.content);
+  const assistantTexts = messages
+    .filter((m) => m.role === 'assistant' && typeof m.content === 'string')
+    .map((m) => m.content);
+  let keywordHits = 0;
+  let sectionHits = 0;
   assistantTexts.forEach((text, index) => {
+    const hasKeyword = hasIngredientsKeyword(text);
     const { hasSection, bulletCount } = findIngredientsSection(text);
-    if (!hasSection || bulletCount < MIN_INGREDIENT_LINES) return;
+    if (hasKeyword) keywordHits += 1;
+    if (hasSection && bulletCount >= MIN_INGREDIENT_LINES) sectionHits += 1;
+    const longEnough = text.trim().length >= MIN_RECIPE_MESSAGE_LEN;
+    // Accept candidates message-by-message when ingredient keyword variants are present.
+    if (!hasKeyword || (!longEnough && bulletCount < 1)) return;
     const title = extractTitle(text);
     candidates.push({ index, title, rawText: text });
   });
   const deduped = deduplicateCandidates(candidates);
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'H2', location: 'detectRecipes.js:summary', message: 'detectRecipes summary', data: { assistantCount: assistantTexts.length, keywordHits, sectionHits, candidatesBeforeDedup: candidates.length, candidatesAfterDedup: deduped.length }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   if (deduped.length > 0) {
     logger.debug('[detectRecipes] Found %d recipe candidate(s) from %d message(s).', deduped.length, messages.length);
   }
@@ -118,4 +158,5 @@ module.exports = {
   detectRecipes,
   findIngredientsSection,
   extractTitle,
+  hasIngredientsKeyword,
 };

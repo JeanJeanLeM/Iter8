@@ -11,13 +11,17 @@
  */
 function buildImportPlan(candidates) {
   const sorted = [...candidates].sort((a, b) => a.index - b.index);
-  return sorted.map((c, i) => ({
+  const plan = sorted.map((c, i) => ({
     importIndex: i,
     index: c.index,
     title: c.title,
     rawText: c.rawText,
     suggestedParentIndex: i === 0 ? null : i - 1,
   }));
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'H3', location: 'buildImportPlan.js:build', message: 'build import plan', data: { candidateCount: sorted.length, rootCount: plan.filter((p) => p.suggestedParentIndex == null).length }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
+  return plan;
 }
 
 /**

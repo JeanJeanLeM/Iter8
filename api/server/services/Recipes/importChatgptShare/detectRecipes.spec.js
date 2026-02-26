@@ -1,4 +1,4 @@
-const { detectRecipes, findIngredientsSection, extractTitle } = require('./detectRecipes');
+const { detectRecipes, findIngredientsSection, extractTitle, hasIngredientsKeyword } = require('./detectRecipes');
 
 describe('importChatgptShare/detectRecipes', () => {
   describe('findIngredientsSection', () => {
@@ -51,8 +51,17 @@ Ingredients:
     });
   });
 
+  describe('hasIngredientsKeyword', () => {
+    it('matches french/english variants and common misspellings', () => {
+      expect(hasIngredientsKeyword('Ingrédients :')).toBe(true);
+      expect(hasIngredientsKeyword('Ingredients list')).toBe(true);
+      expect(hasIngredientsKeyword('INDGREDIENTS')).toBe(true);
+      expect(hasIngredientsKeyword('No food terms here')).toBe(false);
+    });
+  });
+
   describe('detectRecipes', () => {
-    it('returns candidates only for assistant messages with ingredients section', () => {
+    it('returns candidates for assistant messages containing ingredients keywords', () => {
       const messages = [
         { role: 'user', content: 'Give me a recipe' },
         {
@@ -76,6 +85,28 @@ Ingrédients :
       expect(candidates).toHaveLength(1);
       expect(candidates[0].title).toBe('Gel fruit de la passion');
       expect(candidates[0].rawText).toContain('Ingrédients');
+    });
+
+    it('accepts common misspelling in ingredients keyword', () => {
+      const messages = [
+        {
+          role: 'assistant',
+          content: `
+Pain maison
+
+INDGREDIENTS:
+- 500 g flour
+- 350 g water
+- 10 g salt
+
+Steps:
+Mix, rest, shape, bake.
+`,
+        },
+      ];
+      const candidates = detectRecipes(messages);
+      expect(candidates).toHaveLength(1);
+      expect(candidates[0].title).toBe('Pain maison');
     });
 
     it('returns empty when no message has enough ingredient lines', () => {
