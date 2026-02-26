@@ -43,34 +43,109 @@ function validateShareUrl(url) {
 }
 
 /**
- * Extracts the first enqueue("...") payload string from script content.
- * Handles escaped quotes inside the string.
+ * Extract all enqueue("...") payload chunks from script content.
+ * Handles escaped characters inside the chunked string.
+ * @param {string} scriptContent
+ * @returns {string[]}
+ */
+function extractEnqueuePayloads(scriptContent) {
+  const marker = 'streamController.enqueue("';
+  const payloads = [];
+  let searchFrom = 0;
+
+  while (searchFrom < scriptContent.length) {
+    const idx = scriptContent.indexOf(marker, searchFrom);
+    if (idx === -1) break;
+    const start = idx + marker.length;
+    let end = start;
+    let i = start;
+    while (i < scriptContent.length) {
+      // Generic escape handling: skip escaped character, not just escaped quotes.
+      if (scriptContent[i] === '\\') {
+        i += 2;
+        end = i;
+        continue;
+      }
+      if (scriptContent[i] === '"') {
+        end = i;
+        break;
+      }
+      i++;
+      end = i;
+    }
+    if (end > start) {
+      const raw = scriptContent.slice(start, end);
+      payloads.push(raw.replace(/\\"/g, '"').replace(/\\\\/g, '\\'));
+    }
+    searchFrom = end + 1;
+  }
+
+  return payloads;
+}
+
+/**
+ * Backward-compatible helper: first extracted payload chunk.
  * @param {string} scriptContent
  * @returns {string | null}
  */
 function extractEnqueuePayload(scriptContent) {
-  const marker = 'streamController.enqueue("';
-  const idx = scriptContent.indexOf(marker);
-  if (idx === -1) return null;
-  const start = idx + marker.length;
-  let end = start;
-  let i = start;
-  while (i < scriptContent.length) {
-    if (scriptContent[i] === '\\' && scriptContent[i + 1] === '"') {
-      i += 2;
-      end = i;
+  const payloads = extractEnqueuePayloads(scriptContent);
+  return payloads.length > 0 ? payloads[0] : null;
+}
+
+/**
+ * Parse a serialized conversation payload into the Remix array format.
+ * Supports common wrappers found in streamed payload chunks.
+ * @param {string} payloadString
+ * @returns {{ arr: Array; strategy: string } | null}
+ */
+function parseSerializedConversationArray(payloadString) {
+  if (!payloadString || typeof payloadString !== 'string') {
+    return null;
+  }
+
+  const trimmed = payloadString.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const attempts = [{ value: trimmed, strategy: 'direct' }];
+  const withoutNumericPrefix = trimmed.replace(/^\d+:\s*/, '');
+  if (withoutNumericPrefix !== trimmed) {
+    attempts.push({ value: withoutNumericPrefix, strategy: 'strip-numeric-prefix' });
+  }
+  const firstBracket = trimmed.indexOf('[');
+  const lastBracket = trimmed.lastIndexOf(']');
+  if (firstBracket !== -1 && lastBracket > firstBracket) {
+    attempts.push({
+      value: trimmed.slice(firstBracket, lastBracket + 1),
+      strategy: 'slice-array-brackets',
+    });
+  }
+
+  const seen = new Set();
+  for (const attempt of attempts) {
+    if (!attempt.value || seen.has(attempt.value)) {
       continue;
     }
-    if (scriptContent[i] === '"') {
-      end = i;
-      break;
+    seen.add(attempt.value);
+    try {
+      const parsed = JSON.parse(attempt.value);
+      if (Array.isArray(parsed)) {
+        return { arr: parsed, strategy: attempt.strategy };
+      }
+      if (typeof parsed === 'string') {
+        const parsedTwice = JSON.parse(parsed);
+        if (Array.isArray(parsedTwice)) {
+          return { arr: parsedTwice, strategy: `${attempt.strategy}-double-parse` };
+        }
+      }
+    } catch {
+      // Try next strategy.
     }
-    i++;
-    end = i;
   }
-  if (end <= start) return null;
-  const raw = scriptContent.slice(start, end);
-  return raw.replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+
+  return null;
 }
 
 /**
@@ -258,30 +333,59 @@ async function parseSharePage(shareUrl) {
   const scriptMatch = html.match(/<script[^>]*nonce="[^"]*"[^>]*>([\s\S]*?)<\/script>/gi);
   let payloadString = null;
   let matchedScriptCount = 0;
+  let enqueueChunkCount = 0;
+  const payloadCandidates = [];
   for (const tag of scriptMatch || []) {
     if (tag.includes('serverResponse') && tag.includes('mapping')) {
       matchedScriptCount += 1;
       const inner = tag.replace(/^<script[^>]*>/, '').replace(/<\/script>$/, '');
-      payloadString = extractEnqueuePayload(inner);
-      if (payloadString) break;
+      const chunks = extractEnqueuePayloads(inner);
+      enqueueChunkCount += chunks.length;
+      if (chunks.length > 0) {
+        const joined = chunks.join('');
+        if (joined) payloadCandidates.push(joined);
+        payloadCandidates.push(...chunks);
+      } else {
+        const legacyPayload = extractEnqueuePayload(inner);
+        if (legacyPayload) payloadCandidates.push(legacyPayload);
+      }
+    }
+  }
+  const uniquePayloadCandidates = [
+    ...new Set(
+      payloadCandidates
+        .filter((candidate) => typeof candidate === 'string')
+        .map((candidate) => candidate.trim())
+        .filter((candidate) => candidate.length > 0),
+    ),
+  ].sort((a, b) => b.length - a.length);
+  payloadString = uniquePayloadCandidates[0] || null;
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'B', location: 'parseSharePage.js:payload', message: 'after extract payload', data: { hasPayloadString: !!payloadString, payloadStringLen: payloadString ? payloadString.length : 0, payloadCandidateCount: uniquePayloadCandidates.length, enqueueChunkCount, scriptMatchCount: (scriptMatch && scriptMatch.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
+  const trimmedPayload = payloadString ? payloadString.trim() : '';
+  let arr;
+  let parseStrategy = 'none';
+  for (let i = 0; i < uniquePayloadCandidates.length; i += 1) {
+    const parsed = parseSerializedConversationArray(uniquePayloadCandidates[i]);
+    if (parsed) {
+      arr = parsed.arr;
+      payloadString = uniquePayloadCandidates[i];
+      parseStrategy = `${parsed.strategy}:candidate-${i}`;
+      break;
     }
   }
   // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'B', location: 'parseSharePage.js:payload', message: 'after extract payload', data: { hasPayloadString: !!payloadString, payloadStringLen: payloadString ? payloadString.length : 0, scriptMatchCount: (scriptMatch && scriptMatch.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
-  // #endregion
-  const trimmedPayload = payloadString ? payloadString.trim() : '';
-  // #region agent log
-  logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] scriptTotal=${(scriptMatch && scriptMatch.length) || 0} matchedScripts=${matchedScriptCount} payloadLen=${payloadString ? payloadString.length : 0} startsWithBracket=${trimmedPayload.startsWith('[')} startsWithBrace=${trimmedPayload.startsWith('{')} startsWithQuote=${trimmedPayload.startsWith('"')} endsWithBracket=${trimmedPayload.endsWith(']')} endsWithBrace=${trimmedPayload.endsWith('}')}`);
+  logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] scriptTotal=${(scriptMatch && scriptMatch.length) || 0} matchedScripts=${matchedScriptCount} enqueueChunkCount=${enqueueChunkCount} payloadCandidates=${uniquePayloadCandidates.length} payloadLen=${payloadString ? payloadString.length : 0} startsWithBracket=${trimmedPayload.startsWith('[')} startsWithBrace=${trimmedPayload.startsWith('{')} startsWithQuote=${trimmedPayload.startsWith('"')} endsWithBracket=${trimmedPayload.endsWith(']')} endsWithBrace=${trimmedPayload.endsWith('}')} parseStrategy=${parseStrategy}`);
   // #endregion
   if (!payloadString) {
     throw new Error('Could not read conversation data from share link.');
   }
-  let arr;
-  try {
-    arr = JSON.parse(payloadString);
-  } catch (parseError) {
+  if (!arr) {
+    const firstCandidate = uniquePayloadCandidates[0] || '';
+    const firstCandidateTrimmed = firstCandidate.trim();
     // #region agent log
-    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] json-parse-failed payloadLen=${payloadString.length} firstChar=${trimmedPayload.slice(0, 1) || 'n/a'} secondChar=${trimmedPayload.slice(1, 2) || 'n/a'} hasEscapedQuote=${payloadString.includes('\\"')} hasDoubleSlash=${payloadString.includes('\\\\')} hasNewline=${payloadString.includes('\n')} parseMessage=${(parseError && parseError.message) || 'unknown'}`);
+    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] json-parse-failed candidateCount=${uniquePayloadCandidates.length} firstCandidateLen=${firstCandidate.length} firstChar=${firstCandidateTrimmed.slice(0, 1) || 'n/a'} secondChar=${firstCandidateTrimmed.slice(1, 2) || 'n/a'} hasEscapedQuote=${firstCandidate.includes('\\"')} hasDoubleSlash=${firstCandidate.includes('\\\\')} hasNewline=${firstCandidate.includes('\n')}`);
     // #endregion
     throw new Error('Invalid conversation data from share link.');
   }
