@@ -396,12 +396,18 @@ async function parseSharePage(shareUrl) {
     throw new Error('Unexpected conversation format.');
   }
   const { title, mapping } = findTitleAndMapping(arr);
-  if (!mapping || typeof mapping !== 'object') {
-    throw new Error('No conversation mapping in share link.');
-  }
-  let messages = extractMessagesFromMapping(arr, mapping);
+  let messages =
+    mapping && typeof mapping === 'object' ? extractMessagesFromMapping(arr, mapping) : [];
   if (messages.length === 0 && payloadString.length > 100) {
     messages = extractMessagesFromPayloadFallback(payloadString);
+  }
+  if (!mapping || typeof mapping !== 'object') {
+    // #region agent log
+    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] mapping-missing fallbackMessages=${messages.length} titleLen=${(title && title.length) || 0}`);
+    // #endregion
+    if (messages.length === 0) {
+      throw new Error('No conversation mapping in share link.');
+    }
   }
   // #region agent log
   fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'D', location: 'parseSharePage.js:exit', message: 'parseSharePage return', data: { messagesLength: messages.length, titleLen: (title && title.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
