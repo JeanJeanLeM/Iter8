@@ -146,7 +146,6 @@ export default function Personalization({
   }, [user?.personalization?.equipment]);
 
   useEffect(() => {
-  useEffect(() => {
     if (user?.personalization) {
       setRecipeImageStyle(user.personalization.recipeImageStyle ?? '');
       setRecipeImageBackground(user.personalization.recipeImageBackground ?? '');

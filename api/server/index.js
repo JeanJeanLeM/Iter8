@@ -49,21 +49,43 @@ function ensureClientBuild(indexPath) {
   }
 
   const repoRoot = path.resolve(__dirname, '../..');
+  const startupBuildScripts = [
+    'build:data-provider',
+    'build:data-schemas',
+    'build:client-package',
+    'build:client',
+  ];
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'startup', hypothesisId: 'I1', location: 'index.js:ensureClientBuild-entry', message: 'client dist missing, running startup build chain', data: { indexPathExists: fs.existsSync(indexPath), scriptCount: startupBuildScripts.length }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   logger.warn(
-    `[startup] Client build missing at ${indexPath}. Attempting fallback build with "npm run build:client"...`,
+    `[startup] Client build missing at ${indexPath}. Attempting startup build chain: ${startupBuildScripts.join(', ')}`,
   );
-  const buildResult = spawnSync('npm', ['run', 'build:client'], {
-    cwd: repoRoot,
-    stdio: 'inherit',
-    shell: process.platform === 'win32',
-    env: process.env,
-  });
-
-  if (buildResult.error) {
-    logger.error('[startup] Fallback client build spawn error:', buildResult.error.message);
-  } else {
-    logger.info(`[startup] Fallback client build exited with code ${buildResult.status ?? 'unknown'}`);
+  let failedScript = '';
+  let failedStatus = 0;
+  let failedMessage = '';
+  for (const scriptName of startupBuildScripts) {
+    logger.info(`[startup] Running "${scriptName}"...`);
+    const buildResult = spawnSync('npm', ['run', scriptName], {
+      cwd: repoRoot,
+      stdio: 'inherit',
+      shell: process.platform === 'win32',
+      env: process.env,
+    });
+    if (buildResult.error || buildResult.status !== 0) {
+      failedScript = scriptName;
+      failedStatus = buildResult.status ?? -1;
+      failedMessage = buildResult.error?.message ?? '';
+      logger.error(
+        `[startup] Startup build script "${scriptName}" failed with status ${failedStatus}.`,
+        failedMessage,
+      );
+      break;
+    }
   }
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'startup', hypothesisId: 'I2', location: 'index.js:ensureClientBuild-summary', message: 'startup build chain finished', data: { failedScript, failedStatus, recovered: fs.existsSync(indexPath) }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
 
   if (fs.existsSync(indexPath)) {
     logger.info(`[startup] Client build recovered at ${indexPath}.`);
@@ -98,6 +120,9 @@ const startServer = async () => {
 
   const indexPath = path.join(appConfig.paths.dist, 'index.html');
   const hasClientBuild = ensureClientBuild(indexPath);
+  // #region agent log
+  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'startup', hypothesisId: 'I3', location: 'index.js:startServer-index', message: 'index/switch branch', data: { hasClientBuild, indexExists: fs.existsSync(indexPath), swExists: fs.existsSync(path.join(appConfig.paths.dist, 'sw.js')) }, timestamp: Date.now() }) }).catch(() => {});
+  // #endregion
   let indexHTML = hasClientBuild
     ? fs.readFileSync(indexPath, 'utf8')
     : `<!doctype html><html lang="en-US"><head><meta charset="utf-8"><title>CookIterate API is running</title></head><body><h1>CookIterate API is running</h1><p>Client build is missing on this deployment. API endpoints are available; rebuild frontend artifacts for full UI.</p></body></html>`;
