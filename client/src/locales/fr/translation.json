@@ -1044,6 +1044,8 @@
   "com_ui_gamification_recipes": "recettes",
   "com_ui_gamification_toque": "toque",
   "com_ui_gamification_toques": "toques",
+  "com_ui_gamification_filter_accomplished": "Accomplis",
+  "com_ui_gamification_filter_in_progress": "En cours",
   "com_ui_gamification_badge_vegetarien": "Végétarien",
   "com_ui_gamification_badge_vegan": "Végan",
   "com_ui_gamification_badge_proteine": "Protéiné",
