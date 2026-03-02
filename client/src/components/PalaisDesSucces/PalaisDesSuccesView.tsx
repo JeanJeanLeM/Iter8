@@ -19,46 +19,54 @@ function getNextMilestone(count: number, milestones: number[]): number | null {
 
 type BadgeEntry = { key: string; label: string; count: number; image?: string };
 
-const RING_SIZE = 56;
-const RING_STROKE = 4;
-const RING_R = (RING_SIZE - RING_STROKE) / 2;
-const RING_CX = RING_SIZE / 2;
-const RING_CY = RING_SIZE / 2;
-const RING_CIRCUMFERENCE = 2 * Math.PI * RING_R;
+const CARD_RING_SIZE = 104;
+const CARD_RING_STROKE = 6;
+const CARD_RING_R = (CARD_RING_SIZE - CARD_RING_STROKE) / 2;
+const CARD_RING_CX = CARD_RING_SIZE / 2;
+const CARD_RING_CY = CARD_RING_SIZE / 2;
+const CARD_RING_CIRCUMFERENCE = 2 * Math.PI * CARD_RING_R;
 
 function ProgressRing({
   progressPercent,
   isComplete,
+  size = CARD_RING_SIZE,
+  stroke = CARD_RING_STROKE,
   className,
 }: {
   progressPercent: number;
   isComplete: boolean;
+  size?: number;
+  stroke?: number;
   className?: string;
 }) {
-  const dash = (RING_CIRCUMFERENCE * Math.min(100, progressPercent)) / 100;
+  const r = (size - stroke) / 2;
+  const cx = size / 2;
+  const cy = size / 2;
+  const circumference = 2 * Math.PI * r;
+  const dash = (circumference * Math.min(100, progressPercent)) / 100;
   return (
     <svg
-      viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
+      viewBox={`0 0 ${size} ${size}`}
       className={cn('absolute inset-0 h-full w-full -rotate-90', className)}
       aria-hidden
     >
       <circle
-        cx={RING_CX}
-        cy={RING_CY}
-        r={RING_R}
+        cx={cx}
+        cy={cy}
+        r={r}
         fill="none"
         stroke="currentColor"
-        strokeWidth={RING_STROKE}
+        strokeWidth={stroke}
         className="text-border-medium"
       />
       <circle
-        cx={RING_CX}
-        cy={RING_CY}
-        r={RING_R}
+        cx={cx}
+        cy={cy}
+        r={r}
         fill="none"
         stroke="currentColor"
-        strokeWidth={RING_STROKE}
-        strokeDasharray={`${dash} ${RING_CIRCUMFERENCE}`}
+        strokeWidth={stroke}
+        strokeDasharray={`${dash} ${circumference}`}
         strokeLinecap="round"
         className={cn(
           'transition-all duration-300',
@@ -202,10 +210,10 @@ export default function PalaisDesSuccesView() {
             </button>
           </div>
         </div>
-        <p className="mb-3 text-xs text-text-secondary">
+        <p className="mb-4 text-xs text-text-secondary">
           {localize('com_ui_gamification_toques_hint')}
         </p>
-        <ul className="flex flex-col gap-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {filteredEntries.map(({ key: badgeKey, label, count, image }) => {
             const next = getNextMilestone(count, milestones);
             const progressToNext = next != null ? (count / next) * 100 : 100;
@@ -213,24 +221,29 @@ export default function PalaisDesSuccesView() {
             const currentTarget = next ?? (count > 0 ? count : firstMilestone);
             const hue = getBadgeColorHue(badgeKey);
             return (
-              <li
+              <article
                 key={badgeKey}
-                className="flex items-center gap-4 rounded-lg border border-border-medium bg-surface-primary-alt p-3"
+                className="flex flex-col items-center rounded-xl border border-border-medium bg-surface-primary-alt p-4 shadow-sm transition-shadow hover:shadow-md"
               >
                 <div
-                  className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full"
-                  style={{ width: RING_SIZE, height: RING_SIZE }}
+                  className="relative flex shrink-0 items-center justify-center rounded-full"
+                  style={{
+                    width: CARD_RING_SIZE,
+                    height: CARD_RING_SIZE,
+                  }}
                 >
                   <ProgressRing
                     progressPercent={progressToNext}
                     isComplete={isComplete}
+                    size={CARD_RING_SIZE}
+                    stroke={CARD_RING_STROKE}
                   />
                   <div
                     className="absolute rounded-full overflow-hidden"
                     style={{
-                      inset: RING_STROKE,
-                      width: RING_SIZE - RING_STROKE * 2,
-                      height: RING_SIZE - RING_STROKE * 2,
+                      inset: CARD_RING_STROKE,
+                      width: CARD_RING_SIZE - CARD_RING_STROKE * 2,
+                      height: CARD_RING_SIZE - CARD_RING_STROKE * 2,
                     }}
                   >
                     {image ? (
@@ -247,21 +260,23 @@ export default function PalaisDesSuccesView() {
                           color: `hsl(${hue}, 50%, 35%)`,
                         }}
                       >
-                        <ChefHat className="h-6 w-6" strokeWidth={2} />
+                        <ChefHat className="h-10 w-10" strokeWidth={2} />
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium text-text-primary">{label}</div>
-                  <div className="text-sm text-text-secondary">
+                <div className="mt-3 w-full min-w-0 text-center">
+                  <h3 className="truncate font-medium text-text-primary">
+                    {label}
+                  </h3>
+                  <p className="mt-0.5 text-sm text-text-secondary">
                     {count} / {currentTarget} {localize('com_ui_gamification_recipes')}
-                  </div>
+                  </p>
                 </div>
-              </li>
+              </article>
             );
           })}
-        </ul>
+        </div>
         {filteredEntries.length === 0 && (
           <p className="text-sm text-text-secondary">
             {viewFilter === 'accomplis'

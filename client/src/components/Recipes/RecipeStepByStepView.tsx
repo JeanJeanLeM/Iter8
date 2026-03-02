@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useDocumentTitle, useLocalize } from '~/hooks';
-import { useRecipeQuery, useGetUserQuery } from '~/data-provider';
+import { useRecipeQuery, useGetUserQuery, useIngredientsQuery } from '~/data-provider';
 import { Spinner, Button } from '@librechat/client';
 import { ChevronLeft, ChevronRight, Maximize2, Minimize2, AlertCircle } from 'lucide-react';
 import type { TRecipeIngredient } from 'librechat-data-provider';
@@ -12,6 +12,11 @@ import {
   type FormattedIngredient,
 } from '~/utils/recipeIngredients';
 import CookingTimer from './CookingTimer';
+import {
+  buildIngredientImageMap,
+  getIngredientFallbackLetter,
+  resolveIngredientImageUrl,
+} from '~/utils/ingredientImages';
 import { cn } from '~/utils';
 
 export default function RecipeStepByStepView() {
@@ -20,6 +25,7 @@ export default function RecipeStepByStepView() {
   const navigate = useNavigate();
   const { data: user } = useGetUserQuery();
   const { data: recipe, isLoading, isError } = useRecipeQuery(id ?? null);
+  const { data: ingredientsData } = useIngredientsQuery();
   const unitSystem =
     user?.personalization?.unitSystem === 'american' ? 'american' : 'si';
   const showIngredientGrams = user?.personalization?.showIngredientGrams ?? false;
@@ -48,6 +54,10 @@ export default function RecipeStepByStepView() {
       formatIngredientUtil(ing, { ratio, unitSystem, showIngredientGrams }),
     );
   }, [recipe?.ingredients, ratio, unitSystem, showIngredientGrams]);
+  const ingredientImageMap = useMemo(
+    () => buildIngredientImageMap(ingredientsData?.ingredients),
+    [ingredientsData?.ingredients],
+  );
 
   const currentStep = sortedSteps[currentStepIndex];
   const stepCount = sortedSteps.length;
@@ -198,29 +208,51 @@ export default function RecipeStepByStepView() {
             <h2 className="mb-3 text-sm font-medium text-text-secondary">
               {localize('com_ui_recipe_ingredients')}
             </h2>
-            <ul className="list-inside list-disc space-y-1 text-text-primary">
-              {scaledIngredients.map((line, idx) => (
-                <li key={idx}>
-                  {line.displayText}
-                  {line.gramEquivalent && (
-                    <span className="text-text-secondary"> {line.gramEquivalent}</span>
-                  )}
-                  {line.roundedFrom != null && (
-                    <span
-                      className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
-                      title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                        exact: formatExactQuantity(line.roundedFrom),
-                      })}
-                      aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                        exact: formatExactQuantity(line.roundedFrom),
-                      })}
-                    >
-                      <AlertCircle className="h-4 w-4" />
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <div className="space-y-2 text-text-primary">
+              {scaledIngredients.map((line, idx) => {
+                const sourceIngredient = recipe.ingredients?.[idx];
+                const imageUrl = resolveIngredientImageUrl(
+                  sourceIngredient?.name,
+                  ingredientImageMap,
+                );
+                const fallbackLetter = getIngredientFallbackLetter(sourceIngredient?.name);
+                return (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3 rounded-lg border border-border-medium/70 bg-surface-primary px-3 py-2"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border-medium bg-surface-active-alt/50">
+                      {imageUrl ? (
+                        <img src={imageUrl} alt="" className="h-full w-full object-contain" />
+                      ) : (
+                        <span className="text-base font-bold text-text-primary" aria-hidden>
+                          {fallbackLetter}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      {line.displayText}
+                      {line.gramEquivalent && (
+                        <span className="text-text-secondary"> {line.gramEquivalent}</span>
+                      )}
+                      {line.roundedFrom != null && (
+                        <span
+                          className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
+                          title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                            exact: formatExactQuantity(line.roundedFrom),
+                          })}
+                          aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                            exact: formatExactQuantity(line.roundedFrom),
+                          })}
+                        >
+                          <AlertCircle className="h-4 w-4" />
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </section>
 
           <section className="rounded-lg border border-border-medium bg-surface-primary-alt p-4">

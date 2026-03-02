@@ -5,11 +5,17 @@ import {
   useCreateShoppingListItemMutation,
   useUpdateShoppingListItemMutation,
   useDeleteShoppingListItemMutation,
+  useIngredientsQuery,
 } from '~/data-provider';
 import type { TShoppingListItem } from 'librechat-data-provider';
 import { Spinner, Button } from '@librechat/client';
 import { Plus, Check, Trash2 } from 'lucide-react';
 import { formatShoppingItemLabel, sortShoppingItems } from '~/utils/shoppingList';
+import {
+  buildIngredientImageMap,
+  getIngredientFallbackLetter,
+  resolveIngredientImageUrl,
+} from '~/utils/ingredientImages';
 import { cn } from '~/utils';
 
 export default function ShoppingListView() {
@@ -19,6 +25,7 @@ export default function ShoppingListView() {
   const [unit, setUnit] = useState('');
 
   const { data, isLoading, isFetching } = useShoppingListQuery();
+  const { data: ingredientsData } = useIngredientsQuery();
   const createMutation = useCreateShoppingListItemMutation();
   const updateMutation = useUpdateShoppingListItemMutation();
   const deleteMutation = useDeleteShoppingListItemMutation();
@@ -28,9 +35,21 @@ export default function ShoppingListView() {
     () => sortShoppingItems(items.filter((i) => !i.bought)),
     [items],
   );
+  const plannedToBuy = useMemo(
+    () => toBuy.filter((i) => !i.sourceRealizationId),
+    [toBuy],
+  );
+  const fromJournalToBuy = useMemo(
+    () => toBuy.filter((i) => !!i.sourceRealizationId),
+    [toBuy],
+  );
   const bought = useMemo(
     () => sortShoppingItems(items.filter((i) => i.bought)),
     [items],
+  );
+  const ingredientImageMap = useMemo(
+    () => buildIngredientImageMap(ingredientsData?.ingredients),
+    [ingredientsData?.ingredients],
   );
 
   useDocumentTitle(`${localize('com_ui_shopping_list')} | CookIter8`);
@@ -109,28 +128,55 @@ export default function ShoppingListView() {
           </div>
         ) : (
           <div className="flex flex-col gap-6">
-            {/* À acheter */}
+            {/* Planifié */}
             <section>
               <h2 className="mb-2 text-sm font-medium text-text-secondary">
-                {localize('com_ui_shopping_list_to_buy')}
+                {localize('com_ui_shopping_list_planned')}
               </h2>
-              {toBuy.length === 0 && !isFetching ? (
+              {plannedToBuy.length === 0 && !isFetching ? (
                 <p className="py-4 text-sm text-text-tertiary">
-                  {localize('com_ui_shopping_list_empty_to_buy')}
+                  {localize('com_ui_shopping_list_empty_planned')}
                 </p>
               ) : (
-                <ul className="space-y-1">
-                  {toBuy.map((item) => (
-                    <ShoppingListItemRow
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {plannedToBuy.map((item) => (
+                    <ShoppingListItemCard
                       key={item._id}
                       item={item}
+                      imageUrl={resolveIngredientImageUrl(item.name, ingredientImageMap)}
                       onToggle={() => handleToggleBought(item)}
                       onDelete={(e) => handleDelete(e, item)}
                       isUpdating={updateMutation.isPending}
                       isDeleting={deleteMutation.isPending}
                     />
                   ))}
-                </ul>
+                </div>
+              )}
+            </section>
+
+            {/* Journal de cuisine */}
+            <section>
+              <h2 className="mb-2 text-sm font-medium text-text-secondary">
+                {localize('com_ui_shopping_list_from_journal')}
+              </h2>
+              {fromJournalToBuy.length === 0 && !isFetching ? (
+                <p className="py-4 text-sm text-text-tertiary">
+                  {localize('com_ui_shopping_list_empty_from_journal')}
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {fromJournalToBuy.map((item) => (
+                    <ShoppingListItemCard
+                      key={item._id}
+                      item={item}
+                      imageUrl={resolveIngredientImageUrl(item.name, ingredientImageMap)}
+                      onToggle={() => handleToggleBought(item)}
+                      onDelete={(e) => handleDelete(e, item)}
+                      isUpdating={updateMutation.isPending}
+                      isDeleting={deleteMutation.isPending}
+                    />
+                  ))}
+                </div>
               )}
             </section>
 
@@ -144,11 +190,12 @@ export default function ShoppingListView() {
                   {localize('com_ui_shopping_list_empty_bought')}
                 </p>
               ) : (
-                <ul className="space-y-1">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   {bought.map((item) => (
-                    <ShoppingListItemRow
+                    <ShoppingListItemCard
                       key={item._id}
                       item={item}
+                      imageUrl={resolveIngredientImageUrl(item.name, ingredientImageMap)}
                       bought
                       onToggle={() => handleToggleBought(item)}
                       onDelete={(e) => handleDelete(e, item)}
@@ -156,7 +203,7 @@ export default function ShoppingListView() {
                       isDeleting={deleteMutation.isPending}
                     />
                   ))}
-                </ul>
+                </div>
               )}
             </section>
           </div>
@@ -166,8 +213,9 @@ export default function ShoppingListView() {
   );
 }
 
-function ShoppingListItemRow({
+function ShoppingListItemCard({
   item,
+  imageUrl,
   bought,
   onToggle,
   onDelete,
@@ -175,6 +223,7 @@ function ShoppingListItemRow({
   isDeleting,
 }: {
   item: TShoppingListItem;
+  imageUrl?: string;
   bought?: boolean;
   onToggle: () => void;
   onDelete: (e: React.MouseEvent) => void;
@@ -183,13 +232,23 @@ function ShoppingListItemRow({
 }) {
   const localize = useLocalize();
   const label = formatShoppingItemLabel(item);
+  const fallbackLetter = getIngredientFallbackLetter(item.name);
   return (
-    <li
+    <div
       className={cn(
-        'flex items-center gap-2 rounded-lg border border-border-medium bg-surface-primary-alt px-3 py-2 transition-colors',
+        'flex items-center gap-3 rounded-xl border border-border-medium bg-surface-primary-alt p-3 transition-colors',
         bought && 'opacity-75',
       )}
     >
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border-medium bg-surface-active-alt/50">
+        {imageUrl ? (
+          <img src={imageUrl} alt="" className="h-full w-full object-contain" />
+        ) : (
+          <span className="text-2xl font-bold text-text-primary" aria-hidden>
+            {fallbackLetter}
+          </span>
+        )}
+      </div>
       <button
         type="button"
         onClick={onToggle}
@@ -210,7 +269,7 @@ function ShoppingListItemRow({
       </button>
       <span
         className={cn(
-          'flex-1 text-sm text-text-primary',
+          'min-w-0 flex-1 text-sm text-text-primary',
           bought && 'line-through text-text-tertiary',
         )}
       >
@@ -225,6 +284,6 @@ function ShoppingListItemRow({
       >
         <Trash2 className="h-4 w-4" />
       </button>
-    </li>
+    </div>
   );
 }

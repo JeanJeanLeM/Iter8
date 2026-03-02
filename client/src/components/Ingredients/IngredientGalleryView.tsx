@@ -3,8 +3,9 @@ import { useDocumentTitle, useLocalize } from '~/hooks';
 import { useIngredientsQuery } from '~/data-provider';
 import type { TIngredient } from 'librechat-data-provider';
 import { Spinner, Button } from '@librechat/client';
-import { Apple, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { cn } from '~/utils';
+import { getIngredientFallbackLetter } from '~/utils/ingredientImages';
 import IngredientDetailDrawer from './IngredientDetailDrawer';
 import AddIngredientDialog from './AddIngredientDialog';
 
@@ -80,6 +81,7 @@ function IngredientCard({
     ingredient.displayName?.trim() ||
     (ingredient.name.trim().charAt(0).toUpperCase() +
       ingredient.name.trim().slice(1).toLowerCase());
+  const fallbackLetter = getIngredientFallbackLetter(ingredient.name);
 
   return (
     <button
@@ -97,7 +99,9 @@ function IngredientCard({
             className="h-full w-full object-contain"
           />
         ) : (
-          <Apple className="h-10 w-10 text-text-tertiary" aria-hidden />
+          <span className="text-3xl font-bold text-text-primary" aria-hidden>
+            {fallbackLetter}
+          </span>
         )}
       </div>
       <span className="text-center text-sm font-medium text-text-primary">

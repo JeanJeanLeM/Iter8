@@ -10,6 +10,7 @@ import {
   useUpdateRecipeMutation,
   useGenerateRecipeImageMutation,
   useDeriveRecipeMutation,
+  useIngredientsQuery,
 } from '~/data-provider';
 import { Spinner, Button, OGDialog, OGDialogContent, OGDialogTitle } from '@librechat/client';
 import {
@@ -52,6 +53,11 @@ import ParentRecipeSelectorModal from './ParentRecipeSelectorModal';
 import { useConversationsMentioningRecipe } from '~/hooks/Recipes/useConversationsMentioningRecipe';
 import { useSetRecoilState } from 'recoil';
 import { selectedRecipeForVariation } from '~/store';
+import {
+  buildIngredientImageMap,
+  getIngredientFallbackLetter,
+  resolveIngredientImageUrl,
+} from '~/utils/ingredientImages';
 import { cn } from '~/utils';
 
 function formatDurationMinutes(min: number): string {
@@ -130,6 +136,7 @@ export default function RecipeDetailView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: user } = useGetUserQuery();
+  const { data: ingredientsData } = useIngredientsQuery();
   const { data: recipe, isLoading, isError } = useRecipeQuery(id ?? null);
   const unitSystem =
     user?.personalization?.unitSystem === 'american' ? 'american' : 'si';
@@ -265,6 +272,10 @@ export default function RecipeDetailView() {
       formatIngredientUtil(ing, { ratio, unitSystem, showIngredientGrams }),
     );
   }, [recipe?.ingredients, ratio, unitSystem, showIngredientGrams]);
+  const ingredientImageMap = useMemo(
+    () => buildIngredientImageMap(ingredientsData?.ingredients),
+    [ingredientsData?.ingredients],
+  );
 
   /** Group ingredient indices by section (order of first appearance). No section = single group with null label. */
   const ingredientSections = useMemo(() => {
@@ -1141,29 +1152,48 @@ export default function RecipeDetailView() {
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                     {indices.map((idx) => {
                       const line = scaledIngredients[idx];
+                      const sourceIngredient = recipe?.ingredients?.[idx];
+                      const imageUrl = resolveIngredientImageUrl(
+                        sourceIngredient?.name,
+                        ingredientImageMap,
+                      );
+                      const fallbackLetter = getIngredientFallbackLetter(sourceIngredient?.name);
                       if (!line) return null;
                       return (
                         <div
                           key={idx}
-                          className="flex flex-wrap items-start gap-1 rounded-lg border border-border-medium bg-surface-primary-alt p-3 text-sm text-text-primary"
+                          className="flex items-start gap-3 rounded-lg border border-border-medium bg-surface-primary-alt p-3 text-sm text-text-primary"
                         >
-                          <span className="min-w-0 flex-1">{line.displayText}</span>
-                          {line.gramEquivalent && (
-                            <span className="text-text-secondary">{line.gramEquivalent}</span>
-                          )}
-                          {line.roundedFrom != null && (
-                            <span
-                              className="shrink-0 text-amber-600 dark:text-amber-400"
-                              title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                                exact: formatExactQuantity(line.roundedFrom),
-                              })}
-                              aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                                exact: formatExactQuantity(line.roundedFrom),
-                              })}
-                            >
-                              <AlertCircle className="h-4 w-4" />
-                            </span>
-                          )}
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border-medium bg-surface-active-alt/50">
+                            {imageUrl ? (
+                              <img src={imageUrl} alt="" className="h-full w-full object-contain" />
+                            ) : (
+                              <span className="text-lg font-bold text-text-primary" aria-hidden>
+                                {fallbackLetter}
+                              </span>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-start gap-1">
+                              <span className="min-w-0 flex-1">{line.displayText}</span>
+                              {line.gramEquivalent && (
+                                <span className="text-text-secondary">{line.gramEquivalent}</span>
+                              )}
+                              {line.roundedFrom != null && (
+                                <span
+                                  className="shrink-0 text-amber-600 dark:text-amber-400"
+                                  title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                    exact: formatExactQuantity(line.roundedFrom),
+                                  })}
+                                  aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                    exact: formatExactQuantity(line.roundedFrom),
+                                  })}
+                                >
+                                  <AlertCircle className="h-4 w-4" />
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       );
                     })}
@@ -1180,33 +1210,53 @@ export default function RecipeDetailView() {
                       {sectionLabel}
                     </h3>
                   )}
-                  <ul className="list-inside list-disc space-y-1 rounded-lg border border-border-medium bg-surface-primary-alt p-4 text-text-primary">
+                  <div className="space-y-2 rounded-lg border border-border-medium bg-surface-primary-alt p-3 text-text-primary">
                     {indices.map((idx) => {
                       const line = scaledIngredients[idx];
+                      const sourceIngredient = recipe?.ingredients?.[idx];
+                      const imageUrl = resolveIngredientImageUrl(
+                        sourceIngredient?.name,
+                        ingredientImageMap,
+                      );
+                      const fallbackLetter = getIngredientFallbackLetter(sourceIngredient?.name);
                       if (!line) return null;
                       return (
-                        <li key={idx}>
-                          {line.displayText}
-                          {line.gramEquivalent && (
-                            <span className="text-text-secondary"> {line.gramEquivalent}</span>
-                          )}
-                          {line.roundedFrom != null && (
-                            <span
-                              className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
-                              title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                                exact: formatExactQuantity(line.roundedFrom),
-                              })}
-                              aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                                exact: formatExactQuantity(line.roundedFrom),
-                              })}
-                            >
-                              <AlertCircle className="h-4 w-4" />
-                            </span>
-                          )}
-                        </li>
+                        <div
+                          key={idx}
+                          className="flex items-start gap-3 rounded-lg border border-border-medium/70 bg-surface-primary px-3 py-2"
+                        >
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border-medium bg-surface-active-alt/50">
+                            {imageUrl ? (
+                              <img src={imageUrl} alt="" className="h-full w-full object-contain" />
+                            ) : (
+                              <span className="text-base font-bold text-text-primary" aria-hidden>
+                                {fallbackLetter}
+                              </span>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            {line.displayText}
+                            {line.gramEquivalent && (
+                              <span className="text-text-secondary"> {line.gramEquivalent}</span>
+                            )}
+                            {line.roundedFrom != null && (
+                              <span
+                                className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
+                                title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                  exact: formatExactQuantity(line.roundedFrom),
+                                })}
+                                aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                  exact: formatExactQuantity(line.roundedFrom),
+                                })}
+                              >
+                                <AlertCircle className="h-4 w-4" />
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       );
                     })}
-                  </ul>
+                  </div>
                 </div>
               ))}
             </div>
