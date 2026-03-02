@@ -7,6 +7,7 @@ import type {
   CreateShoppingListItemParams,
   CreateShoppingListItemsParams,
   UpdateShoppingListItemParams,
+  ShoppingListResponse,
 } from 'librechat-data-provider';
 import {
   createShoppingListItem as createShoppingListItemApi,
@@ -51,6 +52,8 @@ export const useCreateShoppingListItemsMutation = (
   );
 };
 
+const SHOPPING_LIST_QUERY_KEY = [QueryKeys.shoppingList, {}] as const;
+
 export const useUpdateShoppingListItemMutation = (
   options?: UseMutationOptions<
     TShoppingListItem,
@@ -64,10 +67,31 @@ export const useUpdateShoppingListItemMutation = (
       updateShoppingListItemApi(id, data),
     {
       ...options,
-      onSuccess: (...args) => {
-        queryClient.invalidateQueries([QueryKeys.shoppingList]);
-        options?.onSuccess?.(...args);
+      async onMutate({ id, data }) {
+        await queryClient.cancelQueries({ queryKey: [QueryKeys.shoppingList] });
+        const previous = queryClient.getQueryData<ShoppingListResponse>(SHOPPING_LIST_QUERY_KEY);
+        if (previous?.items) {
+          const nextItems = previous.items.map((item) =>
+            item._id === id ? { ...item, ...data } : item,
+          );
+          queryClient.setQueryData<ShoppingListResponse>(SHOPPING_LIST_QUERY_KEY, {
+            ...previous,
+            items: nextItems,
+          });
+        }
+        return { previous };
       },
+      onError(_err, _variables, context) {
+        if (context?.previous) {
+          queryClient.setQueryData(SHOPPING_LIST_QUERY_KEY, context.previous);
+        }
+        options?.onError?.(_err, _variables, context);
+      },
+      onSettled(...args) {
+        queryClient.invalidateQueries({ queryKey: [QueryKeys.shoppingList] });
+        options?.onSettled?.(...args);
+      },
+      onSuccess: options?.onSuccess,
     },
   );
 };

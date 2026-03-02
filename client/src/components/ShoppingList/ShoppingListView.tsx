@@ -4,12 +4,11 @@ import {
   useShoppingListQuery,
   useCreateShoppingListItemMutation,
   useUpdateShoppingListItemMutation,
-  useDeleteShoppingListItemMutation,
   useIngredientsQuery,
 } from '~/data-provider';
 import type { TShoppingListItem } from 'librechat-data-provider';
 import { Spinner, Button } from '@librechat/client';
-import { Plus, Check, Trash2 } from 'lucide-react';
+import { Plus, Check } from 'lucide-react';
 import { formatShoppingItemLabel, sortShoppingItems } from '~/utils/shoppingList';
 import {
   buildIngredientImageMap,
@@ -28,7 +27,6 @@ export default function ShoppingListView() {
   const { data: ingredientsData } = useIngredientsQuery();
   const createMutation = useCreateShoppingListItemMutation();
   const updateMutation = useUpdateShoppingListItemMutation();
-  const deleteMutation = useDeleteShoppingListItemMutation();
 
   const items = data?.items ?? [];
   const toBuy = useMemo(
@@ -74,11 +72,6 @@ export default function ShoppingListView() {
 
   const handleToggleBought = (item: TShoppingListItem) => {
     updateMutation.mutate({ id: item._id, data: { bought: !item.bought } });
-  };
-
-  const handleDelete = (e: React.MouseEvent, item: TShoppingListItem) => {
-    e.stopPropagation();
-    deleteMutation.mutate(item._id);
   };
 
   return (
@@ -138,16 +131,16 @@ export default function ShoppingListView() {
                   {localize('com_ui_shopping_list_empty_planned')}
                 </p>
               ) : (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8">
                   {plannedToBuy.map((item) => (
                     <ShoppingListItemCard
                       key={item._id}
                       item={item}
                       imageUrl={resolveIngredientImageUrl(item.name, ingredientImageMap)}
+                      bought={false}
+                      showCheckbox={false}
                       onToggle={() => handleToggleBought(item)}
-                      onDelete={(e) => handleDelete(e, item)}
                       isUpdating={updateMutation.isPending}
-                      isDeleting={deleteMutation.isPending}
                     />
                   ))}
                 </div>
@@ -164,16 +157,16 @@ export default function ShoppingListView() {
                   {localize('com_ui_shopping_list_empty_from_journal')}
                 </p>
               ) : (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8">
                   {fromJournalToBuy.map((item) => (
                     <ShoppingListItemCard
                       key={item._id}
                       item={item}
                       imageUrl={resolveIngredientImageUrl(item.name, ingredientImageMap)}
+                      bought={false}
+                      showCheckbox={false}
                       onToggle={() => handleToggleBought(item)}
-                      onDelete={(e) => handleDelete(e, item)}
                       isUpdating={updateMutation.isPending}
-                      isDeleting={deleteMutation.isPending}
                     />
                   ))}
                 </div>
@@ -190,17 +183,16 @@ export default function ShoppingListView() {
                   {localize('com_ui_shopping_list_empty_bought')}
                 </p>
               ) : (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8">
                   {bought.map((item) => (
                     <ShoppingListItemCard
                       key={item._id}
                       item={item}
                       imageUrl={resolveIngredientImageUrl(item.name, ingredientImageMap)}
                       bought
+                      showCheckbox={true}
                       onToggle={() => handleToggleBought(item)}
-                      onDelete={(e) => handleDelete(e, item)}
                       isUpdating={updateMutation.isPending}
-                      isDeleting={deleteMutation.isPending}
                     />
                   ))}
                 </div>
@@ -217,73 +209,70 @@ function ShoppingListItemCard({
   item,
   imageUrl,
   bought,
+  showCheckbox,
   onToggle,
-  onDelete,
   isUpdating,
-  isDeleting,
 }: {
   item: TShoppingListItem;
   imageUrl?: string;
   bought?: boolean;
+  showCheckbox: boolean;
   onToggle: () => void;
-  onDelete: (e: React.MouseEvent) => void;
   isUpdating: boolean;
-  isDeleting: boolean;
 }) {
   const localize = useLocalize();
   const label = formatShoppingItemLabel(item);
   const fallbackLetter = getIngredientFallbackLetter(item.name);
   return (
     <div
+      role={!showCheckbox ? 'button' : undefined}
+      tabIndex={!showCheckbox ? 0 : undefined}
+      onClick={!showCheckbox && !isUpdating ? onToggle : undefined}
+      onKeyDown={
+        !showCheckbox
+          ? (e) => {
+              if ((e.key === 'Enter' || e.key === ' ') && !isUpdating) {
+                e.preventDefault();
+                onToggle();
+              }
+            }
+          : undefined
+      }
+      aria-label={!showCheckbox ? localize('com_ui_shopping_list_tick') : undefined}
       className={cn(
-        'flex items-center gap-3 rounded-xl border border-border-medium bg-surface-primary-alt p-3 transition-colors',
+        'flex w-full max-w-[100px] flex-col rounded-xl border border-border-medium bg-surface-primary-alt p-2 transition-colors',
         bought && 'opacity-75',
+        !showCheckbox &&
+          !isUpdating &&
+          'cursor-pointer hover:border-border-strong hover:bg-surface-active-alt/50',
+        isUpdating && !showCheckbox && 'pointer-events-none opacity-70',
       )}
     >
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border-medium bg-surface-active-alt/50">
+      <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border border-border-medium bg-surface-active-alt/50">
         {imageUrl ? (
           <img src={imageUrl} alt="" className="h-full w-full object-contain" />
         ) : (
-          <span className="text-2xl font-bold text-text-primary" aria-hidden>
+          <span className="text-xl font-bold text-text-primary" aria-hidden>
             {fallbackLetter}
           </span>
         )}
-      </div>
-      <button
-        type="button"
-        onClick={onToggle}
-        disabled={isUpdating}
-        className={cn(
-          'flex h-6 w-6 shrink-0 items-center justify-center rounded border transition-colors',
-          bought
-            ? 'border-green-500 bg-green-500/20 text-green-600'
-            : 'border-border-strong text-text-tertiary hover:border-border-strong hover:bg-surface-active-alt',
+        {showCheckbox && (
+          <div
+            className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded border border-green-500 bg-green-500/20 text-green-600"
+            aria-hidden
+          >
+            <Check className="h-3 w-3" />
+          </div>
         )}
-        aria-label={
-          bought
-            ? localize('com_ui_shopping_list_untick')
-            : localize('com_ui_shopping_list_tick')
-        }
-      >
-        {bought ? <Check className="h-4 w-4" /> : null}
-      </button>
+      </div>
       <span
         className={cn(
-          'min-w-0 flex-1 text-sm text-text-primary',
+          'mt-1.5 line-clamp-3 break-words text-center text-xs text-text-primary',
           bought && 'line-through text-text-tertiary',
         )}
       >
         {label}
       </span>
-      <button
-        type="button"
-        onClick={onDelete}
-        disabled={isDeleting}
-        className="rounded p-1 text-text-tertiary hover:bg-surface-active-alt hover:text-text-primary disabled:opacity-50"
-        aria-label={localize('com_ui_shopping_list_delete')}
-      >
-        <Trash2 className="h-4 w-4" />
-      </button>
     </div>
   );
 }
