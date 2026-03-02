@@ -10,7 +10,7 @@ import {
   startTransition,
 } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Compass, NotebookPen, ShoppingCart, CalendarDays, LayoutGrid, Trophy } from 'lucide-react';
+import { BookOpen, Compass, NotebookPen, ShoppingCart, CalendarDays, LayoutGrid, ChefHat } from 'lucide-react';
 import { useRecoilValue } from 'recoil';
 import { motion } from 'framer-motion';
 import { Skeleton, useMediaQuery } from '@librechat/client';
@@ -219,7 +219,7 @@ const IngredientGalleryNavLink = memo(
 );
 IngredientGalleryNavLink.displayName = 'IngredientGalleryNavLink';
 
-const PalaisDesSuccesNavLink = memo(
+const CollectionDesToquesNavLink = memo(
   ({
     isSmallScreen,
     itemToggleNav,
@@ -231,24 +231,24 @@ const PalaisDesSuccesNavLink = memo(
   }) => {
     const location = useLocation();
     const isActive =
-      location.pathname === '/palais-des-succes' ||
-      location.pathname.startsWith('/palais-des-succes');
+      location.pathname === '/collection-des-toques' ||
+      location.pathname.startsWith('/collection-des-toques');
     return (
       <Link
-        to="/palais-des-succes"
+        to="/collection-des-toques"
         onClick={isSmallScreen ? itemToggleNav : undefined}
         className={cn(
           'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt',
           isActive && 'bg-surface-active-alt',
         )}
       >
-        <Trophy className="h-4 w-4 shrink-0 text-text-secondary" />
-        <span className="truncate">{localize('com_ui_palais_des_succes')}</span>
+        <ChefHat className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_collection_des_toques')}</span>
       </Link>
     );
   },
 );
-PalaisDesSuccesNavLink.displayName = 'PalaisDesSuccesNavLink';
+CollectionDesToquesNavLink.displayName = 'CollectionDesToquesNavLink';
 
 const MealPlannerNavLink = memo(
   ({
@@ -508,7 +508,7 @@ const Nav = memo(
               itemToggleNav={itemToggleNav}
               localize={localize}
             />
-            <PalaisDesSuccesNavLink
+            <CollectionDesToquesNavLink
               isSmallScreen={isSmallScreen}
               itemToggleNav={itemToggleNav}
               localize={localize}

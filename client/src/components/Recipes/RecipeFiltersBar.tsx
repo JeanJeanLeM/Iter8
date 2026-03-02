@@ -149,69 +149,75 @@ export default function RecipeFiltersBar({
           </label>
         </div>
       )}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {/* Ingrédients */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-end gap-4">
+      {/* Ingrédients - inclure */}
+      <div className="flex min-w-[140px] max-w-[200px] flex-col gap-1.5">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
           {localize('com_ui_recipe_filter_ingredients_include')}
         </h3>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex items-center gap-1.5">
           <input
             type="text"
             value={ingredientIncludeInput}
             onChange={(e) => setIngredientIncludeInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addIngredient('include', ingredientIncludeInput)}
             placeholder={localize('com_ui_recipe_filter_ingredient_placeholder')}
-            className="w-full rounded border border-border-medium bg-surface-primary-alt px-2 py-1.5 text-sm text-text-primary"
+            className="min-w-0 flex-1 rounded border border-border-medium bg-surface-primary-alt px-2 py-1.5 text-sm text-text-primary"
           />
           <button
             type="button"
             onClick={() => addIngredient('include', ingredientIncludeInput)}
-            className="rounded bg-surface-active-alt px-2 py-1.5 text-sm text-text-primary hover:opacity-80"
+            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded border border-border-medium bg-surface-active-alt text-sm text-text-primary hover:opacity-80"
+            aria-label={localize('com_ui_recipe_filter_ingredient_placeholder')}
           >
             +
           </button>
-          <ul className="flex flex-wrap gap-1">
-            {ingredientsInclude.map((v, i) => (
-              <li key={`inc-${i}`} className="inline-flex items-center gap-0.5 rounded bg-surface-active-alt px-1.5 py-0.5 text-xs">
-                {v}
-                <button type="button" onClick={() => removeIngredient('include', i)} className="hover:text-text-primary" aria-label="Remove">×</button>
-              </li>
-            ))}
-          </ul>
         </div>
-        <h3 className="mt-1 text-xs font-semibold uppercase tracking-wide text-text-secondary">
+        <ul className="flex flex-wrap gap-1">
+          {ingredientsInclude.map((v, i) => (
+            <li key={`inc-${i}`} className="inline-flex items-center gap-0.5 rounded bg-surface-active-alt px-1.5 py-0.5 text-xs">
+              {v}
+              <button type="button" onClick={() => removeIngredient('include', i)} className="hover:text-text-primary" aria-label="Remove">×</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Ingrédients - exclure */}
+      <div className="flex min-w-[140px] max-w-[200px] flex-col gap-1.5">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
           {localize('com_ui_recipe_filter_ingredients_exclude')}
         </h3>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex items-center gap-1.5">
           <input
             type="text"
             value={ingredientExcludeInput}
             onChange={(e) => setIngredientExcludeInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addIngredient('exclude', ingredientExcludeInput)}
             placeholder={localize('com_ui_recipe_filter_ingredient_placeholder')}
-            className="w-full rounded border border-border-medium bg-surface-primary-alt px-2 py-1.5 text-sm text-text-primary"
+            className="min-w-0 flex-1 rounded border border-border-medium bg-surface-primary-alt px-2 py-1.5 text-sm text-text-primary"
           />
           <button
             type="button"
             onClick={() => addIngredient('exclude', ingredientExcludeInput)}
-            className="rounded bg-surface-active-alt px-2 py-1.5 text-sm text-text-primary hover:opacity-80"
+            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded border border-border-medium bg-surface-active-alt text-sm text-text-primary hover:opacity-80"
+            aria-label={localize('com_ui_recipe_filter_ingredient_placeholder')}
           >
             +
           </button>
-          <ul className="flex flex-wrap gap-1">
-            {ingredientsExclude.map((v, i) => (
-              <li key={`exc-${i}`} className="inline-flex items-center gap-0.5 rounded bg-surface-active-alt px-1.5 py-0.5 text-xs">
-                {v}
-                <button type="button" onClick={() => removeIngredient('exclude', i)} className="hover:text-text-primary" aria-label="Remove">×</button>
-              </li>
-            ))}
-          </ul>
         </div>
+        <ul className="flex flex-wrap gap-1">
+          {ingredientsExclude.map((v, i) => (
+            <li key={`exc-${i}`} className="inline-flex items-center gap-0.5 rounded bg-surface-active-alt px-1.5 py-0.5 text-xs">
+              {v}
+              <button type="button" onClick={() => removeIngredient('exclude', i)} className="hover:text-text-primary" aria-label="Remove">×</button>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* Type de plat - combobox avec recherche (UX Culture) */}
-      <div className="flex flex-col gap-1.5">
+      {/* Type de plat */}
+      <div className="flex min-w-[160px] max-w-[220px] flex-col gap-1.5">
         <label className="text-xs font-semibold uppercase tracking-wide text-text-secondary" htmlFor="recipe-filter-dish">
           {localize('com_ui_recipe_filter_dish_type')}
         </label>
@@ -232,7 +238,8 @@ export default function RecipeFiltersBar({
         <span className="text-xs text-text-secondary">{localize('com_ui_recipe_filter_search_hint')}</span>
       </div>
 
-      {/* Cuisine - combobox multi avec recherche (UX Culture) */}
+      {/* Cuisine */}
+      <div className="min-w-[160px] max-w-[220px]">
       <SearchableMultiSelect
         id="recipe-filter-cuisine"
         label={localize('com_ui_recipe_filter_cuisine')}
@@ -245,8 +252,10 @@ export default function RecipeFiltersBar({
         selectedCountLabel={(n) => localize('com_ui_recipe_filter_n_selected', { count: n })}
         noResultsText={localize('com_ui_recipe_filter_no_results')}
       />
+      </div>
 
-      {/* Régime - combobox multi avec recherche (UX Culture) */}
+      {/* Régime */}
+      <div className="min-w-[160px] max-w-[220px]">
       <SearchableMultiSelect
         id="recipe-filter-diet"
         label={localize('com_ui_recipe_filter_diet')}
@@ -259,6 +268,7 @@ export default function RecipeFiltersBar({
         selectedCountLabel={(n) => localize('com_ui_recipe_filter_n_selected', { count: n })}
         noResultsText={localize('com_ui_recipe_filter_no_results')}
       />
+      </div>
       </div>
     </div>
   );

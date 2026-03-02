@@ -177,8 +177,12 @@ export const router = createBrowserRouter(
                   element: <IngredientGalleryView />,
                 },
                 {
-                  path: 'palais-des-succes',
+                  path: 'collection-des-toques',
                   element: <PalaisDesSuccesView />,
+                },
+                {
+                  path: 'palais-des-succes',
+                  element: <Navigate to="/collection-des-toques" replace />,
                 },
                 {
                   path: 'faq',

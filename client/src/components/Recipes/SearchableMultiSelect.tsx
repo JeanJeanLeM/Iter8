@@ -96,7 +96,7 @@ export default function SearchableMultiSelect({
         {open && (
           <div
             role="listbox"
-            className="mt-1.5 w-full overflow-hidden rounded-xl border border-border-medium bg-surface-primary-alt shadow-lg"
+            className="absolute left-0 right-0 top-full z-50 mt-1.5 w-full overflow-hidden rounded-xl border border-border-medium bg-surface-primary-alt shadow-lg"
           >
             <div className="border-b border-border-medium p-2">
               <div className="relative">
