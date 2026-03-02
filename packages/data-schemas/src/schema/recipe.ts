@@ -8,6 +8,7 @@ const ingredientSchema = new Schema(
     unit: { type: String },
     note: { type: String },
     section: { type: String },
+    state: { type: String },
   },
   { _id: false },
 );

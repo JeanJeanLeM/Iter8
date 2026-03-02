@@ -7,6 +7,8 @@ export interface IRecipeIngredient {
   note?: string;
   /** Section label for multi-part recipes (e.g. "Pour la pâte", "Pour le glaçage"). */
   section?: string;
+  /** Ingredient state/form for display (e.g. "fondu", "mou", "bien froid"). Optional; used with canonical name. */
+  state?: string;
 }
 
 export interface IRecipeStep {

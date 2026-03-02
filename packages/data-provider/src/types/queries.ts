@@ -215,6 +215,8 @@ export type TRecipeIngredient = {
   note?: string;
   /** Section label for multi-part recipes (e.g. "Pour la pâte", "Pour le glaçage"). */
   section?: string;
+  /** Ingredient state/form (e.g. "fondu", "mou", "bien froid"). Optional. */
+  state?: string;
 };
 export type TRecipeStep = {
   order: number;

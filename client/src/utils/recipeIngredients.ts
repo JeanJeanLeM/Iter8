@@ -414,10 +414,14 @@ export function formatIngredient(
   const { ratio = 1, unitSystem = 'si', showGrams = false } = options;
   const name = (ing.name ?? '').trim();
   const note = (ing.note ?? '').trim();
+  const state = (ing.state ?? '').trim();
   const unitRaw = (ing.unit ?? '').trim();
 
   if (ing.quantity == null) {
-    return { displayText: name };
+    let displayText = name;
+    if (state) displayText += ` (${state})`;
+    if (note) displayText += ` (${note})`;
+    return { displayText };
   }
 
   const scaled = ing.quantity * ratio;
@@ -443,6 +447,7 @@ export function formatIngredient(
   } else {
     displayText = `${qtyStr} ${name}`;
   }
+  if (state) displayText += ` (${state})`;
   if (note) displayText += ` (${note})`;
 
   let gramEquivalentStr: string | undefined;

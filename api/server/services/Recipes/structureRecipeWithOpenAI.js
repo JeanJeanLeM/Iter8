@@ -9,6 +9,7 @@
  */
 const { logger } = require('@librechat/data-schemas');
 const OpenAI = require('openai').default;
+const { normalizeRecipeIngredients } = require('./normalizeRecipeIngredients');
 
 const STRUCTURE_SYSTEM_PROMPT = `Tu es un assistant qui structure des recettes. Tu reçois du texte de recette et tu DOIS répondre UNIQUEMENT par un JSON valide, sans texte avant ou après.
 
@@ -20,26 +21,26 @@ Format JSON requis (identique au schéma de la base de données) :
   "portions": number (nombre de parts/personnes),
   "duration": number | { "prep": number, "cook": number, "total": number } (minutes),
   "ingredients": [
-    { "name": "string", "quantity": number, "unit": "string (g, ml, cuillère à café, etc.)", "note": "string optionnel", "section": "string optionnel" }
+    { "name": "string (nom canonique)", "quantity": number, "unit": "string", "note": "string optionnel", "section": "string optionnel", "state": "string optionnel (ex: fondu, mou, bien froid, râpé)" }
   ],
   "steps": [
     { "order": 1, "instruction": "string" }
   ],
   "equipment": ["string"],
   "tags": ["string"],
-  "restTimeMinutes": number (optionnel, temps de repos/fermentation/marinade en minutes, ex: 720 pour 12h),
-  "maxStorageDays": number (optionnel, conservation max en jours, ex: 2 pour 48h)
+  "restTimeMinutes": number (optionnel),
+  "maxStorageDays": number (optionnel)
 }
 
 Règles :
 - title est obligatoire.
-- ingredients : name obligatoire, quantity et unit si connus. Convertir "1 œuf" en quantity: 1 sans unit, "250 g farine" en quantity: 250, unit: "g". Si la recette a plusieurs sous-parties (ex: pâte, mélange cannelle, glaçage), ajoute pour chaque ingrédient un champ "section" avec le libellé exact (ex: "Pour la pâte :", "Pour le mélange cannelle :", "Pour le glaçage :"). Si la recette n'a qu'une seule liste d'ingrédients, omets "section".
-- duration : si tu as "Préparation 15 min, Cuisson 10 min" → { "prep": 15, "cook": 10, "total": 25 }. Si seulement un total → number.
+- ingredients : name obligatoire (nom canonique de l'ingrédient : "beurre", "farine", "œuf"). Met la forme ou l'état dans "state" quand c'est pertinent (ex: "beurre fondu" → name "beurre", state "fondu"; "fromage râpé" → name "fromage", state "râpé"). quantity et unit si connus. "1 œuf" → quantity: 1 sans unit, "250 g farine" → quantity: 250, unit: "g". Si plusieurs sous-parties (pâte, glaçage…), utilise "section" pour chaque ingrédient. "note" pour précisions (ex. "finement haché" si pas dans state).
+- duration : "Préparation 15 min, Cuisson 10 min" → { "prep": 15, "cook": 10, "total": 25 }. Sinon number pour le total.
 - steps : order 1-based, instruction claire et complète.
 - equipment : liste du matériel (four, saladier, etc.).
 - tags : dessert, plat, vegan, rapide, etc.
-- restTimeMinutes : si la recette a un temps de repos, fermentation ou marinade (ex. pain au levain 12h), indique-le en minutes. Sinon omets.
-- maxStorageDays : si le plat ne se conserve pas longtemps (ex. 1-2 jours), indique-le. Sinon omets ou mets 2 par défaut.
+- restTimeMinutes : temps de repos/fermentation/marinade en minutes si applicable. Sinon omets.
+- maxStorageDays : conservation max en jours. Sinon omets ou 2 par défaut.
 
 Réponds UNIQUEMENT avec le JSON, rien d'autre.`;
 
@@ -118,18 +119,7 @@ function normalizeForDb(raw) {
         : undefined,
   };
 
-  recipe.ingredients = recipe.ingredients
-    .filter((i) => i && typeof i.name === 'string')
-    .map((i) => {
-      const sectionVal = i.section != null ? String(i.section).trim() : '';
-      return {
-        name: String(i.name).trim(),
-        quantity: typeof i.quantity === 'number' ? i.quantity : undefined,
-        unit: i.unit != null ? String(i.unit).trim() : undefined,
-        note: i.note != null ? String(i.note).trim() : undefined,
-        section: sectionVal || undefined,
-      };
-    });
+  recipe.ingredients = normalizeRecipeIngredients(recipe.ingredients);
 
   recipe.steps = recipe.steps
     .filter((s) => s && typeof s.instruction === 'string')

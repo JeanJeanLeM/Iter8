@@ -1,4 +1,5 @@
 const { Tool } = require('@langchain/core/tools');
+const { normalizeRecipeIngredients } = require('~/server/services/Recipes/normalizeRecipeIngredients');
 
 const updateRecipeJsonSchema = {
   type: 'object',
@@ -29,15 +30,25 @@ const updateRecipeJsonSchema = {
       items: {
         type: 'object',
         properties: {
-          name: { type: 'string', description: 'Ingredient name' },
+          name: {
+            type: 'string',
+            description:
+              'Canonical ingredient name (e.g. "beurre", "farine"). Use base name; put form/state in "state" when possible.',
+          },
           quantity: { type: 'number', description: 'Quantity for the given portions' },
           unit: { type: 'string', description: 'Unit (g, ml, tbsp, etc.)' },
-          note: { type: 'string', description: 'Optional note (e.g. "finely chopped")' },
+          note: { type: 'string', description: 'Optional note (e.g. "finely chopped", preparation detail)' },
+          section: { type: 'string', description: 'Optional section label for multi-part recipes (e.g. "Pour la pâte")' },
+          state: {
+            type: 'string',
+            description:
+              'Optional ingredient state/form (e.g. "fondu", "mou", "bien froid", "râpé"). Prefer this over embedding in name.',
+          },
         },
         required: ['name'],
         additionalProperties: false,
       },
-      description: 'List of ingredients',
+      description: 'List of ingredients. Use canonical names and optional state for variations (e.g. beurre + state "fondu").',
     },
     steps: {
       type: 'array',
@@ -97,14 +108,7 @@ function normalizeRecipe(args) {
   };
 
   if (recipe.ingredients.length > 0) {
-    recipe.ingredients = recipe.ingredients
-      .filter((i) => i && typeof i.name === 'string')
-      .map((i) => ({
-        name: String(i.name).trim(),
-        quantity: typeof i.quantity === 'number' ? i.quantity : undefined,
-        unit: i.unit != null ? String(i.unit).trim() : undefined,
-        note: i.note != null ? String(i.note).trim() : undefined,
-      }));
+    recipe.ingredients = normalizeRecipeIngredients(recipe.ingredients);
   }
 
   if (recipe.steps.length > 0) {
