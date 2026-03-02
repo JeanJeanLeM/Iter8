@@ -29,6 +29,26 @@ export default function PalaisDesSuccesView() {
 
   useDocumentTitle(`${localize('com_ui_collection_des_toques')} | CookIter8`);
 
+  const badgeEntries: BadgeEntry[] = useMemo(() => {
+    if (!data) return [];
+    const { badgeCounts } = data;
+    const predefinedKeys = new Set(RECIPE_BADGE_OPTIONS.map((o) => o.value));
+    const list: BadgeEntry[] = RECIPE_BADGE_OPTIONS.map((o) => ({
+      key: o.value,
+      label: localize(o.labelKey),
+      count: badgeCounts[o.value] ?? 0,
+    }));
+    const others = Object.entries(badgeCounts)
+      .filter(([key]) => !predefinedKeys.has(key))
+      .sort(([, a], [, b]) => b - a)
+      .map(([key]) => ({
+        key,
+        label: formatBadgeLabel(key),
+        count: badgeCounts[key],
+      }));
+    return [...list, ...others];
+  }, [data, localize]);
+
   if (isLoading) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-surface-primary">
@@ -51,24 +71,6 @@ export default function PalaisDesSuccesView() {
     xpNeededForNextLevel > 0
       ? Math.min(100, (xpInCurrentLevel / xpNeededForNextLevel) * 100)
       : 100;
-
-  const badgeEntries: BadgeEntry[] = useMemo(() => {
-    const predefinedKeys = new Set(RECIPE_BADGE_OPTIONS.map((o) => o.value));
-    const list: BadgeEntry[] = RECIPE_BADGE_OPTIONS.map((o) => ({
-      key: o.value,
-      label: localize(o.labelKey),
-      count: badgeCounts[o.value] ?? 0,
-    }));
-    const others = Object.entries(badgeCounts)
-      .filter(([key]) => !predefinedKeys.has(key))
-      .sort(([, a], [, b]) => b - a)
-      .map(([key]) => ({
-        key,
-        label: formatBadgeLabel(key),
-        count: badgeCounts[key],
-      }));
-    return [...list, ...others];
-  }, [badgeCounts, localize]);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-primary">

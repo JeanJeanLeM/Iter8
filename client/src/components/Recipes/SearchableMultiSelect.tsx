@@ -152,7 +152,7 @@ export default function SearchableMultiSelect({
           </div>
         )}
       </Ariakit.ComboboxProvider>
-      <span className="text-xs text-text-secondary">{hintText}</span>
+      {hintText && <span className="text-xs text-text-secondary">{hintText}</span>}
     </div>
   );
 }

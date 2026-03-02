@@ -10,7 +10,7 @@ import {
   startTransition,
 } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Compass, NotebookPen, ShoppingCart, CalendarDays, LayoutGrid, ChefHat } from 'lucide-react';
+import { BookOpen, Compass, NotebookPen, ShoppingCart, CalendarDays, LayoutGrid, ChefHat, ChevronDown } from 'lucide-react';
 import { useRecoilValue } from 'recoil';
 import { motion } from 'framer-motion';
 import { Skeleton, useMediaQuery } from '@librechat/client';
@@ -308,13 +308,57 @@ const RecipeAssistantNavLink = memo(
         onClick={isSmallScreen ? itemToggleNav : undefined}
         className="flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt"
       >
-        <CalendarDays className="h-4 w-4 shrink-0 text-text-secondary" />
+        <ChefHat className="h-4 w-4 shrink-0 text-text-secondary" />
         <span className="truncate">{localize('com_ui_recipe_assistant')}</span>
       </Link>
     );
   },
 );
 RecipeAssistantNavLink.displayName = 'RecipeAssistantNavLink';
+
+const AssistantsSection = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const [isExpanded, setIsExpanded] = useLocalStorage('assistantsExpanded', true);
+
+    return (
+      <div className="mt-1">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="group flex w-full items-center justify-between rounded-lg px-1 py-2 text-xs font-bold text-text-secondary outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-black dark:focus-visible:ring-white"
+          type="button"
+        >
+          <span className="select-none">{localize('com_ui_nav_assistants')}</span>
+          <ChevronDown
+            className={cn('h-3 w-3 transition-transform duration-200', isExpanded ? 'rotate-180' : '')}
+          />
+        </button>
+        {isExpanded && (
+          <div>
+            <MealPlannerNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+            <RecipeAssistantNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+AssistantsSection.displayName = 'AssistantsSection';
 
 const Nav = memo(
   ({
@@ -513,12 +557,7 @@ const Nav = memo(
               itemToggleNav={itemToggleNav}
               localize={localize}
             />
-            <MealPlannerNavLink
-              isSmallScreen={isSmallScreen}
-              itemToggleNav={itemToggleNav}
-              localize={localize}
-            />
-            <RecipeAssistantNavLink
+            <AssistantsSection
               isSmallScreen={isSmallScreen}
               itemToggleNav={itemToggleNav}
               localize={localize}
