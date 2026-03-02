@@ -5,7 +5,12 @@ import { useLocalize } from '~/hooks';
 import { DISH_TYPES, CUISINE_TYPES, DIET_TYPES } from './recipeFilterOptions';
 import SearchableMultiSelect from './SearchableMultiSelect';
 
-export default function RecipeFiltersBar() {
+export default function RecipeFiltersBar({
+  showJournalScopeFilters = false,
+}: {
+  /** When true, show visibility filter and "include others derived from mine" toggle (for /r only). */
+  showJournalScopeFilters?: boolean;
+}) {
   const localize = useLocalize();
   const [searchParams, setSearchParams] = useSearchParams();
   const [ingredientIncludeInput, setIngredientIncludeInput] = useState('');
@@ -61,6 +66,22 @@ export default function RecipeFiltersBar() {
     });
   };
 
+  const visibilityFilter = searchParams.get('visibilityFilter') || 'all';
+  const setVisibilityFilter = (value: 'all' | 'private' | 'public') => {
+    updateParams((p) => {
+      if (value === 'all') p.delete('visibilityFilter');
+      else p.set('visibilityFilter', value);
+    });
+  };
+
+  const includeOthersDerivedFromMine = searchParams.get('includeOthersDerivedFromMine') === 'true';
+  const setIncludeOthersDerivedFromMine = (value: boolean) => {
+    updateParams((p) => {
+      if (value) p.set('includeOthersDerivedFromMine', 'true');
+      else p.delete('includeOthersDerivedFromMine');
+    });
+  };
+
   const ingredientsInclude = searchParams.getAll('ingredientsInclude').filter(Boolean);
   const ingredientsExclude = searchParams.getAll('ingredientsExclude').filter(Boolean);
   const dishType = searchParams.get('dishType');
@@ -91,7 +112,44 @@ export default function RecipeFiltersBar() {
   );
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="flex flex-col gap-4">
+      {showJournalScopeFilters && (
+        <div className="flex flex-wrap items-center gap-4 rounded-lg border border-border-medium bg-surface-primary-alt p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
+              {localize('com_ui_recipe_filter_my_visibility')}
+            </span>
+            <div className="flex gap-1 rounded-md p-0.5 bg-surface-primary">
+              {(['all', 'private', 'public'] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setVisibilityFilter(v)}
+                  className={`rounded px-2.5 py-1 text-sm font-medium ${
+                    visibilityFilter === v
+                      ? 'bg-surface-active-alt text-text-primary'
+                      : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  {localize(`com_ui_recipe_filter_visibility_${v}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includeOthersDerivedFromMine}
+              onChange={(e) => setIncludeOthersDerivedFromMine(e.target.checked)}
+              className="rounded border-border-medium"
+            />
+            <span className="text-sm text-text-primary">
+              {localize('com_ui_recipe_filter_include_others_derived')}
+            </span>
+          </label>
+        </div>
+      )}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {/* Ingrédients */}
       <div className="flex flex-col gap-2">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
@@ -201,6 +259,7 @@ export default function RecipeFiltersBar() {
         selectedCountLabel={(n) => localize('com_ui_recipe_filter_n_selected', { count: n })}
         noResultsText={localize('com_ui_recipe_filter_no_results')}
       />
+      </div>
     </div>
   );
 }

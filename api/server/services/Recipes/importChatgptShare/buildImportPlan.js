@@ -6,22 +6,20 @@
 /**
  * Build preview items with default parent by timeline order.
  * importIndex is the stable 0-based index used in commit (which to import, parent reference).
- * @param {Array<{ index: number; title: string; rawText: string }>} candidates
- * @returns {Array<{ importIndex: number; index: number; title: string; rawText: string; suggestedParentIndex: number | null }>}
+ * @param {Array<{ index: number; title: string; rawText: string; recipeDate?: string | null; userResponse?: string | null }>} candidates
+ * @returns {Array<{ importIndex: number; index: number; title: string; rawText: string; recipeDate: string | null; userResponse: string | null; suggestedParentIndex: number | null }>}
  */
 function buildImportPlan(candidates) {
   const sorted = [...candidates].sort((a, b) => a.index - b.index);
-  const plan = sorted.map((c, i) => ({
+  return sorted.map((c, i) => ({
     importIndex: i,
     index: c.index,
     title: c.title,
     rawText: c.rawText,
+    recipeDate: c.recipeDate ?? null,
+    userResponse: c.userResponse ?? null,
     suggestedParentIndex: i === 0 ? null : i - 1,
   }));
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'H3', location: 'buildImportPlan.js:build', message: 'build import plan', data: { candidateCount: sorted.length, rootCount: plan.filter((p) => p.suggestedParentIndex == null).length }, timestamp: Date.now() }) }).catch(() => {});
-  // #endregion
-  return plan;
 }
 
 /**

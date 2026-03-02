@@ -5,6 +5,8 @@ export interface IRecipeIngredient {
   quantity?: number;
   unit?: string;
   note?: string;
+  /** Section label for multi-part recipes (e.g. "Pour la pâte", "Pour le glaçage"). */
+  section?: string;
 }
 
 export interface IRecipeStep {
@@ -44,6 +46,12 @@ export interface IRecipe extends Document {
   maxStorageDays?: number;
   /** Conversation where this recipe was created (chat that mentions it). Used for "go to discussion" link. */
   conversationId?: string | null;
+  /** Whether the recipe is visible to other users in Explore. Default: private. */
+  visibility?: 'private' | 'public';
+  /** When this recipe was derived from another user's public recipe. */
+  sourceRecipeId?: Types.ObjectId | null;
+  /** Owner (userId) of the source recipe when derived from another user. */
+  sourceOwnerId?: Types.ObjectId | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -72,6 +80,9 @@ export interface IRecipeLean {
   maxStorageDays?: number;
   /** Conversation where this recipe was created (chat that mentions it). */
   conversationId?: string | null;
+  visibility?: 'private' | 'public';
+  sourceRecipeId?: Types.ObjectId | null;
+  sourceOwnerId?: Types.ObjectId | null;
   variationCount?: number;
   score?: number;
   userVote?: number;
@@ -94,6 +105,8 @@ export interface IRecipeVoteLean {
   updatedAt?: Date;
 }
 
+export type RecipeVisibility = 'private' | 'public';
+
 export interface GetRecipesParams {
   userId: string | Types.ObjectId;
   ingredientsInclude?: string[];
@@ -105,6 +118,12 @@ export interface GetRecipesParams {
   parentId?: string | Types.ObjectId | null;
   /** When set, fetch only recipes with these IDs (ignores parentsOnly/parentId) */
   ids?: (string | Types.ObjectId)[];
+  /** Listing mode: mine (default) or explore (public roots from all users). */
+  mode?: 'mine' | 'explore';
+  /** For mode=mine: filter by visibility (all = no filter). */
+  visibilityFilter?: 'all' | RecipeVisibility;
+  /** For mode=mine: include recipes from other users that are public and derived from my recipes (sourceOwnerId = me). */
+  includeOthersDerivedFromMine?: boolean;
 }
 
 export interface RecipeListResult {

@@ -9,6 +9,7 @@ import {
   useRecipeAiImagesQuery,
   useUpdateRecipeMutation,
   useGenerateRecipeImageMutation,
+  useDeriveRecipeMutation,
 } from '~/data-provider';
 import { Spinner, Button, OGDialog, OGDialogContent, OGDialogTitle } from '@librechat/client';
 import {
@@ -143,7 +144,11 @@ export default function RecipeDetailView() {
     if (!recipe.parentId) return recipe._id;
     return rootRecipe?._id ?? null;
   }, [recipe?.parentId, recipe?._id, rootRecipe?._id]);
-  const { data: familyData } = useRecipeFamilyQuery(rootId);
+  const isOwner = useMemo(
+    () => Boolean(user?.id && recipe && String(recipe.userId) === user.id),
+    [user?.id, recipe?.userId, recipe],
+  );
+  const { data: familyData } = useRecipeFamilyQuery(rootId, { enabled: !!rootId && isOwner });
   // Carousel: root (V0) + all descendants (V0.1, V0.1.1, V0.1.1.1, …). Order: root first, then by depth, then createdAt.
   const carouselItems = useMemo(() => {
     const list = familyData?.recipes ?? [];
@@ -186,10 +191,20 @@ export default function RecipeDetailView() {
 
   const updateRecipeMutation = useUpdateRecipeMutation();
   const generateRecipeImageMutation = useGenerateRecipeImageMutation();
+  const deriveRecipeMutation = useDeriveRecipeMutation({
+    onSuccess: (data) => navigate(`/r/${data._id}`),
+  });
   const { newConversation } = useNewConvo();
   const setSelectedRecipeForVariation = useSetRecoilState(selectedRecipeForVariation);
   const { conversations, isLoading: conversationsLoading } =
     useConversationsMentioningRecipe(recipe?._id, recipe?.conversationId);
+
+  const canDerive = !isOwner && recipe?.visibility === 'public';
+
+  const handleDeriveIntoMyJournal = () => {
+    if (!recipe) return;
+    deriveRecipeMutation.mutate(recipe._id);
+  };
 
   const { data: aiImagesData, isLoading: aiImagesLoading } = useRecipeAiImagesQuery(
     recipe?._id ?? null,
@@ -210,12 +225,9 @@ export default function RecipeDetailView() {
     if (parentRecipe.imageUrl) return [{ url: parentRecipe.imageUrl, source: 'upload' as const }];
     return [];
   }, [parentRecipe?.images, parentRecipe?.imageUrl]);
-  const displayImages = useMemo(() => {
-    if (recipeImages.length > 0) return recipeImages;
-    if (recipe?.parentId && parentImages.length > 0) return parentImages;
-    return [];
-  }, [recipeImages, recipe?.parentId, parentImages]);
-  const isDisplayingParentImage = recipeImages.length === 0 && !!recipe?.parentId && parentImages.length > 0;
+  /** Always show the selected recipe's images only (never parent's in main area). */
+  const displayImages = useMemo(() => recipeImages, [recipeImages]);
+  const canUseParentImage = recipeImages.length === 0 && !!recipe?.parentId && parentImages.length > 0;
   const hasAiImage = recipeImages.some((img) => img.source === 'ai');
   const aiImagesOnly = useMemo(
     () => recipeImages.filter((img) => img.source === 'ai'),
@@ -253,6 +265,27 @@ export default function RecipeDetailView() {
       formatIngredientUtil(ing, { ratio, unitSystem, showIngredientGrams }),
     );
   }, [recipe?.ingredients, ratio, unitSystem, showIngredientGrams]);
+
+  /** Group ingredient indices by section (order of first appearance). No section = single group with null label. */
+  const ingredientSections = useMemo(() => {
+    const ing = recipe?.ingredients ?? [];
+    if (ing.length === 0) return [];
+    const order: (string | null)[] = [];
+    const seen = new Set<string | null>();
+    for (const i of ing) {
+      const s = (i.section && String(i.section).trim()) || null;
+      if (!seen.has(s)) {
+        seen.add(s);
+        order.push(s);
+      }
+    }
+    return order.map((sectionLabel) => ({
+      sectionLabel,
+      indices: ing
+        .map((i, idx) => ((i.section && String(i.section).trim()) || null) === sectionLabel ? idx : -1)
+        .filter((i) => i >= 0),
+    }));
+  }, [recipe?.ingredients]);
 
   const relatedFilters = useMemo(
     () => ({
@@ -426,6 +459,25 @@ export default function RecipeDetailView() {
         </Link>
       </header>
 
+      {canDerive && (
+        <div className="flex flex-shrink-0 items-center justify-between gap-3 border-b border-border-medium bg-surface-primary-alt px-4 py-3">
+          <p className="text-sm text-text-secondary">
+            {localize('com_ui_recipe_another_user_public')}
+          </p>
+          <Button
+            type="button"
+            variant="default"
+            size="sm"
+            onClick={handleDeriveIntoMyJournal}
+            disabled={deriveRecipeMutation.isPending}
+          >
+            {deriveRecipeMutation.isPending
+              ? localize('com_ui_recipe_deriving')
+              : localize('com_ui_recipe_derive_into_my_journal')}
+          </Button>
+        </div>
+      )}
+
       <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
         {/* Title + rating */}
         <div className="mb-4">
@@ -441,6 +493,36 @@ export default function RecipeDetailView() {
               userVote={recipe.userVote}
             />
           </div>
+          {isOwner && (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
+                {localize('com_ui_recipe_visibility_in_explore')}
+              </span>
+              <div className="flex gap-1 rounded-md p-0.5 bg-surface-primary-alt">
+                {(['private', 'public'] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() =>
+                      updateRecipeMutation.mutate({
+                        id: recipe._id,
+                        data: { visibility: v },
+                      })
+                    }
+                    disabled={updateRecipeMutation.isLoading || recipe.visibility === v}
+                    className={cn(
+                      'rounded px-2.5 py-1 text-sm font-medium',
+                      recipe.visibility === v
+                        ? 'bg-surface-active-alt text-text-primary'
+                        : 'text-text-secondary hover:text-text-primary',
+                    )}
+                  >
+                    {localize(`com_ui_recipe_filter_visibility_${v}`)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {/* Unroll: objective (parent) or variationNote (variation) */}
           {((recipe.parentId && recipe.variationNote) || (!recipe.parentId && (recipe.objective ?? recipe.description))) && (
             <div className="mt-3 rounded-lg border border-border-medium bg-surface-primary-alt p-2">
@@ -467,8 +549,8 @@ export default function RecipeDetailView() {
               )}
             </div>
           )}
-          {/* Parent recipe link + change parent (when this is a variation) */}
-          {recipe.parentId && parentId && (
+          {/* Parent recipe link + change parent (when this is a variation) - owner only */}
+          {isOwner && recipe.parentId && parentId && (
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-border-medium bg-surface-primary-alt px-3 py-2">
               <span className="text-sm text-text-secondary">
                 {localize('com_ui_recipe_parent_recipe')}:
@@ -497,8 +579,8 @@ export default function RecipeDetailView() {
               </Button>
             </div>
           )}
-          {/* Link to a parent when this recipe is currently a "mother" (no parent) */}
-          {!recipe.parentId && (
+          {/* Link to a parent when this recipe is currently a "mother" (no parent) - owner only */}
+          {isOwner && !recipe.parentId && (
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-border-medium bg-surface-primary-alt px-3 py-2">
               <span className="text-sm text-text-secondary">
                 {localize('com_ui_recipe_no_parent')}
@@ -517,6 +599,7 @@ export default function RecipeDetailView() {
           )}
         </div>
 
+        {isOwner && (
         <ParentRecipeSelectorModal
           open={changeParentModalOpen}
           onOpenChange={setChangeParentModalOpen}
@@ -531,6 +614,7 @@ export default function RecipeDetailView() {
             });
           }}
         />
+        )}
 
         {/* Variations carousel (parent + variations) */}
         {carouselItems.length > 0 && (
@@ -539,6 +623,7 @@ export default function RecipeDetailView() {
 
         {/* Recipe image gallery */}
         <section className="mb-6">
+          {isOwner && (
           <input
             ref={fileInputRef}
             type="file"
@@ -547,9 +632,10 @@ export default function RecipeDetailView() {
             aria-hidden
             onChange={handleImageFromDevice}
           />
+          )}
           <div className="relative">
             {/* Loading overlay when generating AND we already have an image to cover */}
-            {generateRecipeImageMutation.isLoading && (currentImage || isDisplayingParentImage) && (
+            {generateRecipeImageMutation.isLoading && currentImage && (
               <div
                 className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-lg bg-black/50 dark:bg-black/60 backdrop-blur-sm"
                 aria-live="polite"
@@ -611,7 +697,7 @@ export default function RecipeDetailView() {
                     </button>
                   </div>
                 )}
-                {recipeImages.length > 1 && currentImageIndex > 0 && (
+                {isOwner && recipeImages.length > 1 && currentImageIndex > 0 && (
                   <div className="mt-1 flex justify-center">
                     <Button
                       type="button"
@@ -625,29 +711,6 @@ export default function RecipeDetailView() {
                   </div>
                 )}
               </>
-            ) : isDisplayingParentImage ? (
-              <div className="flex flex-col gap-2">
-                <div className="aspect-video w-full overflow-hidden rounded-lg bg-surface-active-alt">
-                  <img
-                    src={displayImages[0]?.url}
-                    alt={parentRecipe?.title ?? ''}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <p className="text-center text-sm text-text-secondary">
-                  {localize('com_ui_recipe_image_from_parent')}
-                </p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleUseParentImage}
-                  disabled={updateRecipeMutation.isLoading}
-                  className="self-center"
-                >
-                  {localize('com_ui_recipe_use_parent_image')}
-                </Button>
-              </div>
             ) : generateRecipeImageMutation.isLoading ? (
               /* No image yet: show loading state directly in the placeholder so it's always visible on web */
               <div
@@ -665,11 +728,41 @@ export default function RecipeDetailView() {
                 </span>
               </div>
             ) : (
-              <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border-medium bg-surface-active-alt text-text-secondary">
-                <span>{localize('com_ui_recipe_no_image')}</span>
-              </div>
+              <>
+                <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border-medium bg-surface-active-alt text-text-secondary">
+                  <span>{localize('com_ui_recipe_no_image')}</span>
+                </div>
+                {isOwner && canUseParentImage && (
+                  <div className="mt-3 flex flex-wrap items-center justify-center gap-3 rounded-lg border border-border-medium bg-surface-primary-alt p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-14 w-20 shrink-0 overflow-hidden rounded bg-surface-active-alt">
+                        <img
+                          src={parentImages[0]?.url}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm text-text-secondary">
+                          {localize('com_ui_recipe_image_from_parent')}
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleUseParentImage}
+                          disabled={updateRecipeMutation.isLoading}
+                        >
+                          {localize('com_ui_recipe_use_parent_image')}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
+          {isOwner && (
           <div className="mt-3 flex flex-wrap gap-2">
             <Button
               type="button"
@@ -751,6 +844,7 @@ export default function RecipeDetailView() {
                 : localize('com_ui_recipe_image_ai')}
             </Button>
           </div>
+          )}
 
           {/* Modal: Galerie (current recipe) / Galerie IA (all user AI images, paginated) */}
           <OGDialog
@@ -1036,56 +1130,86 @@ export default function RecipeDetailView() {
             </div>
           </div>
           {ingredientsViewMode === 'grid' ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {scaledIngredients.map((line, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-wrap items-start gap-1 rounded-lg border border-border-medium bg-surface-primary-alt p-3 text-sm text-text-primary"
-                >
-                  <span className="min-w-0 flex-1">{line.displayText}</span>
-                  {line.gramEquivalent && (
-                    <span className="text-text-secondary">{line.gramEquivalent}</span>
+            <div className="flex flex-col gap-6">
+              {ingredientSections.map(({ sectionLabel, indices }) => (
+                <div key={sectionLabel ?? 'default'}>
+                  {sectionLabel && (
+                    <h3 className="mb-2 text-sm font-semibold text-text-primary">
+                      {sectionLabel}
+                    </h3>
                   )}
-                  {line.roundedFrom != null && (
-                    <span
-                      className="shrink-0 text-amber-600 dark:text-amber-400"
-                      title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                        exact: formatExactQuantity(line.roundedFrom),
-                      })}
-                      aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                        exact: formatExactQuantity(line.roundedFrom),
-                      })}
-                    >
-                      <AlertCircle className="h-4 w-4" />
-                    </span>
-                  )}
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                    {indices.map((idx) => {
+                      const line = scaledIngredients[idx];
+                      if (!line) return null;
+                      return (
+                        <div
+                          key={idx}
+                          className="flex flex-wrap items-start gap-1 rounded-lg border border-border-medium bg-surface-primary-alt p-3 text-sm text-text-primary"
+                        >
+                          <span className="min-w-0 flex-1">{line.displayText}</span>
+                          {line.gramEquivalent && (
+                            <span className="text-text-secondary">{line.gramEquivalent}</span>
+                          )}
+                          {line.roundedFrom != null && (
+                            <span
+                              className="shrink-0 text-amber-600 dark:text-amber-400"
+                              title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                exact: formatExactQuantity(line.roundedFrom),
+                              })}
+                              aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                exact: formatExactQuantity(line.roundedFrom),
+                              })}
+                            >
+                              <AlertCircle className="h-4 w-4" />
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <ul className="list-inside list-disc space-y-1 rounded-lg border border-border-medium bg-surface-primary-alt p-4 text-text-primary">
-              {scaledIngredients.map((line, idx) => (
-                <li key={idx}>
-                  {line.displayText}
-                  {line.gramEquivalent && (
-                    <span className="text-text-secondary"> {line.gramEquivalent}</span>
+            <div className="flex flex-col gap-6">
+              {ingredientSections.map(({ sectionLabel, indices }) => (
+                <div key={sectionLabel ?? 'default'}>
+                  {sectionLabel && (
+                    <h3 className="mb-2 text-sm font-semibold text-text-primary">
+                      {sectionLabel}
+                    </h3>
                   )}
-                  {line.roundedFrom != null && (
-                    <span
-                      className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
-                      title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                        exact: formatExactQuantity(line.roundedFrom),
-                      })}
-                      aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
-                        exact: formatExactQuantity(line.roundedFrom),
-                      })}
-                    >
-                      <AlertCircle className="h-4 w-4" />
-                    </span>
-                  )}
-                </li>
+                  <ul className="list-inside list-disc space-y-1 rounded-lg border border-border-medium bg-surface-primary-alt p-4 text-text-primary">
+                    {indices.map((idx) => {
+                      const line = scaledIngredients[idx];
+                      if (!line) return null;
+                      return (
+                        <li key={idx}>
+                          {line.displayText}
+                          {line.gramEquivalent && (
+                            <span className="text-text-secondary"> {line.gramEquivalent}</span>
+                          )}
+                          {line.roundedFrom != null && (
+                            <span
+                              className="ml-1 inline-flex shrink-0 align-middle text-amber-600 dark:text-amber-400"
+                              title={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                exact: formatExactQuantity(line.roundedFrom),
+                              })}
+                              aria-label={localize('com_ui_recipe_ingredient_rounded_tooltip', {
+                                exact: formatExactQuantity(line.roundedFrom),
+                              })}
+                            >
+                              <AlertCircle className="h-4 w-4" />
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </section>
 

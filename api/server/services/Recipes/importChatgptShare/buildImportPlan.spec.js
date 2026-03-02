@@ -20,12 +20,14 @@ describe('importChatgptShare/buildImportPlan', () => {
 
   it('sorts by candidate index (message order)', () => {
     const candidates = [
-      { index: 10, title: 'Later', rawText: '...' },
-      { index: 0, title: 'First', rawText: '...' },
+      { index: 10, title: 'Later', rawText: '...', recipeDate: null, userResponse: null },
+      { index: 0, title: 'First', rawText: '...', recipeDate: '2026-02-20T10:00:00.000Z', userResponse: 'Can you adapt?' },
     ];
     const plan = buildImportPlan(candidates);
     expect(plan[0].title).toBe('First');
     expect(plan[0].importIndex).toBe(0);
+    expect(plan[0].recipeDate).toBe('2026-02-20T10:00:00.000Z');
+    expect(plan[0].userResponse).toBe('Can you adapt?');
     expect(plan[1].title).toBe('Later');
     expect(plan[1].importIndex).toBe(1);
   });

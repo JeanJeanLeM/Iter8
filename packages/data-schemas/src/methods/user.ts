@@ -384,6 +384,47 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
   };
 
   /**
+   * Update a user's gamification stats (XP, level, badge counts).
+   * Use badgeCountsIncrements to add recipe counts per badge; use xp and level to set totals after milestone/level computation.
+   */
+  async function updateUserGamification(
+    userId: string,
+    patch: {
+      xp?: number;
+      level?: number;
+      /** Increments to apply per badge key (e.g. { vegetarien: 1, indien: 1 }). Merged with $inc. */
+      badgeCountsIncrements?: Record<string, number>;
+    },
+  ): Promise<IUser | null> {
+    const User = mongoose.models.User;
+    const updateOp: Record<string, unknown> = {};
+    if (patch.xp !== undefined || patch.level !== undefined) {
+      updateOp.$set = updateOp.$set || {};
+      if (patch.xp !== undefined) {
+        (updateOp.$set as Record<string, unknown>)['gamification.xp'] = patch.xp;
+      }
+      if (patch.level !== undefined) {
+        (updateOp.$set as Record<string, unknown>)['gamification.level'] = patch.level;
+      }
+    }
+    if (patch.badgeCountsIncrements && Object.keys(patch.badgeCountsIncrements).length > 0) {
+      updateOp.$inc = updateOp.$inc || {};
+      for (const [badge, delta] of Object.entries(patch.badgeCountsIncrements)) {
+        if (typeof delta === 'number' && delta !== 0) {
+          (updateOp.$inc as Record<string, number>)[`gamification.badgeCounts.${badge}`] = delta;
+        }
+      }
+    }
+    if (Object.keys(updateOp).length === 0) {
+      return (await User.findById(userId).lean()) as IUser | null;
+    }
+    return (await User.findByIdAndUpdate(userId, updateOp, {
+      new: true,
+      runValidators: true,
+    }).lean()) as IUser | null;
+  }
+
+  /**
    * Updates the plugins for a user based on the action specified (install/uninstall).
    * @param userId - The user ID whose plugins are to be updated
    * @param plugins - The current plugins array
@@ -421,6 +462,7 @@ export function createUserMethods(mongoose: typeof import('mongoose')) {
     updateUserPlugins,
     toggleUserMemories,
     updateUserPersonalization,
+    updateUserGamification,
   };
 }
 

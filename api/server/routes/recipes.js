@@ -8,12 +8,16 @@ const {
   updateRecipe,
   deleteRecipe,
   setRecipeVote,
+  getUserById,
+  updateUserGamification,
 } = require('~/models');
+const { processRecipeCreated } = require('~/server/services/Gamification/recipeAchievements');
 const getLogStores = require('~/cache/getLogStores');
 const { requireJwtAuth } = require('~/server/middleware');
 const { structureRecipeWithOpenAI } = require('~/server/services/Recipes/structureRecipeWithOpenAI');
 const { generateRecipeImageWithOpenAI } = require('~/server/services/Recipes/generateRecipeImageWithOpenAI');
 const { parseSharePage } = require('~/server/services/Recipes/importChatgptShare/parseSharePage');
+const { parseMarmitonPage } = require('~/server/services/Recipes/importChatgptShare/parseMarmitonPage');
 const { detectRecipes } = require('~/server/services/Recipes/importChatgptShare/detectRecipes');
 const { buildImportPlan } = require('~/server/services/Recipes/importChatgptShare/buildImportPlan');
 const { config: endpointConfig } = require('~/server/services/Config/EndpointService');
@@ -26,6 +30,23 @@ async function invalidateRecipesListCache(userId) {
   await cache.delete(`${userId}:default`);
 }
 
+function detectImportSource(url) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return 'invalid';
+  }
+  const host = parsed.hostname.toLowerCase();
+  if (host === 'chatgpt.com' && parsed.pathname.startsWith('/share/')) {
+    return 'chatgpt';
+  }
+  if ((host === 'marmiton.org' || host === 'www.marmiton.org') && /^\/recettes\/recette_/i.test(parsed.pathname)) {
+    return 'marmiton';
+  }
+  return 'unsupported';
+}
+
 router.use(requireJwtAuth);
 
 /**
@@ -34,55 +55,58 @@ router.use(requireJwtAuth);
  * Body: { shareUrl: string }
  */
 router.post('/import/chatgpt-share/preview', async (req, res) => {
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'E', location: 'recipes.js:preview', message: 'preview handler entry', data: { hasShareUrl: !!(req.body && req.body.shareUrl), shareUrlLen: (req.body && req.body.shareUrl) ? String(req.body.shareUrl).length : 0 }, timestamp: Date.now() }) }).catch(() => {});
-  // #endregion
   try {
     const { shareUrl } = req.body || {};
     if (!shareUrl || typeof shareUrl !== 'string') {
       return res.status(400).json({ error: 'shareUrl is required.' });
     }
-    const { title, messages } = await parseSharePage(shareUrl);
-    const candidates = detectRecipes(messages);
+    const normalizedUrl = shareUrl.trim();
+    const source = detectImportSource(normalizedUrl);
+    if (source === 'invalid' || source === 'unsupported') {
+      return res
+        .status(400)
+        .json({ error: 'Only ChatGPT share links and Marmiton recipe links are supported.' });
+    }
+
+    let title = '';
+    let candidates = [];
+    if (source === 'marmiton') {
+      const marmiton = await parseMarmitonPage(normalizedUrl);
+      const baseCandidates = [
+        {
+          index: 0,
+          title: marmiton.title,
+          rawText: marmiton.recipeText,
+          recipeDate: marmiton.recipeDate,
+          userResponse: marmiton.userResponse,
+        },
+      ];
+      title = marmiton.title;
+      candidates = baseCandidates;
+    } else {
+      const parsedShare = await parseSharePage(normalizedUrl);
+      title = parsedShare.title;
+      candidates = detectRecipes(parsedShare.messages);
+    }
+
     if (candidates.length === 0) {
       return res.status(200).json({
         title,
         candidates: [],
-        message: 'Aucune recette détectée (ingrédients en liste à puces requis).',
+        message: 'Aucune recette détectée.',
       });
     }
     const plan = buildImportPlan(candidates);
     res.status(200).json({ title, candidates: plan });
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'E', location: 'recipes.js:preview-catch', message: 'preview handler catch', data: { errorMessage: (error && error.message) || '', errorName: (error && error.name) || '' }, timestamp: Date.now() }) }).catch(() => {});
-    // #endregion
     const msg = error?.message || '';
-    const rawShareUrl = typeof req?.body?.shareUrl === 'string' ? req.body.shareUrl.trim() : '';
-    let shareHost = '';
-    let shareProtocol = '';
-    let pathStartsWithShare = false;
-    if (rawShareUrl) {
-      try {
-        const parsed = new URL(rawShareUrl);
-        shareHost = parsed.hostname || '';
-        shareProtocol = parsed.protocol || '';
-        pathStartsWithShare = parsed.pathname.startsWith('/share/');
-      } catch {
-        // Keep safe defaults for logging only
-      }
-    }
     // Treat as client error (400): validation, share-link issues, or 401 from wrong URL (e.g. pasted app URL)
     const isShareLinkError =
       /share link|URL|chatgpt|invalid url|only https|could not load|expired|not found|required\.|unexpected format|no conversation|mapping/i.test(msg) ||
       (/\b401\b/.test(msg) && /GET\s+https?:\/\//i.test(msg));
     const status = isShareLinkError ? 400 : 500;
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'G', location: 'recipes.js:preview-catch-meta', message: 'preview catch classification', data: { status, isShareLinkError, has401: /\b401\b/.test(msg), shareHost, shareProtocol, pathStartsWithShare }, timestamp: Date.now() }) }).catch(() => {});
-    // #endregion
     const { logger } = require('@librechat/data-schemas');
     logger.error('[POST /api/recipes/import/chatgpt-share/preview]', msg || '(empty error message)', error?.stack);
-    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][debug] status=${status} isShareLinkError=${isShareLinkError} shareHost=${shareHost || 'n/a'} shareProtocol=${shareProtocol || 'n/a'} pathStartsWithShare=${pathStartsWithShare} msg=${msg || '(empty)'}`);
     const bodyMessage =
       status === 400 && /\b401\b/.test(msg) && /cookiterate|api\/user/i.test(msg)
         ? 'Please use a ChatGPT share link (https://chatgpt.com/share/...). Paste the share link from ChatGPT, not a link from this site.'
@@ -137,6 +161,7 @@ router.post('/import/chatgpt-share/commit', async (req, res) => {
       });
       createdIdsByImportIndex.set(importIndex, recipe._id.toString());
       created.push(recipe);
+      await processRecipeCreated(req.user.id, recipe, { getUserById, updateUserGamification });
     }
     await invalidateRecipesListCache(req.user.id);
     res.status(201).json({ recipes: created });
@@ -187,6 +212,7 @@ router.post('/structure', async (req, res) => {
       maxStorageDays: structured.maxStorageDays,
     });
 
+    await processRecipeCreated(req.user.id, recipe, { getUserById, updateUserGamification });
     await invalidateRecipesListCache(req.user.id);
     res.status(201).json(recipe);
   } catch (error) {
@@ -231,11 +257,67 @@ router.post('/:parentId/variation', async (req, res) => {
       imageUrl: body.imageUrl,
     });
 
+    await processRecipeCreated(req.user.id, recipe, { getUserById, updateUserGamification });
     await invalidateRecipesListCache(req.user.id);
     res.status(201).json(recipe);
   } catch (error) {
     const { logger } = require('@librechat/data-schemas');
     logger.error('[POST /api/recipes/:parentId/variation]', error?.message, error?.stack);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/recipes/:id/derive
+ * Create a copy of another user's public recipe in my journal (derivation).
+ * Sets sourceRecipeId and sourceOwnerId; new recipe is owned by current user and private by default.
+ */
+router.post('/:id/derive', async (req, res) => {
+  try {
+    const sourceId = req.params.id;
+    const source = await getRecipe(req.user.id, sourceId);
+    if (!source) {
+      return res.status(404).json({ error: 'Recipe not found.' });
+    }
+    const sourceUserId = String(source.userId);
+    if (sourceUserId === req.user.id) {
+      return res.status(400).json({ error: 'Cannot derive from your own recipe. Use variation instead.' });
+    }
+    if (source.visibility !== 'public') {
+      return res.status(403).json({ error: 'Only public recipes can be derived.' });
+    }
+
+    const recipe = await createRecipe({
+      userId: req.user.id,
+      parentId: null,
+      title: source.title ?? 'Sans titre',
+      description: source.description,
+      portions: source.portions,
+      duration: source.duration,
+      ingredients: source.ingredients ?? [],
+      steps: source.steps ?? [],
+      equipment: source.equipment ?? [],
+      tags: source.tags ?? [],
+      dishType: source.dishType,
+      cuisineType: source.cuisineType ?? [],
+      diet: source.diet ?? [],
+      imageUrl: source.imageUrl,
+      images: source.images,
+      objective: source.objective,
+      emoji: source.emoji,
+      restTimeMinutes: source.restTimeMinutes,
+      maxStorageDays: source.maxStorageDays,
+      visibility: 'private',
+      sourceRecipeId: sourceId,
+      sourceOwnerId: sourceUserId,
+    });
+
+    await processRecipeCreated(req.user.id, recipe, { getUserById, updateUserGamification });
+    await invalidateRecipesListCache(req.user.id);
+    res.status(201).json(recipe);
+  } catch (error) {
+    const { logger } = require('@librechat/data-schemas');
+    logger.error('[POST /api/recipes/:id/derive]', error?.message, error?.stack);
     res.status(500).json({ error: error.message });
   }
 });
@@ -360,9 +442,11 @@ router.get('/ai-images', async (req, res) => {
 
 /**
  * GET /api/recipes
- * List recipes for the authenticated user with optional filters.
- * Query: ingredientsInclude, ingredientsExclude (array or comma-separated),
- *        dishType, cuisineType, diet (array or comma-separated), parentsOnly (default true)
+ * List recipes: mode=mine (default) or mode=explore (public roots).
+ * Query: ingredientsInclude, ingredientsExclude, dishType, cuisineType, diet,
+ *        parentsOnly (default true), parentId, ids,
+ *        mode (mine | explore), visibilityFilter (all | private | public),
+ *        includeOthersDerivedFromMine (true to include others' public recipes derived from mine).
  */
 router.get('/', async (req, res) => {
   try {
@@ -375,8 +459,17 @@ router.get('/', async (req, res) => {
     const parentsOnly = req.query.parentsOnly !== 'false';
     const parentId = req.query.parentId || undefined;
     const ids = parseArrayParam(req.query.ids);
+    const mode = req.query.mode === 'explore' ? 'explore' : 'mine';
+    const visibilityFilter =
+      req.query.visibilityFilter === 'private' || req.query.visibilityFilter === 'public'
+        ? req.query.visibilityFilter
+        : 'all';
+    const includeOthersDerivedFromMine = req.query.includeOthersDerivedFromMine === 'true';
 
     const useCache =
+      mode === 'mine' &&
+      visibilityFilter === 'all' &&
+      !includeOthersDerivedFromMine &&
       ids.length === 0 &&
       !parentId &&
       ingredientsInclude.length === 0 &&
@@ -405,6 +498,9 @@ router.get('/', async (req, res) => {
       parentsOnly,
       parentId,
       ids: ids.length > 0 ? ids : undefined,
+      mode,
+      visibilityFilter,
+      includeOthersDerivedFromMine,
     });
     const payload = { recipes };
     if (useCache) {
@@ -438,7 +534,7 @@ router.get('/:id/root', async (req, res) => {
 
 /**
  * GET /api/recipes/:id
- * Get a single recipe by id (must belong to the user).
+ * Get a single recipe by id (owner or public).
  */
 router.get('/:id', async (req, res) => {
   try {
@@ -477,7 +573,9 @@ router.post('/', async (req, res) => {
       cuisineType: body.cuisineType ?? [],
       diet: body.diet ?? [],
       imageUrl: body.imageUrl,
+      visibility: body.visibility === 'public' ? 'public' : undefined,
     });
+    await processRecipeCreated(req.user.id, recipe, { getUserById, updateUserGamification });
     await invalidateRecipesListCache(req.user.id);
     res.status(201).json(recipe);
   } catch (error) {
@@ -496,6 +594,9 @@ router.post('/:id/generate-image', async (req, res) => {
     const recipe = await getRecipe(req.user.id, id);
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found.' });
+    }
+    if (String(recipe.userId) !== req.user.id) {
+      return res.status(403).json({ error: 'Only the recipe owner can generate an image.' });
     }
     const existingImages = Array.isArray(recipe.images) && recipe.images.length > 0
       ? recipe.images
@@ -532,11 +633,16 @@ router.post('/:id/generate-image', async (req, res) => {
 
 /**
  * PUT /api/recipes/:id
- * Update a recipe (must belong to the user).
+ * Update a recipe (must belong to the user). Allows updating visibility.
  */
 router.put('/:id', async (req, res) => {
   try {
-    const recipe = await updateRecipe(req.user.id, req.params.id, req.body || {});
+    const body = req.body || {};
+    const allowed = { ...body };
+    if (allowed.visibility !== undefined && allowed.visibility !== 'private' && allowed.visibility !== 'public') {
+      delete allowed.visibility;
+    }
+    const recipe = await updateRecipe(req.user.id, req.params.id, allowed);
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found.' });
     }

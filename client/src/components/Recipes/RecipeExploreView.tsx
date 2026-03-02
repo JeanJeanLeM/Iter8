@@ -3,24 +3,23 @@ import { useSearchParams } from 'react-router-dom';
 import { useDocumentTitle, useLocalize } from '~/hooks';
 import { useRecipesQuery } from '~/data-provider';
 import { Spinner, Button, useMediaQuery } from '@librechat/client';
-import { Plus, RefreshCw, ChevronDown, ChevronUp, LayoutGrid, List, FileDown } from 'lucide-react';
+import { RefreshCw, ChevronDown, ChevronUp, LayoutGrid, List } from 'lucide-react';
 import RecipeFiltersBar from './RecipeFiltersBar';
 import RecipeGallery from './RecipeGallery';
 import RecipeList from './RecipeList';
-import NewRecipeDialog from './NewRecipeDialog';
-import ImportChatgptShareDialog from './ImportChatgptShareDialog';
 import { cn } from '~/utils';
 
 export type RecipeViewMode = 'gallery' | 'list';
 
-/** Écrans en dessous de cette largeur : filtres fermés par défaut (mobile, tablette, petit PC) */
 const FILTERS_AUTO_OPEN_MIN_WIDTH = 1024;
 
-export default function RecipeBookView() {
+/**
+ * Explore view: public root recipes from all users (read-only discovery).
+ * No create/import; cards link to detail where user can derive into their journal.
+ */
+export default function RecipeExploreView() {
   const localize = useLocalize();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [newRecipeOpen, setNewRecipeOpen] = useState(false);
-  const [importChatgptOpen, setImportChatgptOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const isLargeScreen = useMediaQuery(`(min-width: ${FILTERS_AUTO_OPEN_MIN_WIDTH}px)`);
 
@@ -41,8 +40,6 @@ export default function RecipeBookView() {
     const dishType = searchParams.get('dishType') || undefined;
     const cuisineType = searchParams.getAll('cuisineType').filter(Boolean);
     const diet = searchParams.getAll('diet').filter(Boolean);
-    const visibilityFilter = searchParams.get('visibilityFilter') || 'all';
-    const includeOthersDerivedFromMine = searchParams.get('includeOthersDerivedFromMine') === 'true';
     return {
       ingredientsInclude: ingredientsInclude.length ? ingredientsInclude : undefined,
       ingredientsExclude: ingredientsExclude.length ? ingredientsExclude : undefined,
@@ -50,17 +47,14 @@ export default function RecipeBookView() {
       cuisineType: cuisineType.length ? cuisineType : undefined,
       diet: diet.length ? diet : undefined,
       parentsOnly: true,
-      mode: 'mine' as const,
-      visibilityFilter:
-        visibilityFilter === 'private' || visibilityFilter === 'public' ? visibilityFilter : 'all',
-      includeOthersDerivedFromMine,
+      mode: 'explore' as const,
     };
   }, [searchParams]);
 
   const { data, isLoading, isFetching, refetch } = useRecipesQuery(filters);
   const recipes = data?.recipes ?? [];
 
-  useDocumentTitle(`${localize('com_ui_recipe_book')} | CookIter8`);
+  useDocumentTitle(`${localize('com_ui_recipe_explore')} | CookIter8`);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-primary">
@@ -68,7 +62,7 @@ export default function RecipeBookView() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-initial">
             <h1 className="truncate text-lg font-semibold text-text-primary">
-              {localize('com_ui_recipe_book')}
+              {localize('com_ui_recipe_explore')}
             </h1>
             <button
               type="button"
@@ -92,27 +86,6 @@ export default function RecipeBookView() {
             >
               <RefreshCw className={cn('h-4 w-4 flex-shrink-0', isFetching && 'animate-spin')} />
               <span className="hidden sm:inline">{localize('com_ui_recipe_reload')}</span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setImportChatgptOpen(true)}
-              className="flex items-center gap-1 sm:gap-1.5"
-              title={localize('com_ui_recipe_import_from_chatgpt')}
-            >
-              <FileDown className="h-4 w-4 flex-shrink-0" />
-              <span className="hidden sm:inline">{localize('com_ui_recipe_import_from_chatgpt')}</span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setNewRecipeOpen(true)}
-              className="flex items-center gap-1 sm:gap-1.5"
-            >
-              <Plus className="h-4 w-4 flex-shrink-0" />
-              <span className="hidden sm:inline">{localize('com_ui_recipe_new')}</span>
             </Button>
             <div className="flex gap-0.5 rounded-lg border border-border-medium bg-surface-primary-alt p-0.5 sm:gap-1">
               <button
@@ -148,15 +121,9 @@ export default function RecipeBookView() {
         </div>
         {filtersOpen && (
           <div className="animate-in slide-in-from-top-1 duration-200">
-            <RecipeFiltersBar showJournalScopeFilters />
+            <RecipeFiltersBar />
           </div>
         )}
-        <NewRecipeDialog open={newRecipeOpen} onOpenChange={setNewRecipeOpen} />
-        <ImportChatgptShareDialog
-          open={importChatgptOpen}
-          onOpenChange={setImportChatgptOpen}
-          onImportDone={() => refetch()}
-        />
       </div>
       <div className="flex-1 overflow-auto p-3 sm:p-4">
         {isLoading ? (

@@ -127,6 +127,10 @@ export function getUserBalance(): Promise<t.TBalanceResponse> {
   return request.get(endpoints.balance());
 }
 
+export function getGamificationStats(): Promise<t.TGamificationStats> {
+  return request.get(endpoints.gamification());
+}
+
 export const updateTokenCount = (text: string) => {
   return request.post(endpoints.tokenizer(), { arg: text });
 };

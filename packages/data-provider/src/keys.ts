@@ -52,6 +52,8 @@ export enum QueryKeys {
   banner = 'banner',
   /* Memories */
   memories = 'memories',
+  /* Gamification */
+  gamification = 'gamification',
   /* Recipes */
   recipes = 'recipes',
   recipe = 'recipe',

@@ -93,6 +93,26 @@ En pratique : ajouter **PORT** = **3080** dans les variables suffit souvent.
 
 ---
 
+## Vérification : que la version hébergée Railway fonctionne encore
+
+Pour que l’app sur Railway continue de tourner après un push ou un redéploiement :
+
+1. **Builder = Dockerfile**  
+   Dans le service → **Settings** → **Build** : **Builder** = **Dockerfile**, **Root Directory** = racine du repo. Le Dockerfile à la racine fait `npm run frontend` (build des packages + client) puis lance `npm run backend`. Ne pas utiliser un build Nixpacks sans le `railway.toml` (voir ci‑dessous).
+
+2. **Ne pas surcharger la commande de démarrage**  
+   Ne pas remplacer la commande de run par uniquement `npm run backend` : les dossiers `dist/` des packages seraient absents et tu obtiendrais « Cannot find module @librechat/api » (ou data-schemas). Laisser la commande par défaut du Dockerfile : `npm run backend` est exécuté **après** le build dans l’image.
+
+3. **Si tu utilises Nixpacks (sans Dockerfile)**  
+   Le fichier **`railway.toml`** à la racine impose **Build** = `npm run frontend`, **Start** = `npm run backend`. Il doit rester commité ; après un push, Railway refait le build puis démarre le backend. Si tu modifies le Build/Start dans l’interface Railway, assure-toi que la phase de build exécute bien `npm run frontend`.
+
+4. **Variables critiques**  
+   Vérifier que **DOMAIN_CLIENT**, **DOMAIN_SERVER**, **JWT_SECRET**, **JWT_REFRESH_SECRET** et **MONGO_URI** sont bien définis (voir section 4). Si l’URL du domaine Railway a changé, mettre à jour DOMAIN_CLIENT et DOMAIN_SERVER.
+
+En cas d’erreur « Cannot find module @librechat/... » sur Railway, voir la section **Erreur « Cannot find module @librechat/data-schemas/dist/index.cjs »** plus bas dans ce doc.
+
+---
+
 ## 7. Premier utilisateur
 
 - La première fois, tu peux créer un compte depuis l'interface (si l'inscription est activée) ou utiliser un script d'invitation / création d'utilisateur du projet (voir la doc du projet ou `config/invite-user.js`).
@@ -210,9 +230,13 @@ Si en créant un compte tu obtiens **POST …/api/auth/register 403 (Forbidden)*
 
 ---
 
-## Erreur « Cannot find module @librechat/data-schemas/dist/index.cjs »
+## Erreur « Cannot find module @librechat/data-schemas/dist/index.cjs » (ou @librechat/api)
 
-Ça arrive quand Railway **ne build pas** les packages du monorepo avant de lancer le backend. Deux solutions :
+Ça arrive quand les packages du monorepo n’ont **pas été buildés** avant de lancer le backend.
+
+**En local** (ex. `npm run backend:dev` qui plante) : exécuter une fois à la racine `npm run build:packages`, puis relancer `npm run backend:dev`. Voir [setup-step-by-step.md](setup-step-by-step.md) étape 3.
+
+**Sur Railway**, deux solutions :
 
 ### A. Utiliser le Dockerfile (recommandé)
 

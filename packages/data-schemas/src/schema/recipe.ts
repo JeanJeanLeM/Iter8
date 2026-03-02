@@ -7,6 +7,7 @@ const ingredientSchema = new Schema(
     quantity: { type: Number },
     unit: { type: String },
     note: { type: String },
+    section: { type: String },
   },
   { _id: false },
 );
@@ -63,11 +64,19 @@ const recipeSchema: Schema<IRecipe> = new Schema(
     maxStorageDays: { type: Number },
     /** Conversation where this recipe was created (chat that mentions it). */
     conversationId: { type: String, default: null },
+    /** Whether the recipe is visible to other users in Explore. Default: private. */
+    visibility: { type: String, enum: ['private', 'public'], default: 'private', index: true },
+    /** When this recipe was derived from another user's public recipe. */
+    sourceRecipeId: { type: Schema.Types.ObjectId, ref: 'Recipe', default: null },
+    /** Owner (userId) of the source recipe when derived from another user. */
+    sourceOwnerId: { type: Schema.Types.ObjectId, ref: 'User', default: null },
   },
   { timestamps: true },
 );
 
 recipeSchema.index({ userId: 1, createdAt: -1 });
 recipeSchema.index({ userId: 1, parentId: 1 });
+recipeSchema.index({ visibility: 1, parentId: 1 });
+recipeSchema.index({ sourceOwnerId: 1, visibility: 1 });
 
 export default recipeSchema;

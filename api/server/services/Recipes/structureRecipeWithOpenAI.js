@@ -20,7 +20,7 @@ Format JSON requis (identique au schéma de la base de données) :
   "portions": number (nombre de parts/personnes),
   "duration": number | { "prep": number, "cook": number, "total": number } (minutes),
   "ingredients": [
-    { "name": "string", "quantity": number, "unit": "string (g, ml, cuillère à café, etc.)", "note": "string optionnel" }
+    { "name": "string", "quantity": number, "unit": "string (g, ml, cuillère à café, etc.)", "note": "string optionnel", "section": "string optionnel" }
   ],
   "steps": [
     { "order": 1, "instruction": "string" }
@@ -33,7 +33,7 @@ Format JSON requis (identique au schéma de la base de données) :
 
 Règles :
 - title est obligatoire.
-- ingredients : name obligatoire, quantity et unit si connus. Convertir "1 œuf" en quantity: 1 sans unit, "250 g farine" en quantity: 250, unit: "g".
+- ingredients : name obligatoire, quantity et unit si connus. Convertir "1 œuf" en quantity: 1 sans unit, "250 g farine" en quantity: 250, unit: "g". Si la recette a plusieurs sous-parties (ex: pâte, mélange cannelle, glaçage), ajoute pour chaque ingrédient un champ "section" avec le libellé exact (ex: "Pour la pâte :", "Pour le mélange cannelle :", "Pour le glaçage :"). Si la recette n'a qu'une seule liste d'ingrédients, omets "section".
 - duration : si tu as "Préparation 15 min, Cuisson 10 min" → { "prep": 15, "cook": 10, "total": 25 }. Si seulement un total → number.
 - steps : order 1-based, instruction claire et complète.
 - equipment : liste du matériel (four, saladier, etc.).
@@ -120,12 +120,16 @@ function normalizeForDb(raw) {
 
   recipe.ingredients = recipe.ingredients
     .filter((i) => i && typeof i.name === 'string')
-    .map((i) => ({
-      name: String(i.name).trim(),
-      quantity: typeof i.quantity === 'number' ? i.quantity : undefined,
-      unit: i.unit != null ? String(i.unit).trim() : undefined,
-      note: i.note != null ? String(i.note).trim() : undefined,
-    }));
+    .map((i) => {
+      const sectionVal = i.section != null ? String(i.section).trim() : '';
+      return {
+        name: String(i.name).trim(),
+        quantity: typeof i.quantity === 'number' ? i.quantity : undefined,
+        unit: i.unit != null ? String(i.unit).trim() : undefined,
+        note: i.note != null ? String(i.note).trim() : undefined,
+        section: sectionVal || undefined,
+      };
+    });
 
   recipe.steps = recipe.steps
     .filter((s) => s && typeof s.instruction === 'string')

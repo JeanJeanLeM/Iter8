@@ -213,6 +213,8 @@ export type TRecipeIngredient = {
   quantity?: number;
   unit?: string;
   note?: string;
+  /** Section label for multi-part recipes (e.g. "Pour la pâte", "Pour le glaçage"). */
+  section?: string;
 };
 export type TRecipeStep = {
   order: number;
@@ -243,6 +245,8 @@ export type TSelectedRecipeForVariation = {
   recipeData?: TRecipeDataForContext | null;
 };
 
+export type RecipeVisibility = 'private' | 'public';
+
 export type TRecipe = {
   _id: string;
   userId: string;
@@ -265,6 +269,12 @@ export type TRecipe = {
   images?: Array<{ url: string; source: 'ai' | 'upload' }>;
   /** Conversation where this recipe was created (chat that mentions it). */
   conversationId?: string | null;
+  /** Whether the recipe is visible in Explore. Default: private. */
+  visibility?: RecipeVisibility;
+  /** When derived from another user's public recipe. */
+  sourceRecipeId?: string | null;
+  /** Owner of the source recipe when derived from another user. */
+  sourceOwnerId?: string | null;
   variationCount?: number;
   score?: number;
   userVote?: number;
@@ -282,6 +292,12 @@ export type RecipesListParams = {
   parentId?: string | null;
   /** Fetch only recipes with these IDs */
   ids?: string[];
+  /** Listing mode: mine (default) or explore (public roots from all users). */
+  mode?: 'mine' | 'explore';
+  /** For mode=mine: filter by visibility (all = no filter). */
+  visibilityFilter?: 'all' | RecipeVisibility;
+  /** For mode=mine: include public recipes from others derived from my recipes. */
+  includeOthersDerivedFromMine?: boolean;
 };
 
 export type RecipesListResponse = {

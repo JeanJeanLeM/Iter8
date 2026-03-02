@@ -29,24 +29,53 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
       parentsOnly = true,
       parentId: parentIdParam,
       ids: idsParam,
+      mode = 'mine',
+      visibilityFilter = 'all',
+      includeOthersDerivedFromMine = false,
     } = params;
 
-    const match: Record<string, unknown> = { userId: new Types.ObjectId(userId as string) };
-    if (idsParam != null && Array.isArray(idsParam) && idsParam.length > 0) {
-      match._id = { $in: idsParam.map((id) => new Types.ObjectId(id as string)) };
-    } else if (parentIdParam != null) {
-      match.parentId = new Types.ObjectId(parentIdParam as string);
-    } else if (parentsOnly) {
-      match.parentId = null;
-    }
-    if (dishType) {
-      match.dishType = dishType;
-    }
-    if (cuisineType.length > 0) {
-      match.cuisineType = { $in: cuisineType };
-    }
-    if (diet.length > 0) {
-      match.diet = { $in: diet };
+    const userIdObj = new Types.ObjectId(userId as string);
+
+    let match: Record<string, unknown>;
+    if (mode === 'explore') {
+      match = { visibility: 'public', parentId: null };
+      if (dishType) match.dishType = dishType;
+      if (cuisineType.length > 0) match.cuisineType = { $in: cuisineType };
+      if (diet.length > 0) match.diet = { $in: diet };
+    } else {
+      const mineMatch: Record<string, unknown> = { userId: userIdObj };
+      if (idsParam != null && Array.isArray(idsParam) && idsParam.length > 0) {
+        mineMatch._id = { $in: idsParam.map((id) => new Types.ObjectId(id as string)) };
+      } else if (parentIdParam != null) {
+        mineMatch.parentId = new Types.ObjectId(parentIdParam as string);
+      } else if (parentsOnly) {
+        mineMatch.parentId = null;
+      }
+      if (visibilityFilter === 'private') {
+        mineMatch.$or = [
+          { visibility: 'private' },
+          { visibility: { $exists: false } },
+        ];
+      } else if (visibilityFilter === 'public') {
+        mineMatch.visibility = 'public';
+      }
+      if (dishType) mineMatch.dishType = dishType;
+      if (cuisineType.length > 0) mineMatch.cuisineType = { $in: cuisineType };
+      if (diet.length > 0) mineMatch.diet = { $in: diet };
+
+      if (includeOthersDerivedFromMine) {
+        const othersDerived: Record<string, unknown> = {
+          sourceOwnerId: userIdObj,
+          visibility: 'public',
+          userId: { $ne: userIdObj },
+        };
+        if (dishType) othersDerived.dishType = dishType;
+        if (cuisineType.length > 0) othersDerived.cuisineType = { $in: cuisineType };
+        if (diet.length > 0) othersDerived.diet = { $in: diet };
+        match = { $or: [mineMatch, othersDerived] };
+      } else {
+        match = mineMatch;
+      }
     }
 
     const pipeline: Record<string, unknown>[] = [{ $match: match }];
@@ -71,7 +100,6 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     }
 
     pipeline.push({ $sort: { createdAt: -1 } });
-    const userIdObj = new Types.ObjectId(userId as string);
     pipeline.push(
       {
         $lookup: {
@@ -140,21 +168,21 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     userId: string | Types.ObjectId,
     recipeId: string | Types.ObjectId,
   ): Promise<IRecipeLean | null> {
+    const userIdObj = new Types.ObjectId(userId as string);
     let current = await Recipe.findOne({
       _id: new Types.ObjectId(recipeId as string),
-      userId: new Types.ObjectId(userId as string),
     })
       .lean()
       .exec();
     if (!current) return null;
+    const canAccess = (r: { userId?: Types.ObjectId; visibility?: string }) =>
+      r.userId?.equals(userIdObj) || r.visibility === 'public';
+    if (!canAccess(current)) return null;
     while (current?.parentId) {
-      const parent = await Recipe.findOne({
-        _id: current.parentId,
-        userId: new Types.ObjectId(userId as string),
-      })
+      const parent = await Recipe.findOne({ _id: current.parentId })
         .lean()
         .exec();
-      if (!parent) break;
+      if (!parent || !canAccess(parent as IRecipeLean)) break;
       current = parent as IRecipeLean & { parentId?: Types.ObjectId };
     }
     if (!current) return null;
@@ -181,11 +209,13 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
   ): Promise<IRecipeLean | null> {
     const recipe = await Recipe.findOne({
       _id: new Types.ObjectId(recipeId as string),
-      userId: new Types.ObjectId(userId as string),
     })
       .lean()
       .exec();
     if (!recipe) return null;
+    const isOwner = recipe.userId.toString() === (userId as string).toString();
+    const isPublic = recipe.visibility === 'public';
+    if (!isOwner && !isPublic) return null;
 
     const variationCount = await Recipe.countDocuments({
       parentId: recipe._id,
@@ -226,17 +256,23 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
     restTimeMinutes?: number;
     maxStorageDays?: number;
     conversationId?: string | null;
+    visibility?: 'private' | 'public';
+    sourceRecipeId?: string | Types.ObjectId | null;
+    sourceOwnerId?: string | Types.ObjectId | null;
   }): Promise<IRecipe> {
     const doc = await Recipe.create({
       ...data,
       userId: new Types.ObjectId(data.userId as string),
       parentId: data.parentId ? new Types.ObjectId(data.parentId as string) : null,
+      sourceRecipeId: data.sourceRecipeId ? new Types.ObjectId(data.sourceRecipeId as string) : null,
+      sourceOwnerId: data.sourceOwnerId ? new Types.ObjectId(data.sourceOwnerId as string) : null,
       ingredients: data.ingredients ?? [],
       steps: data.steps ?? [],
       equipment: data.equipment ?? [],
       tags: data.tags ?? [],
       cuisineType: data.cuisineType ?? [],
       diet: data.diet ?? [],
+      visibility: data.visibility ?? 'private',
     });
     return doc as IRecipe;
   }
@@ -264,6 +300,7 @@ export function createRecipeMethods(mongoose: typeof import('mongoose')) {
       parentId: string | Types.ObjectId | null;
       restTimeMinutes?: number;
       maxStorageDays?: number;
+      visibility: 'private' | 'public';
     }>,
   ): Promise<IRecipe | null> {
     const updated = await Recipe.findOneAndUpdate(

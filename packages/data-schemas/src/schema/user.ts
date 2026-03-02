@@ -208,6 +208,21 @@ const userSchema = new Schema<IUser>(
       type: String,
       sparse: true,
     },
+    /** Recipe gamification: XP, level, and recipe count per badge (tags). Only new recipes count. */
+    gamification: {
+      type: {
+        /** Total experience points from milestone rewards */
+        xp: { type: Number, default: 0 },
+        /** Current level derived from XP */
+        level: { type: Number, default: 1 },
+        /** Recipe count per badge key (e.g. "vegetarien" -> 3). Keys are normalized recipe tags. */
+        badgeCounts: {
+          type: Schema.Types.Mixed,
+          default: () => ({}),
+        },
+      },
+      default: () => ({}),
+    },
   },
   { timestamps: true },
 );

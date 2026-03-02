@@ -27,6 +27,7 @@ const keys = require('./keys');
 const user = require('./user');
 const mcp = require('./mcp');
 const recipes = require('./recipes');
+const gamification = require('./gamification');
 const journal = require('./journal');
 const shoppingList = require('./shoppingList');
 const mealPlanner = require('./mealPlanner');
@@ -62,6 +63,7 @@ module.exports = {
   staticRoute,
   accessPermissions,
   recipes,
+  gamification,
   journal,
   shoppingList,
   mealPlanner,

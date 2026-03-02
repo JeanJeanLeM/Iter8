@@ -103,6 +103,13 @@ export default function ImportChatgptShareDialog({
       .sort((a, b) => a.importIndex - b.importIndex);
   }, [previewData, selected]);
 
+  const formatRecipeDate = (value: string | null) => {
+    if (!value) return localize('com_ui_recipe_import_date_unknown');
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return localize('com_ui_recipe_import_date_unknown');
+    return d.toLocaleString();
+  };
+
   const handleCommit = () => {
     if (selectedList.length === 0) {
       showToast({ message: localize('com_ui_recipe_import_select_at_least_one') });
@@ -149,7 +156,7 @@ export default function ImportChatgptShareDialog({
                 type="url"
                 value={shareUrl}
                 onChange={(e) => setShareUrl(e.target.value)}
-                placeholder="https://chatgpt.com/share/..."
+                placeholder={localize('com_ui_recipe_import_url_placeholder')}
                 className="flex-1 rounded-lg border border-border-medium bg-surface-primary-alt px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
                 aria-label={localize('com_ui_recipe_import_url_placeholder')}
               />
@@ -195,6 +202,15 @@ export default function ImportChatgptShareDialog({
                       />
                       <div className="min-w-0 flex-1">
                         <div className="font-medium text-text-primary">{c.title}</div>
+                        <div className="mt-1 text-xs text-text-secondary">
+                          {localize('com_ui_recipe_import_recipe_date')}: {formatRecipeDate(c.recipeDate)}
+                        </div>
+                        <div className="mt-1 text-xs text-text-secondary">
+                          {localize('com_ui_recipe_import_user_response')}:
+                        </div>
+                        <div className="mt-1 rounded border border-border-medium bg-surface-primary px-2 py-1 text-xs text-text-secondary break-words">
+                          {c.userResponse || localize('com_ui_recipe_import_user_response_none')}
+                        </div>
                         <div className="mt-1 flex flex-wrap items-center gap-2">
                           <span className="text-xs text-text-secondary">
                             {localize('com_ui_recipe_import_parent')}:

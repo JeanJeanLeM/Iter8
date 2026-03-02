@@ -377,6 +377,9 @@ export const memories = () => `${BASE_URL}/api/memories`;
 export const memory = (key: string) => `${memories()}/${encodeURIComponent(key)}`;
 export const memoryPreferences = () => `${memories()}/preferences`;
 
+/* Gamification (recipe achievements, XP, level) */
+export const gamification = () => `${BASE_URL}/api/gamification`;
+
 /* Recipes */
 export const recipes = (params?: q.RecipesListParams) =>
   `${BASE_URL}/api/recipes${params ? buildQuery(params as Record<string, unknown>) : ''}`;

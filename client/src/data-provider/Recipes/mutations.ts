@@ -12,6 +12,7 @@ import {
   generateRecipeImage as generateRecipeImageApi,
   previewChatgptShareImport as previewChatgptShareImportApi,
   commitChatgptShareImport as commitChatgptShareImportApi,
+  deriveRecipeFromPublic as deriveRecipeFromPublicApi,
 } from './api';
 import type {
   ChatgptSharePreviewResponse,
@@ -29,6 +30,7 @@ export const useCreateRecipeMutation = (
       ...options,
       onSuccess: (...args) => {
         queryClient.invalidateQueries([QueryKeys.recipes]);
+        queryClient.invalidateQueries([QueryKeys.gamification]);
         options?.onSuccess?.(...args);
       },
     },
@@ -51,6 +53,7 @@ export const useCreateRecipeVariationMutation = (
       ...options,
       onSuccess: (...args) => {
         queryClient.invalidateQueries([QueryKeys.recipes]);
+        queryClient.invalidateQueries([QueryKeys.gamification]);
         options?.onSuccess?.(...args);
       },
     },
@@ -134,6 +137,22 @@ export const useCommitChatgptShareImportMutation = (
     ...options,
     onSuccess: (...args) => {
       queryClient.invalidateQueries([QueryKeys.recipes]);
+      queryClient.invalidateQueries([QueryKeys.gamification]);
+      options?.onSuccess?.(...args);
+    },
+  });
+};
+
+/** Derive a copy of another user's public recipe into my journal. */
+export const useDeriveRecipeMutation = (
+  options?: UseMutationOptions<TRecipe, Error, string>,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation((recipeId: string) => deriveRecipeFromPublicApi(recipeId), {
+    ...options,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries([QueryKeys.recipes]);
+      queryClient.invalidateQueries([QueryKeys.gamification]);
       options?.onSuccess?.(...args);
     },
   });

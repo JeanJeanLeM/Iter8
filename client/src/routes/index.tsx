@@ -21,11 +21,13 @@ import ChatRoute from './ChatRoute';
 import Search from './Search';
 import Root from './Root';
 import RecipeBookView from '~/components/Recipes/RecipeBookView';
+import RecipeExploreView from '~/components/Recipes/RecipeExploreView';
 import RecipeDetailView from '~/components/Recipes/RecipeDetailView';
 import RecipeStepByStepView from '~/components/Recipes/RecipeStepByStepView';
 import { JournalView } from '~/components/Journal';
 import { ShoppingListView } from '~/components/ShoppingList';
 import { IngredientGalleryView } from '~/components/Ingredients';
+import PalaisDesSuccesView from '~/components/PalaisDesSucces/PalaisDesSuccesView';
 import FAQView from '~/components/FAQ/FAQView';
 
 const AuthLayout = () => (
@@ -147,6 +149,10 @@ export const router = createBrowserRouter(
                   ),
                 },
                 {
+                  path: 'r/explore',
+                  element: <RecipeExploreView />,
+                },
+                {
                   path: 'r/:id/step',
                   element: <RecipeStepByStepView />,
                 },
@@ -169,6 +175,10 @@ export const router = createBrowserRouter(
                 {
                   path: 'ingredients',
                   element: <IngredientGalleryView />,
+                },
+                {
+                  path: 'palais-des-succes',
+                  element: <PalaisDesSuccesView />,
                 },
                 {
                   path: 'faq',

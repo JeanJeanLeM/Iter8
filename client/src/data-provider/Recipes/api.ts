@@ -83,6 +83,14 @@ export function deleteRecipe(id: string): Promise<{ deleted: boolean }> {
   return request.delete(`${apiBaseUrl()}/api/recipes/${encodeURIComponent(id)}`);
 }
 
+/**
+ * Create a copy of another user's public recipe in my journal (derivation).
+ * New recipe is owned by current user and private by default.
+ */
+export function deriveRecipeFromPublic(recipeId: string): Promise<TRecipe> {
+  return request.post(`${apiBaseUrl()}/api/recipes/${encodeURIComponent(recipeId)}/derive`);
+}
+
 export function setRecipeVote(id: string, value: 1 | -1): Promise<RecipeVoteResponse> {
   return request.post(`${apiBaseUrl()}/api/recipes/${encodeURIComponent(id)}/vote`, { value });
 }
@@ -123,6 +131,8 @@ export interface ChatgptSharePreviewCandidate {
   index: number;
   title: string;
   rawText: string;
+  recipeDate: string | null;
+  userResponse: string | null;
   suggestedParentIndex: number | null;
 }
 

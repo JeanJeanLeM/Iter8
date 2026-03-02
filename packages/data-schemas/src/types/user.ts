@@ -55,6 +55,13 @@ export interface IUser extends Document {
   updatedAt?: Date;
   /** Field for external source identification (for consistency with TPrincipal schema) */
   idOnTheSource?: string;
+  /** Recipe gamification: XP, level, recipe count per badge. Only new recipes counted. */
+  gamification?: {
+    xp?: number;
+    level?: number;
+    /** Recipe count per badge key (normalized recipe tag) */
+    badgeCounts?: Record<string, number>;
+  };
 }
 
 export interface BalanceConfig {
@@ -93,6 +100,11 @@ export interface UpdateUserRequest {
     equipment?: string[];
     recipeImageStyle?: string;
     recipeImageBackground?: string;
+  };
+  gamification?: {
+    xp?: number;
+    level?: number;
+    badgeCounts?: Record<string, number>;
   };
 }
 

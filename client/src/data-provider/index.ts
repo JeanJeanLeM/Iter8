@@ -4,6 +4,8 @@ export * from './Endpoints';
 export * from './Files';
 /* Memories */
 export * from './Memories';
+/* Gamification */
+export * from './Gamification';
 /* Recipes */
 export * from './Recipes';
 /* Journal */

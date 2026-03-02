@@ -3,7 +3,6 @@
  * Only allows https://chatgpt.com/share/<id>. Used for recipe import preview.
  */
 const axios = require('axios');
-const { logger } = require('@librechat/data-schemas');
 
 const ALLOWED_ORIGIN = 'https://chatgpt.com';
 const SHARE_PATH_PREFIX = '/share/';
@@ -212,13 +211,37 @@ function collectTextFromNode(node, arr, visited) {
 }
 
 /**
- * Check if a node (by index) represents an assistant message and return its text content.
+ * Normalize various timestamp formats to ISO string.
+ * @param {unknown} value
+ * @returns {string | null}
+ */
+function normalizeTimestamp(value) {
+  if (value == null) return null;
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const millis = value < 1e12 ? value * 1000 : value;
+    const d = new Date(millis);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    if (/^\d+(\.\d+)?$/.test(trimmed)) {
+      return normalizeTimestamp(Number(trimmed));
+    }
+    const d = new Date(trimmed);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+  return null;
+}
+
+/**
+ * Check if a node (by index) represents a user/assistant message and return its text.
  * @param {Array} arr
  * @param {number} nodeIndex
  * @param {Set<number>} visited
- * @returns {{ role: string; text: string } | null}
+ * @returns {{ role: 'assistant' | 'user'; text: string; createdAt: string | null; nodeIndex: number } | null}
  */
-function getMessageRoleAndText(arr, nodeIndex, visited) {
+function getMessageFromNode(arr, nodeIndex, visited) {
   if (visited.has(nodeIndex)) return null;
   visited.add(nodeIndex);
   const node = getNode(arr, nodeIndex);
@@ -237,7 +260,8 @@ function getMessageRoleAndText(arr, nodeIndex, visited) {
     }
     if (k === 'content' && typeof v === 'number') contentIndex = v;
   }
-  if (!role || role !== 'assistant') return null;
+  const normalizedRole = typeof role === 'string' ? role.toLowerCase() : '';
+  if (normalizedRole !== 'assistant' && normalizedRole !== 'user') return null;
   if (contentIndex == null) return null;
   const contentNode = getNode(arr, contentIndex);
   if (!contentNode) return null;
@@ -255,14 +279,28 @@ function getMessageRoleAndText(arr, nodeIndex, visited) {
     }
   }
   const text = texts.join('\n').trim();
-  return text ? { role: 'assistant', text } : null;
+  if (!text) return null;
+
+  const createTimeRaw =
+    obj.create_time ??
+    obj.createTime ??
+    obj.created_at ??
+    obj.createdAt ??
+    obj.timestamp ??
+    obj.time;
+  const resolvedCreateTime =
+    typeof createTimeRaw === 'number' && Number.isInteger(createTimeRaw) && createTimeRaw >= 0 && createTimeRaw < arr.length
+      ? getNode(arr, createTimeRaw)
+      : createTimeRaw;
+  const createdAt = normalizeTimestamp(resolvedCreateTime);
+  return { role: normalizedRole, text, createdAt, nodeIndex };
 }
 
 /**
- * From mapping object (id -> index), collect all assistant message texts in order.
+ * From mapping object (id -> index), collect user/assistant messages in order.
  * @param {Array} arr
  * @param {Record<string, number>} mapping
- * @returns {{ title: string; messages: Array<{ role: string; content: string }> }}
+ * @returns {Array<{ role: 'assistant' | 'user'; content: string; createdAt: string | null }>}
  */
 function extractMessagesFromMapping(arr, mapping) {
   const visited = new Set();
@@ -270,35 +308,45 @@ function extractMessagesFromMapping(arr, mapping) {
   const seenText = new Set();
   const indices = Object.values(mapping).filter((v) => typeof v === 'number').sort((a, b) => a - b);
   for (const idx of indices) {
-    const msg = getMessageRoleAndText(arr, idx, visited);
-    if (msg && msg.text && !seenText.has(msg.text)) {
-      seenText.add(msg.text);
-      messages.push({ role: msg.role, content: msg.text });
+    const msg = getMessageFromNode(arr, idx, visited);
+    if (msg && msg.text) {
+      const dedupKey = `${msg.role}|${msg.text}`;
+      if (seenText.has(dedupKey)) continue;
+      seenText.add(dedupKey);
+      messages.push({ role: msg.role, content: msg.text, createdAt: msg.createdAt });
     }
   }
   return messages;
 }
 
 /**
- * Fetch ChatGPT share page and extract conversation title + assistant message texts.
+ * Fallback when mapping is missing: scan full serialized array and recover message nodes.
+ * @param {Array} arr
+ * @returns {Array<{ role: 'assistant' | 'user'; content: string; createdAt: string | null }>}
+ */
+function extractMessagesFromArrayScan(arr) {
+  const collected = [];
+  const seen = new Set();
+  for (let i = 0; i < arr.length; i += 1) {
+    const msg = getMessageFromNode(arr, i, new Set());
+    if (!msg || !msg.text) continue;
+    const dedupKey = `${msg.role}|${msg.text}`;
+    if (seen.has(dedupKey)) continue;
+    seen.add(dedupKey);
+    collected.push(msg);
+  }
+  collected.sort((a, b) => a.nodeIndex - b.nodeIndex);
+  return collected.map((m) => ({ role: m.role, content: m.text, createdAt: m.createdAt }));
+}
+
+/**
+ * Fetch ChatGPT share page and extract conversation title + message timeline.
  * @param {string} shareUrl - https://chatgpt.com/share/<id>
- * @returns {Promise<{ title: string; messages: Array<{ role: string; content: string }> }>}
+ * @returns {Promise<{ title: string; messages: Array<{ role: 'assistant' | 'user'; content: string; createdAt: string | null; inferredUserResponse?: string | null }> }>}
  */
 async function parseSharePage(shareUrl) {
-  let parsedForLog = null;
-  try {
-    parsedForLog = new URL(typeof shareUrl === 'string' ? shareUrl.trim() : '');
-  } catch {
-    parsedForLog = null;
-  }
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'F', location: 'parseSharePage.js:entry', message: 'parseSharePage entry metadata', data: { shareUrlLen: typeof shareUrl === 'string' ? shareUrl.trim().length : 0, protocol: parsedForLog?.protocol || '', hostname: parsedForLog?.hostname || '', pathStartsWithShare: !!parsedForLog?.pathname?.startsWith('/share/') }, timestamp: Date.now() }) }).catch(() => {});
-  // #endregion
   const validation = validateShareUrl(shareUrl);
   if (!validation.valid) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'F', location: 'parseSharePage.js:validation-fail', message: 'share URL validation failed', data: { validationError: validation.error || '', protocol: parsedForLog?.protocol || '', hostname: parsedForLog?.hostname || '', pathStartsWithShare: !!parsedForLog?.pathname?.startsWith('/share/') }, timestamp: Date.now() }) }).catch(() => {});
-    // #endregion
     throw new Error(validation.error);
   }
   const url = shareUrl.trim();
@@ -311,13 +359,7 @@ async function parseSharePage(shareUrl) {
       validateStatus: (status) => status === 200,
     });
     html = res.data;
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'A', location: 'parseSharePage.js:fetch', message: 'after fetch', data: { status: res.status, htmlLength: (html && typeof html === 'string') ? html.length : 0 }, timestamp: Date.now() }) }).catch(() => {});
-    // #endregion
   } catch (err) {
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'A', location: 'parseSharePage.js:fetch-catch', message: 'fetch error', data: { isAxios: !!axios.isAxiosError(err), code: (err && err.code) || '', status: (err && err.response && err.response.status) || '', errMessage: (err && err.message) ? String(err.message).slice(0, 200) : '' }, timestamp: Date.now() }) }).catch(() => {});
-    // #endregion
     if (axios.isAxiosError(err)) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         throw new Error('Share link request timed out.');
@@ -332,15 +374,11 @@ async function parseSharePage(shareUrl) {
   }
   const scriptMatch = html.match(/<script[^>]*nonce="[^"]*"[^>]*>([\s\S]*?)<\/script>/gi);
   let payloadString = null;
-  let matchedScriptCount = 0;
-  let enqueueChunkCount = 0;
   const payloadCandidates = [];
   for (const tag of scriptMatch || []) {
     if (tag.includes('serverResponse') && tag.includes('mapping')) {
-      matchedScriptCount += 1;
       const inner = tag.replace(/^<script[^>]*>/, '').replace(/<\/script>$/, '');
       const chunks = extractEnqueuePayloads(inner);
-      enqueueChunkCount += chunks.length;
       if (chunks.length > 0) {
         const joined = chunks.join('');
         if (joined) payloadCandidates.push(joined);
@@ -360,58 +398,38 @@ async function parseSharePage(shareUrl) {
     ),
   ].sort((a, b) => b.length - a.length);
   payloadString = uniquePayloadCandidates[0] || null;
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'B', location: 'parseSharePage.js:payload', message: 'after extract payload', data: { hasPayloadString: !!payloadString, payloadStringLen: payloadString ? payloadString.length : 0, payloadCandidateCount: uniquePayloadCandidates.length, enqueueChunkCount, scriptMatchCount: (scriptMatch && scriptMatch.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
-  // #endregion
-  const trimmedPayload = payloadString ? payloadString.trim() : '';
   let arr;
-  let parseStrategy = 'none';
   for (let i = 0; i < uniquePayloadCandidates.length; i += 1) {
     const parsed = parseSerializedConversationArray(uniquePayloadCandidates[i]);
     if (parsed) {
       arr = parsed.arr;
       payloadString = uniquePayloadCandidates[i];
-      parseStrategy = `${parsed.strategy}:candidate-${i}`;
       break;
     }
   }
-  // #region agent log
-  logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] scriptTotal=${(scriptMatch && scriptMatch.length) || 0} matchedScripts=${matchedScriptCount} enqueueChunkCount=${enqueueChunkCount} payloadCandidates=${uniquePayloadCandidates.length} payloadLen=${payloadString ? payloadString.length : 0} startsWithBracket=${trimmedPayload.startsWith('[')} startsWithBrace=${trimmedPayload.startsWith('{')} startsWithQuote=${trimmedPayload.startsWith('"')} endsWithBracket=${trimmedPayload.endsWith(']')} endsWithBrace=${trimmedPayload.endsWith('}')} parseStrategy=${parseStrategy}`);
-  // #endregion
   if (!payloadString) {
     throw new Error('Could not read conversation data from share link.');
   }
   if (!arr) {
-    const firstCandidate = uniquePayloadCandidates[0] || '';
-    const firstCandidateTrimmed = firstCandidate.trim();
-    // #region agent log
-    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] json-parse-failed candidateCount=${uniquePayloadCandidates.length} firstCandidateLen=${firstCandidate.length} firstChar=${firstCandidateTrimmed.slice(0, 1) || 'n/a'} secondChar=${firstCandidateTrimmed.slice(1, 2) || 'n/a'} hasEscapedQuote=${firstCandidate.includes('\\"')} hasDoubleSlash=${firstCandidate.includes('\\\\')} hasNewline=${firstCandidate.includes('\n')}`);
-    // #endregion
     throw new Error('Invalid conversation data from share link.');
   }
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'C', location: 'parseSharePage.js:parse', message: 'after JSON.parse', data: { isArray: Array.isArray(arr), arrLength: Array.isArray(arr) ? arr.length : 0 }, timestamp: Date.now() }) }).catch(() => {});
-  // #endregion
   if (!Array.isArray(arr)) {
     throw new Error('Unexpected conversation format.');
   }
   const { title, mapping } = findTitleAndMapping(arr);
-  let messages =
-    mapping && typeof mapping === 'object' ? extractMessagesFromMapping(arr, mapping) : [];
+  let messages = mapping && typeof mapping === 'object' ? extractMessagesFromMapping(arr, mapping) : [];
+  if (messages.length === 0) {
+    messages = extractMessagesFromArrayScan(arr);
+  }
   if (messages.length === 0 && payloadString.length > 100) {
     messages = extractMessagesFromPayloadFallback(payloadString);
   }
-  if (!mapping || typeof mapping !== 'object') {
-    // #region agent log
-    logger.error(`[POST /api/recipes/import/chatgpt-share/preview][parse-debug] mapping-missing fallbackMessages=${messages.length} titleLen=${(title && title.length) || 0}`);
-    // #endregion
-    if (messages.length === 0) {
-      throw new Error('No conversation mapping in share link.');
-    }
+  const hasAssistantMessage = messages.some(
+    (m) => m?.role === 'assistant' && typeof m?.content === 'string' && m.content.trim().length > 0,
+  );
+  if (!hasAssistantMessage) {
+    throw new Error('No assistant messages in share link.');
   }
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/62b56a56-4067-4871-bca4-ada532eb8bb4', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '4d0408' }, body: JSON.stringify({ sessionId: '4d0408', runId: 'preview', hypothesisId: 'D', location: 'parseSharePage.js:exit', message: 'parseSharePage return', data: { messagesLength: messages.length, titleLen: (title && title.length) || 0 }, timestamp: Date.now() }) }).catch(() => {});
-  // #endregion
   return {
     title: title || 'Shared conversation',
     messages,
@@ -421,7 +439,7 @@ async function parseSharePage(shareUrl) {
 /**
  * Fallback: extract long quoted strings that look like recipe content (contain ingredients).
  * @param {string} payloadString
- * @returns {Array<{ role: string; content: string }>}
+ * @returns {Array<{ role: 'assistant'; content: string; createdAt: string | null; inferredUserResponse: string | null }>}
  */
 function extractMessagesFromPayloadFallback(payloadString) {
   const messages = [];
@@ -431,10 +449,69 @@ function extractMessagesFromPayloadFallback(payloadString) {
     const raw = m[0];
     const unescaped = raw.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
     if (unescaped.length > 80) {
-      messages.push({ role: 'assistant', content: unescaped });
+      messages.push({
+        role: 'assistant',
+        content: unescaped,
+        createdAt: inferFallbackTimestamp(payloadString, m.index),
+        inferredUserResponse: inferFallbackUserResponse(payloadString, m.index),
+      });
     }
   }
   return messages;
+}
+
+/**
+ * Try to infer a nearby timestamp around a fallback match.
+ * @param {string} payloadString
+ * @param {number} matchIndex
+ * @returns {string | null}
+ */
+function inferFallbackTimestamp(payloadString, matchIndex) {
+  const windowStart = Math.max(0, matchIndex - 3000);
+  const window = payloadString.slice(windowStart, matchIndex + 250);
+  const regex =
+    /(?:create[_-]?time|created[_-]?at|timestamp)\s*"?\s*[:=]\s*"?(\d{10,13}(?:\.\d+)?|20\d{2}-\d{2}-\d{2}T[^"\\\s,}]+)/gi;
+  const matches = [];
+  let m;
+  while ((m = regex.exec(window)) !== null) {
+    if (m[1]) matches.push(m[1]);
+  }
+  if (matches.length > 0) {
+    return normalizeTimestamp(matches[matches.length - 1]);
+  }
+  // Last-resort fallback: grab nearest 10-13 digit number near the message block.
+  const generic = window.match(/\b\d{10,13}\b/g);
+  if (!generic || generic.length === 0) return null;
+  return normalizeTimestamp(generic[generic.length - 1]);
+}
+
+/**
+ * Try to infer previous user response text around a fallback match.
+ * @param {string} payloadString
+ * @param {number} matchIndex
+ * @returns {string | null}
+ */
+function inferFallbackUserResponse(payloadString, matchIndex) {
+  const windowStart = Math.max(0, matchIndex - 5000);
+  const window = payloadString.slice(windowStart, matchIndex);
+  const regex = /"((?:[^"\\]|\\.){12,260})"/g;
+  const candidates = [];
+  let m;
+  while ((m = regex.exec(window)) !== null) {
+    const raw = m[1];
+    const unescaped = raw.replace(/\\"/g, '"').replace(/\\\\/g, '\\').replace(/\s+/g, ' ').trim();
+    if (!unescaped) continue;
+    candidates.push(unescaped);
+  }
+  for (let i = candidates.length - 1; i >= 0; i -= 1) {
+    const text = candidates[i];
+    if (/\bingr[eé]dients?\b/i.test(text)) continue;
+    if (text.length < 12) continue;
+    if (/\?|plus|sans|avec|modifi|change|version|moelleux|cuisson|temps|can you|please|make/i.test(text)) {
+      return text.length > 280 ? `${text.slice(0, 280)}…` : text;
+    }
+  }
+  return null;
 }
 
 module.exports = {

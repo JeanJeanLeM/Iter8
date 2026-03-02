@@ -10,7 +10,7 @@ import {
   startTransition,
 } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, NotebookPen, ShoppingCart, CalendarDays, LayoutGrid } from 'lucide-react';
+import { BookOpen, Compass, NotebookPen, ShoppingCart, CalendarDays, LayoutGrid, Trophy } from 'lucide-react';
 import { useRecoilValue } from 'recoil';
 import { motion } from 'framer-motion';
 import { Skeleton, useMediaQuery } from '@librechat/client';
@@ -96,6 +96,36 @@ const RecipeBookNavLink = memo(
   },
 );
 RecipeBookNavLink.displayName = 'RecipeBookNavLink';
+
+const RecipeExploreNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const location = useLocation();
+    const isActive =
+      location.pathname === '/r/explore' || location.pathname.startsWith('/r/explore');
+    return (
+      <Link
+        to="/r/explore"
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className={cn(
+          'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt',
+          isActive && 'bg-surface-active-alt',
+        )}
+      >
+        <Compass className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_recipe_explore')}</span>
+      </Link>
+    );
+  },
+);
+RecipeExploreNavLink.displayName = 'RecipeExploreNavLink';
 
 const JournalNavLink = memo(
   ({
@@ -188,6 +218,37 @@ const IngredientGalleryNavLink = memo(
   },
 );
 IngredientGalleryNavLink.displayName = 'IngredientGalleryNavLink';
+
+const PalaisDesSuccesNavLink = memo(
+  ({
+    isSmallScreen,
+    itemToggleNav,
+    localize,
+  }: {
+    isSmallScreen: boolean;
+    itemToggleNav: () => void;
+    localize: (key: string) => string;
+  }) => {
+    const location = useLocation();
+    const isActive =
+      location.pathname === '/palais-des-succes' ||
+      location.pathname.startsWith('/palais-des-succes');
+    return (
+      <Link
+        to="/palais-des-succes"
+        onClick={isSmallScreen ? itemToggleNav : undefined}
+        className={cn(
+          'flex w-full items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors duration-200 text-text-primary hover:bg-surface-active-alt',
+          isActive && 'bg-surface-active-alt',
+        )}
+      >
+        <Trophy className="h-4 w-4 shrink-0 text-text-secondary" />
+        <span className="truncate">{localize('com_ui_palais_des_succes')}</span>
+      </Link>
+    );
+  },
+);
+PalaisDesSuccesNavLink.displayName = 'PalaisDesSuccesNavLink';
 
 const MealPlannerNavLink = memo(
   ({
@@ -427,6 +488,11 @@ const Nav = memo(
               itemToggleNav={itemToggleNav}
               localize={localize}
             />
+            <RecipeExploreNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
             <JournalNavLink
               isSmallScreen={isSmallScreen}
               itemToggleNav={itemToggleNav}
@@ -438,6 +504,11 @@ const Nav = memo(
               localize={localize}
             />
             <IngredientGalleryNavLink
+              isSmallScreen={isSmallScreen}
+              itemToggleNav={itemToggleNav}
+              localize={localize}
+            />
+            <PalaisDesSuccesNavLink
               isSmallScreen={isSmallScreen}
               itemToggleNav={itemToggleNav}
               localize={localize}

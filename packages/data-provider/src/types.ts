@@ -223,6 +223,23 @@ export type TUser = {
   updatedAt: string;
   /** When false, show onboarding modal. Undefined = treat as completed. */
   onboardingCompleted?: boolean;
+  /** Recipe gamification: XP, level, badge counts (from GET /api/gamification). */
+  gamification?: {
+    xp?: number;
+    level?: number;
+    badgeCounts?: Record<string, number>;
+  };
+};
+
+/** Response from GET /api/gamification */
+export type TGamificationStats = {
+  xp: number;
+  level: number;
+  badgeCounts: Record<string, number>;
+  milestones: number[];
+  xpInCurrentLevel: number;
+  xpNeededForNextLevel: number;
+  xpForNextLevel: number;
 };
 
 export type TGetConversationsResponse = {
