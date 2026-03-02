@@ -132,13 +132,15 @@ function createValidateImageRequest(secureImageLinks) {
       const basePath = getBasePath();
       const imagesPath = `${basePath}/images`;
 
-      // Allow static ingredient images (no auth required)
-      const ingredientsPath = `${imagesPath}/ingredients/`;
-      if (fullPath.startsWith(ingredientsPath)) {
-        const rest = fullPath.slice(ingredientsPath.length);
-        if (rest && !rest.includes('..') && /^[^/]+$/.test(rest.trim())) {
-          logger.debug('[validateImageRequest] Ingredient image request validated');
-          return next();
+      // Allow static ingredient images (no auth required): /images/ingredients/ or /images/Ingrédients/
+      const allowedIngredientPrefixes = [`${imagesPath}/ingredients/`, `${imagesPath}/Ingrédients/`];
+      for (const ingredientsPath of allowedIngredientPrefixes) {
+        if (fullPath.startsWith(ingredientsPath)) {
+          const rest = fullPath.slice(ingredientsPath.length);
+          if (rest && !rest.includes('..') && /^[^/]+$/.test(rest.trim())) {
+            logger.debug('[validateImageRequest] Ingredient image request validated');
+            return next();
+          }
         }
       }
 
