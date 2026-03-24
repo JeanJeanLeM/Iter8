@@ -11,7 +11,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 const backendPort = process.env.BACKEND_PORT && Number(process.env.BACKEND_PORT) || 3080;
 const backendURL = process.env.HOST ? `http://${process.env.HOST}:${backendPort}` : `http://localhost:${backendPort}`;
 
-export default defineConfig(({ command }) => ({
+export default defineConfig(() => ({
   base: '',
   server: {
     allowedHosts: process.env.VITE_ALLOWED_HOSTS && process.env.VITE_ALLOWED_HOSTS.split(',') || [],
@@ -35,6 +35,11 @@ export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     nodePolyfills(),
+    sourcemapExclude({ excludeNodeModules: true }),
+    compression({
+      threshold: 10240,
+    }),
+    // PWA last: Workbox must glob `dist` after Rollup + compression have written files.
     VitePWA({
       injectRegister: 'auto', // 'auto' | 'manual' | 'disabled'
       registerType: 'autoUpdate', // 'prompt' | 'autoUpdate'
@@ -43,22 +48,32 @@ export default defineConfig(({ command }) => ({
       },
       useCredentials: true,
       includeManifestIcons: false,
+      // Static files to precache from `public/` (not emitted as hashed Rollup assets).
+      includeAssets: ['robots.txt', 'assets/cookiter8/**/*.png'],
       workbox: {
+        // Explicit dir avoids cwd quirks on CI (e.g. Vercel monorepo).
+        globDirectory: path.resolve(__dirname, 'dist'),
+        // Split extensions: brace expansion can fail on some glob/workbox versions.
         globPatterns: [
-          '**/*.{js,css,html}',
-          'assets/favicon*.png',
-          'assets/icon-*.png',
-          'assets/apple-touch-icon*.png',
-          'assets/maskable-icon.png',
-          'assets/cookiter8/*.png',
+          '**/*.html',
+          '**/*.js',
+          '**/*.css',
           'manifest.webmanifest',
+          'assets/**/*.woff2',
+          'assets/**/*.woff',
         ],
-        globIgnores: ['images/**/*', '**/*.map'],
+        globIgnores: [
+          'images/**/*',
+          '**/*.map',
+          '**/*.gz',
+          '**/*.br',
+          'sw.js',
+          'workbox-*.js',
+        ],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/oauth/, /^\/api/],
       },
-      includeAssets: [],
       manifest: {
         name: 'CookIter8',
         short_name: 'CookIter8',
@@ -95,12 +110,10 @@ export default defineConfig(({ command }) => ({
         ],
       },
     }),
-    sourcemapExclude({ excludeNodeModules: true }),
-    compression({
-      threshold: 10240,
-    }),
   ],
-  publicDir: command === 'serve' ? './public' : false,
+  // Needed for production so `dist/` contains `public/` assets *before* Workbox runs.
+  // (Previously only post-build copied them, too late for precache generation.)
+  publicDir: './public',
   build: {
     sourcemap: process.env.NODE_ENV === 'development',
     outDir: './dist',
