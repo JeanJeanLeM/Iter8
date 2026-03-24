@@ -54,13 +54,13 @@ export default defineConfig(() => ({
         // Explicit dir avoids cwd quirks on CI (e.g. Vercel monorepo).
         globDirectory: path.resolve(__dirname, 'dist'),
         // Split extensions: brace expansion can fail on some glob/workbox versions.
+        // Do not add optional globs (e.g. **/*.woff): Workbox fails the build if a pattern matches
+        // zero files, and font outputs vary by platform / tree-shaking (Vercel had no .woff).
         globPatterns: [
           '**/*.html',
           '**/*.js',
           '**/*.css',
           'manifest.webmanifest',
-          'assets/**/*.woff2',
-          'assets/**/*.woff',
         ],
         globIgnores: [
           'images/**/*',
