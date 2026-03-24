@@ -48,14 +48,16 @@ export default defineConfig(() => ({
       },
       useCredentials: true,
       includeManifestIcons: false,
+      // Run SW generation after other plugins (e.g. compression) so `dist/` is final before Workbox globs.
+      integration: {
+        closeBundleOrder: 'post',
+      },
       // Static files to precache from `public/` (not emitted as hashed Rollup assets).
       includeAssets: ['robots.txt', 'assets/cookiter8/**/*.png'],
       workbox: {
-        // Explicit dir avoids cwd quirks on CI (e.g. Vercel monorepo).
-        globDirectory: path.resolve(__dirname, 'dist'),
-        // Split extensions: brace expansion can fail on some glob/workbox versions.
-        // Do not add optional globs (e.g. **/*.woff): Workbox fails the build if a pattern matches
-        // zero files, and font outputs vary by platform / tree-shaking (Vercel had no .woff).
+        // Let vite-plugin-pwa resolve `globDirectory` from Vite `root` + `build.outDir`.
+        // `path.resolve(__dirname, 'dist')` can point at the wrong folder when the config is bundled on CI.
+        globStrict: false,
         globPatterns: [
           '**/*.html',
           '**/*.js',
