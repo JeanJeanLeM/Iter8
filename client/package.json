@@ -10,6 +10,7 @@
     "build:workspace-deps": "npm --prefix .. run build:data-provider && npm --prefix .. run build:data-schemas && npm --prefix .. run build:api && npm --prefix .. run build:client-package",
     "build:client-only": "cross-env NODE_ENV=production vite build && node ./scripts/post-build.cjs",
     "build": "npm run build:workspace-deps && npm run build:client-only",
+    "frontend": "npm run build",
     "build:ci": "cross-env NODE_ENV=development vite build --mode ci",
     "dev": "cross-env NODE_ENV=development vite",
     "preview-prod": "cross-env NODE_ENV=development vite preview",
