@@ -20,7 +20,7 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
     "b:clean": "bun run rimraf dist",
     "build": "npm run clean && rollup -c --bundleConfigAsCjs",
     "build:dev": "npm run clean && NODE_ENV=development rollup -c --bundleConfigAsCjs",
