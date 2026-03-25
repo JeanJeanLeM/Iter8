@@ -1,4 +1,4 @@
-const availableTools = require('./manifest.json');
+const availableTools = require('./plugins-manifest.json');
 
 /** @type {Record<string, TPlugin | undefined>} */
 const manifestToolMap = {};

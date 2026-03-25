@@ -10,5 +10,5 @@ module.exports = {
   assets: path.resolve(__dirname, '..', '..', 'client', 'public', 'assets'),
   imageOutput: path.resolve(__dirname, '..', '..', 'client', 'public', 'images'),
   structuredTools: path.resolve(__dirname, '..', 'app', 'clients', 'tools', 'structured'),
-  pluginManifest: path.resolve(__dirname, '..', 'app', 'clients', 'tools', 'manifest.json'),
+  pluginManifest: path.resolve(__dirname, '..', 'app', 'clients', 'tools', 'plugins-manifest.json'),
 };
