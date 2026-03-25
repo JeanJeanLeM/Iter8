@@ -11,6 +11,22 @@ import { VitePWA } from 'vite-plugin-pwa';
 const backendPort = process.env.BACKEND_PORT && Number(process.env.BACKEND_PORT) || 3080;
 const backendURL = process.env.HOST ? `http://${process.env.HOST}:${backendPort}` : `http://localhost:${backendPort}`;
 
+/** When the static front is on another host than the API (e.g. Vercel + Docker), set DOMAIN_SERVER at build time so `<base href>` points at the API origin (see packages/data-provider apiBaseUrl). */
+function splitDeployBaseTag(): Plugin {
+  return {
+    name: 'split-deploy-base-href',
+    transformIndexHtml(html) {
+      const domain = process.env.DOMAIN_SERVER?.trim();
+      if (!domain) {
+        return html;
+      }
+      const normalized = domain.replace(/\/+$/, '');
+      const href = `${normalized}/`;
+      return html.replace(/<base\s+href="\/"\s*\/>/i, `<base href="${href}" />`);
+    },
+  };
+}
+
 export default defineConfig(() => ({
   base: '',
   server: {
@@ -33,6 +49,7 @@ export default defineConfig(() => ({
   envDir: '../',
   envPrefix: ['VITE_', 'SCRIPT_', 'DOMAIN_', 'ALLOW_'],
   plugins: [
+    splitDeployBaseTag(),
     react(),
     nodePolyfills(),
     sourcemapExclude({ excludeNodeModules: true }),
