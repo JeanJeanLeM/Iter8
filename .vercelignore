@@ -1,11 +1,10 @@
-# LibreChat: `api/` is the Express backend, not Vercel Serverless routes.
-# With Root Directory = repo root, Vercel would otherwise treat every file under
-# `api/` as a function → very long "stuck" phase after the Vite build finishes.
-api
+# LibreChat: root `api/` is the Express backend, not Vercel Serverless routes.
+# Use a leading `/` so we only ignore the repo-root folder — NOT `packages/api`.
+/api
 
-e2e
-playwright-report
-coverage
+/e2e
+/playwright-report
+/coverage
 **/*.spec.js
 **/*.spec.ts
 **/*.test.js
